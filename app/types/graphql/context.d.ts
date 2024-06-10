@@ -1,6 +1,7 @@
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Cache } from "@envelop/response-cache"
 import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
+import { Transaction } from "@sentry/node"
 
 export type Context = {
   user: PartialUserAuth | null | undefined
@@ -20,4 +21,5 @@ export type Context = {
   request: Request
   cache: Cache
   id: string | undefined
+  sentryTransaction: Transaction
 }

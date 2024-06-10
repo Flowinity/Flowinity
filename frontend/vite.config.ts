@@ -155,7 +155,9 @@ const config = {
         ws: true,
         secure: true,
         changeOrigin: true
-      }
+      },
+      "/metrics": "http://localhost:34583",
+      "/ok": "http://localhost:34583"
     },
     https: undefined,
     warmup: {

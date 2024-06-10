@@ -32,7 +32,7 @@
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value" />
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
-    <UploadDialog v-model="$app.dialogs.upload.value" />
+    <UploadFileV2 v-model="$app.dialogs.upload.value" />
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
     <NetworkInspector v-if="$app.dialogs.networkInspector" />
     <v-overlay
@@ -158,10 +158,12 @@ import Connecting from "@/components/Core/Dialogs/Connecting.vue";
 import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
+import UploadFileV2 from "@/components/Gallery/Dialogs/UploadFileV2.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    UploadFileV2,
     FlowinityLogoAnimated,
     GroupSettingsDialog,
     ImageDialog,

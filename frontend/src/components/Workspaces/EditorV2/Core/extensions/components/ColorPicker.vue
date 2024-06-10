@@ -1,44 +1,43 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-
-import { COLORS_LIST } from '@/constants/define'
-import { getIcon } from '@/constants/icons'
+import { ref, watch } from "vue";
+import { RiCircleLine } from "@remixicon/vue";
+import { COLORS_LIST } from "@/components/Workspaces/EditorV2/Core/constants";
 
 interface Props {
-  modelValue?: string
-  nudgeLeft?: string | number
-  nudgeTop?: string | number
-  more?: boolean
+  modelValue?: string;
+  nudgeLeft?: string | number;
+  nudgeTop?: string | number;
+  more?: boolean;
 }
 
 interface Emits {
-  (event: 'update:modelValue', color: string): void
-  (event: 'change', color: string): void
+  (event: "update:modelValue", color: string): void;
+  (event: "change", color: string): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
+  modelValue: "",
   nudgeLeft: 0,
   nudgeTop: 0,
   more: true
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
-const inutValue = ref('')
-const menu = ref(false)
+const inputValue = ref("");
+const menu = ref(false);
 // const picker = ref(false);
 
-watch(menu, val => {
-  inutValue.value = props.modelValue
-})
+watch(menu, (val) => {
+  inputValue.value = props.modelValue;
+});
 
 function setColor(color: string) {
-  emit('update:modelValue', color)
-  emit('change', color)
+  emit("update:modelValue", color);
+  emit("change", color);
 
-  inutValue.value = color
-  menu.value = false
+  inputValue.value = color;
+  menu.value = false;
 }
 </script>
 
@@ -53,15 +52,26 @@ function setColor(color: string) {
     activator="parent"
   >
     <VList>
-      <VSheet class="d-flex flex-wrap justify-between ma-1" fluid :max-width="230">
-        <VBtn v-for="color in COLORS_LIST" :key="color" flat icon density="compact" @click="setColor(color)">
-          <VIcon :icon="getIcon('circle')" :color="color" />
+      <VSheet
+        class="d-flex flex-wrap justify-between ma-1"
+        fluid
+        :max-width="230"
+      >
+        <VBtn
+          v-for="color in COLORS_LIST"
+          :key="color"
+          flat
+          icon
+          density="compact"
+          @click="setColor(color)"
+        >
+          <RiCircleLine class="opacity-100" size="1.5em" :color="color" />
         </VBtn>
 
         <VTextField
-          v-model="inutValue"
+          v-model="inputValue"
           class="mt-2 mx-1"
-          :append-inner-icon="getIcon('check')"
+          append-inner-icon="mdi-check"
           density="compact"
           label="HEX"
           variant="outlined"
@@ -69,10 +79,14 @@ function setColor(color: string) {
           hide-details
           single-line
           clearable
-          @click:append-inner="setColor(inutValue)"
+          @click:append-inner="setColor(inputValue)"
         >
-          <template v-if="inutValue" #prepend-inner>
-            <VIcon class="opacity-100" :icon="getIcon('circle')" :color="inutValue" />
+          <template v-if="inputValue" #prepend-inner>
+            <RiCircleLine
+              class="opacity-100"
+              size="1.5em"
+              :color="inputValue"
+            />
           </template>
         </VTextField>
       </VSheet>

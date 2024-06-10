@@ -12,7 +12,7 @@ import { useMessagesStore } from "@/stores/messages.store";
 import { gql } from "@apollo/client";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { ReadChatMutation } from "@/graphql/chats/readChat.graphql";
-import { ChatPermissions } from "@/typecache/tpu-typecache";
+import { ChatPermissions } from "@/components/Workspaces/EditorV2/Core/typescache/tpu-typecache";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);

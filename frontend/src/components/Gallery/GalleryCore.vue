@@ -222,7 +222,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.randomAttachment") }}
               </v-tooltip>
-              <v-icon class="action-bar-item">mdi-dice</v-icon>
+              <v-icon>mdi-dice-multiple</v-icon>
             </v-btn>
             <v-btn
               icon
@@ -309,7 +309,7 @@
 import { defineComponent } from "vue";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
-import { CollectionCache } from "@/types/collection";
+import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
 import Paginate from "@/components/Core/Paginate.vue";
 import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 import { Pager, Upload } from "@/gql/graphql";

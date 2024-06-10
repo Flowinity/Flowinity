@@ -281,7 +281,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import { MessageSocket } from "@/types/messages";
+import { MessageSocket } from "@/components/Workspaces/EditorV2/Core/typess/messages";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";

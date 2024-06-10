@@ -386,6 +386,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Promise<Record<string, any>> {
     const experiments = {
+      EDITOR_V2: false,
+      WIDGETS: false,
       BADGES: !config.officialInstance,
       NATIVE_BADGES: true,
       REMOVE_LEGACY_SOCKET: false,
@@ -461,6 +463,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        EDITOR_V2: {
+          description: "Enable the new Workspaces editor.",
+          createdAt: "2024-06-06T00:00:00.000Z",
+          versions: [4, 5]
+        },
+        WIDGETS: {
+          description: "Enable railbar widgets.",
+          createdAt: "2024-06-02T00:00:00.000Z",
+          versions: [4, 5]
+        },
         BADGES: {
           description: "Enable the extended custom badges.",
           createdAt: "2024-05-22T00:00:00.000Z",
@@ -877,6 +889,7 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
+      experiments.EDITOR_V2 = true
       experiments.CHAT_CACHING = 10
       experiments.PROGRESSIVE_UI = true
       experiments.CHAT_GUIDED_WIZARD = true

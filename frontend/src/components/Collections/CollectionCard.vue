@@ -77,7 +77,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { CollectionCache } from "@/types/collection";
+import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
 
 export default defineComponent({
   props: {

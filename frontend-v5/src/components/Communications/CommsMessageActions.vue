@@ -99,7 +99,7 @@ import TpuConfirmationDialog from "@/components/Framework/Dialog/TpuConfirmation
 import { useChatStore } from "@/stores/chat.store";
 import { useMessagesStore } from "@/stores/messages.store";
 import { useUserStore } from "@/stores/user.store";
-import { ChatPermissions } from "@/typecache/tpu-typecache";
+import { ChatPermissions } from "@/components/Workspaces/EditorV2/Core/typescache/tpu-typecache";
 
 const props = defineProps({
   message: {

@@ -261,15 +261,20 @@ export default defineComponent({
       this.$ui.appBarImage = this.collection?.banner
         ? this.$app.domain + this.collection?.banner
         : null;
+
+      if (this.$ui.appBarImage) {
+        this.$ui.appBarType = "collapse";
+        this.$ui.appBarHeight = 256;
+      } else {
+        this.$ui.appBarType = "stick";
+      }
     },
     async onCollectionUserUpdate(data: { id?: number; collectionId: number }) {
       if (data.collectionId !== this.collection?.id) return;
-      console.log(1);
       this.getCollection(false);
     },
     async onCollectionUpdate(data: { id?: number; name?: string }) {
       if (data.id !== this.collection?.id) return;
-      this.getCollection(false);
     }
   },
   mounted() {
@@ -297,6 +302,7 @@ export default defineComponent({
       "collectionUserRemove",
       this.onCollectionUserUpdate
     );
+    this.$ui.appBarType = "stick";
   },
   watch: {
     "$route.params.id"(val) {

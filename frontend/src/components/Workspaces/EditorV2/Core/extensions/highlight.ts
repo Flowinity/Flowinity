@@ -1,13 +1,16 @@
-import type { HighlightOptions as TiptapHighlightOptions } from '@tiptap/extension-highlight'
-import { Highlight as TiptapHighlight } from '@tiptap/extension-highlight'
+import type { HighlightOptions as TiptapHighlightOptions } from "@tiptap/extension-highlight";
+import { Highlight as TiptapHighlight } from "@tiptap/extension-highlight";
 
-import HighlightActionButton from './components/HighlightActionButton.vue'
+import HighlightActionButton from "./components/HighlightActionButton.vue";
 
-import type { GeneralOptions } from '@/type'
+import type { GeneralOptions } from "@/components/Workspaces/EditorV2/Core/types";
+import { RiMarkPenLine, RiTextBlock } from "@remixicon/vue";
 
-export interface HighlightOptions extends TiptapHighlightOptions, GeneralOptions<HighlightOptions> {}
+export interface HighlightOptions
+  extends TiptapHighlightOptions,
+    GeneralOptions<HighlightOptions> {}
 
-export const Highlight = /* @__PURE__*/ TiptapHighlight.extend<HighlightOptions>({
+export const Highlight = TiptapHighlight.extend<HighlightOptions>({
   addOptions() {
     return {
       ...this.parent?.(),
@@ -16,14 +19,15 @@ export const Highlight = /* @__PURE__*/ TiptapHighlight.extend<HighlightOptions>
         component: HighlightActionButton,
         componentProps: {
           action: (color?: unknown) => {
-            if (typeof color === 'string') editor.commands.setHighlight({ color })
+            if (typeof color === "string")
+              editor.commands.setHighlight({ color });
           },
-          isActive: () => editor.isActive('highlight') || false,
+          isActive: () => editor.isActive("highlight") || false,
           disabled: !editor.can().setHighlight(),
-          icon: 'highlight',
-          tooltip: t('editor.highlight.tooltip')
+          icon: RiMarkPenLine,
+          tooltip: t("editor.highlight.tooltip")
         }
       })
-    }
+    };
   }
-})
+});

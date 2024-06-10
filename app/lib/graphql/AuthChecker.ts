@@ -42,6 +42,7 @@ export const authChecker: AuthChecker<Context> = async (
   { context }: ResolverData<Context>,
   options: any[]
 ) => {
+  const start = new Date()
   const token = context.token
   let cache
   if (config.finishedSetup && !options[0]?.neverUseCache) {
@@ -180,6 +181,10 @@ export const authChecker: AuthChecker<Context> = async (
         )
       }
     }
+  }
+  const total = new Date().getTime() - start.getTime()
+  if (total >= 10) {
+    console.log(`AuthChecker took ${total}ms`)
   }
   return true
 }

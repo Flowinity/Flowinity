@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import type { Editor } from '@tiptap/vue-3'
+import type { Editor } from "@tiptap/vue-3";
 
-import TableMenu from './table/TableMenu.vue'
-import ActionButton from './ActionButton.vue'
-
-import type { IconsOptions } from '@/constants/icons'
-import { ButtonViewReturnComponentProps } from '@/type'
+import TableMenu from "./table/TableMenu.vue";
+import ActionButton from "./ActionButton.vue";
+import { ButtonViewReturnComponentProps } from "@/components/Workspaces/EditorV2/Core/types";
+import { VNode } from "vue";
 
 interface Props {
-  editor: Editor
-  icon?: keyof IconsOptions
-  tooltip?: string
-  disabled?: boolean
-  color?: string
-  action?: ButtonViewReturnComponentProps['action']
-  isActive?: ButtonViewReturnComponentProps['isActive']
+  editor: Editor;
+  icon?: VNode;
+  tooltip?: string;
+  disabled?: boolean;
+  color?: string;
+  action?: ButtonViewReturnComponentProps["action"];
+  isActive?: ButtonViewReturnComponentProps["isActive"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   action: undefined,
   isActive: undefined
-})
+});
 </script>
 
 <template>

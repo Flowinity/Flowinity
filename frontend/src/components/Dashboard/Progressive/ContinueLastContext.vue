@@ -1,21 +1,15 @@
 <template>
-  <v-card color="toolbar lighten-2 p-4" :to="example.route">
+  <v-card color="toolbar lighten-2" class="p-4" :elevation="0" :to="item.path">
     <div>
-      <div class="text-grey">
-        <v-icon>{{ example.heading.icon }}</v-icon>
-        <span class="ml-2">{{ example.heading.title }}</span>
+      <div class="text-grey flex items-center">
+        <component :is="item.rail.icon" />
+        <span class="ml-4">{{ item.rail.name }}</span>
       </div>
     </div>
-    <div class="text-h6">Continue where you left off.</div>
-    <div class="flex flex-col">
-      <div class="flex">
-        <UserAvatar
-          :user="{
-            avatar: example.content.icon,
-            username: example.content.title
-          }"
-        />
-        <div class="ml-4 text-h5">{{ example.content.title }}</div>
+    <div class="flex flex-col mt-2">
+      <div class="flex items-center">
+        <component :is="item.icon" />
+        <div class="ml-4 text-h5">{{ item.name }}</div>
       </div>
     </div>
   </v-card>
@@ -23,19 +17,14 @@
 
 <script lang="ts" setup>
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { NavigationOption } from "@/store/progressive.store";
 
-const example = {
-  route: "/communications/-1",
-  heading: {
-    icon: "mdi-message-processing",
-    title: "Communications"
-  },
-  content: {
-    title: "Jolt707",
-    icon: "3459781d.png"
-  },
-  id: -1
-};
+const props = defineProps({
+  item: {
+    type: Object as () => NavigationOption,
+    required: true
+  }
+});
 </script>
 
 <style scoped></style>

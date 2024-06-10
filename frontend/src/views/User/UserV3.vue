@@ -340,7 +340,10 @@ import { DefaultThemes } from "@/plugins/vuetify";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/UserV3ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
-import { Component, Rows } from "@/types/userv3";
+import {
+  Component,
+  Rows
+} from "@/components/Workspaces/EditorV2/Core/typess/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import { FriendStatus, ProfileLayout, User, UserInsights } from "@/gql/graphql";
 import { RiSettings5Line } from "@remixicon/vue";

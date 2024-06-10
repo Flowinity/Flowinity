@@ -164,10 +164,11 @@
       </div>
     </div>
   </div>
-  <overline position="center" class="mt-4">
-    {{ $t("chats.settings.home.insights.name") }}
-  </overline>
-  <div class="d-flex text-center flex-grow-1 justify-center"></div>
+  <!-- TODO: v5 milestone -->
+  <!--  <overline position="center" class="mt-4">-->
+  <!--    {{ $t("chats.settings.home.insights.name") }}-->
+  <!--  </overline>-->
+  <!--  <div class="d-flex text-center flex-grow-1 justify-center"></div>-->
 </template>
 
 <script lang="ts">

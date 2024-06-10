@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Editor } from '@tiptap/vue-3'
+import { ref, VNode } from "vue";
+import type { Editor } from "@tiptap/vue-3";
 
-import ActionButton from './ActionButton.vue'
-
-import type { IconsOptions } from '@/constants/icons'
-import { ButtonViewReturnComponentProps } from '@/type'
+import ActionButton from "./ActionButton.vue";
+import { ButtonViewReturnComponentProps } from "@/components/Workspaces/EditorV2/Core/types";
 
 interface Props {
-  editor: Editor
+  editor: Editor;
 
-  icon?: keyof IconsOptions
-  tooltip?: string
-  disabled?: boolean
-  color?: string
-  action?: ButtonViewReturnComponentProps['action']
-  isActive?: ButtonViewReturnComponentProps['isActive']
+  icon?: VNode;
+  tooltip?: string;
+  disabled?: boolean;
+  color?: string;
+  action?: ButtonViewReturnComponentProps["action"];
+  isActive?: ButtonViewReturnComponentProps["isActive"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -25,13 +23,13 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   action: undefined,
   isActive: undefined
-})
+});
 
-const src = ref<string | undefined>(undefined)
+const src = ref<string | undefined>(undefined);
 
 function onAction() {
-  const { src: _src } = props.editor.getAttributes('video')
-  src.value = _src
+  const { src: _src } = props.editor.getAttributes("video");
+  src.value = _src;
 }
 </script>
 

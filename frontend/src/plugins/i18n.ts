@@ -7,7 +7,7 @@ import ru from "@/locales/ru.json";
 import fr from "@/locales/fr.json";
 
 const instance = createI18n({
-  legacy: true,
+  legacy: false,
   locale: "en",
   fallbackLocale: "en",
   messages: {

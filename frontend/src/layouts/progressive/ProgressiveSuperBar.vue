@@ -14,7 +14,6 @@
     :class="{ 'sidebar-patch': !$vuetify.display.mobile }"
     color="dark"
     elevation="0"
-    id="superbar"
   >
     <div class="justify-between superbar flex flex-col h-full overflow-y-auto">
       <div class="flex flex-col flex-grow overflow-y-auto items-center">
@@ -151,6 +150,16 @@
             :key="item.id"
             :item="item"
           />
+          <super-bar-item-template
+            :item="{
+              id: RailMode.COLLECTIONS,
+              name: 'Add Widget',
+              icon: RiAddLine,
+              selectedIcon: RiAddLine
+            }"
+            :highlighted="true"
+            id="superbar-widgets"
+          />
         </div>
         <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
           <div class="divide-outline-dark border flowinity-border w-full" />
@@ -258,7 +267,8 @@ import {
   RiNotificationLine,
   RiSearchLine,
   RiUserLine,
-  RiLogoutBoxLine
+  RiLogoutBoxLine,
+  RiAddLine
 } from "@remixicon/vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";

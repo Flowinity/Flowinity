@@ -65,7 +65,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { CollectionCache } from "@/types/collection";
+import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import {

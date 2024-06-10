@@ -1,29 +1,32 @@
-import type { BlockquoteOptions as TiptapBlockquoteOptions } from '@tiptap/extension-blockquote'
-import { Blockquote as TiptapBlockquote } from '@tiptap/extension-blockquote'
+import type { BlockquoteOptions as TiptapBlockquoteOptions } from "@tiptap/extension-blockquote";
+import { Blockquote as TiptapBlockquote } from "@tiptap/extension-blockquote";
 
-import ActionButton from './components/ActionButton.vue'
+import ActionButton from "./components/ActionButton.vue";
 
-import type { GeneralOptions } from '@/type'
+import type { GeneralOptions } from "@/components/Workspaces/EditorV2/Core/types";
+import { RiQuoteText } from "@remixicon/vue";
 
-export interface BlockquoteOptions extends TiptapBlockquoteOptions, GeneralOptions<BlockquoteOptions> {}
+export interface BlockquoteOptions
+  extends TiptapBlockquoteOptions,
+    GeneralOptions<BlockquoteOptions> {}
 
-export const Blockquote = /* @__PURE__*/ TiptapBlockquote.extend<BlockquoteOptions>({
+export const Blockquote = TiptapBlockquote.extend<BlockquoteOptions>({
   addOptions() {
     return {
       ...this.parent?.(),
       HTMLAttributes: {
-        class: 'blockquote'
+        class: "blockquote"
       },
       button: ({ editor, t }) => ({
         component: ActionButton,
         componentProps: {
           action: () => editor.commands.toggleBlockquote(),
-          isActive: () => editor.isActive('blockquote') || false,
+          isActive: () => editor.isActive("blockquote") || false,
           disabled: !editor.can().toggleBlockquote(),
-          icon: 'blockquote',
-          tooltip: t('editor.blockquote.tooltip')
+          icon: RiQuoteText,
+          tooltip: t("editor.blockquote.tooltip")
         }
       })
-    }
+    };
   }
-})
+});

@@ -39,7 +39,7 @@ export const useMailStore = defineStore("mail", {
     }) as MailState,
   actions: {
     getSender(email: Email) {
-      return email.from[0]?.name || email.from[0]?.address || "Unknown";
+      return email?.from?.[0]?.name || email?.from?.[0]?.address || "Unknown";
     },
     async getMessages(mailbox: string, page: number) {
       const { data } = await axios.get(`/mail/mailbox/${mailbox}/${page}`);

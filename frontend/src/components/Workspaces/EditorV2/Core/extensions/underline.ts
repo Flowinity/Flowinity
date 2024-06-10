@@ -1,13 +1,16 @@
-import type { UnderlineOptions as TiptapUnderlineOptions } from '@tiptap/extension-underline'
-import { Underline as TiptapUnderline } from '@tiptap/extension-underline'
+import type { UnderlineOptions as TiptapUnderlineOptions } from "@tiptap/extension-underline";
+import { Underline as TiptapUnderline } from "@tiptap/extension-underline";
 
-import ActionButton from './components/ActionButton.vue'
+import ActionButton from "./components/ActionButton.vue";
 
-import type { GeneralOptions } from '@/type'
+import type { GeneralOptions } from "@/components/Workspaces/EditorV2/Core/types";
+import { RiUnderline } from "@remixicon/vue";
 
-export interface UnderlineOptions extends TiptapUnderlineOptions, GeneralOptions<UnderlineOptions> {}
+export interface UnderlineOptions
+  extends TiptapUnderlineOptions,
+    GeneralOptions<UnderlineOptions> {}
 
-export const Underline = /* @__PURE__*/ TiptapUnderline.extend<UnderlineOptions>({
+export const Underline = TiptapUnderline.extend<UnderlineOptions>({
   addOptions() {
     return {
       ...this.parent?.(),
@@ -15,12 +18,12 @@ export const Underline = /* @__PURE__*/ TiptapUnderline.extend<UnderlineOptions>
         component: ActionButton,
         componentProps: {
           action: () => editor.commands.toggleUnderline(),
-          isActive: () => editor.isActive('underline') || false,
+          isActive: () => editor.isActive("underline") || false,
           disabled: !editor.can().toggleUnderline(),
-          icon: 'underline',
-          tooltip: t('editor.underline.tooltip')
+          icon: RiUnderline,
+          tooltip: t("editor.underline.tooltip")
         }
       })
-    }
+    };
   }
-})
+});

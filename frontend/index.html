@@ -37,59 +37,44 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2015%2Ces2016%2Ces6%2Ces7%2Ces5%2Cdom4%2CAbortController%2CArray.from%2CIntersectionObserver%2CIntersectionObserverEntry%2CResizeObserver%2CWebAnimations%2CObject.fromEntries%2CArray.prototype.at%2CArray.of%2CNumber.isNaN%2CNumber.isInteger%2CNumber.parseFloat%2CNumber.parseInt%2CObject.entries"></script>
     <style>
       :root {
-        --v-theme-background: 0, 0, 0;
+        --v-theme-background: 18, 18, 18;
         background-color: rgb(var(--v-theme-background));
       }
 
-      #spinner-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 4px solid #303030;
-        border-top-color: white;
-        animation: spinner-rotate 0.8s linear infinite;
-        z-index: 10;
-      }
-
-      @keyframes spinner-rotate {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      noscript {
+      .preinit-flex {
         font-family: Inter, sans-serif;
       }
 
-      noscript .margin {
+      .preinit-flex .margin {
         margin-top: 0.25rem;
         text-align: center;
       }
 
-      noscript .crashed {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 20;
-        background-color: black;
-      }
-
-      noscript .title {
+      .preinit-flex .title {
         font-size: 2rem;
         font-weight: 700;
       }
+
+      .preinit-flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width:100dvw;
+        height:100dvh;
+        overflow: hidden;
+        position: fixed;
+        color: white;
+      }
+
+      .preinit-flex a {
+        color: #0190ea;
+        text-decoration: none;
+      }
+
+       #spinner-overlay {
+         padding-top: 6px;
+       }
     </style>
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -97,20 +82,52 @@
 
   <body style="--gradient-offset: 100%">
     <div id="tpu-app">
-      <div id="spinner-overlay">
-        <noscript style="color: white">
-          <div class="crashed">
-            <div class="margin title">
-              Flowinity requires JavaScript.
+      <div class="preinit-flex">
+        <svg id="flowinity-preinit-logo" viewBox="0 0 741 741" style="max-width:128px" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <rect width="741" height="741" fill="#121212"></rect>
+          <circle cx="370.5" cy="370.5" r="370.5" fill="white"></circle>
+          <path d="M108 426C108 409.984 120.984 397 137 397C153.016 397 166 409.984 166 426V691H108V426Z" fill="#121212" id="path-0"></path>
+          <path d="M583 284C583 266.327 597.327 252 615 252V252C632.673 252 647 266.327 647 284V691H583V284Z" fill="#121212" id="path-3"></path>
+          <path d="M196 252C196 220.52 221.52 195 253 195V195C284.48 195 310 220.52 310 252V739H196V252Z" fill="#121212" id="path-1"></path>
+          <path d="M413 436C413 404.52 438.52 379 470 379V379C501.48 379 527 404.52 527 436V741H413V436Z" fill="#121212" id="path-2"></path>
+
+          <defs>
+            <linearGradient id="paint0_linear_370_5" x1="371" y1="0" x2="371" y2="741" gradientUnits="userSpaceOnUse">
+              <stop offset="1" stop-color="currentColor"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div id="spinner-overlay">
+          <noscript style="color: white">
+            <div>
+              <div class="margin title">
+                Flowinity requires JavaScript.
+              </div>
+              <div class="margin subtitle">
+                For Flowinity to work, you need to use a JavaScript enabled browser.
+              </div>
             </div>
-            <div class="margin subtitle">
-              For Flowinity to work, you need to use a JavaScript enabled browser.
-            </div>
-          </div>
-        </noscript>
-        <div class="spinner"></div>
+          </noscript>
+        </div>
       </div>
     </div>
     <script src="./src/main.ts" type="module"></script>
+    <script>
+      addEventListener("error", () => {
+        if(window.tpuInternals === undefined) {
+          console.warn("Flowinity failed to initialize.")
+          document.getElementById("spinner-overlay").innerHTML = `
+          <div class="crashed">
+            <div class="margin title">
+              Flowinity requires a modern browser.
+            </div>
+            <div class="margin subtitle">
+              For Flowinity to work, you need to use a modern browser.  We recommend browsers such as <a target="_blank" href="https://www.google.com/chrome/">Chrome</a> or <a target="_blank" href="https://www.mozilla.org/firefox/">Firefox</a>.
+            </div>
+          </div>
+        `;
+        }
+      });
+    </script>
   </body>
 </html>

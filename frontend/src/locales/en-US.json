@@ -106,7 +106,15 @@
     "displayLargeFile": "Preview large file",
     "downloadSelected": "Download Selected",
     "removeFromCollectionBulk": "Remove from Collection",
-    "addToCollectionBulk": "Add to Collection<br>(SHIFT to remove)"
+    "addToCollectionBulk": "Add to Collection<br>(SHIFT to remove)",
+    "dialogs": {
+      "upload": {
+        "title": "Upload to {collection}",
+        "clickToUpload": "Click to upload",
+        "dragAndDrop": " or drag and drop.",
+        "addMore": "Add more files"
+      }
+    }
   },
   "settings": {
     "tabs": {

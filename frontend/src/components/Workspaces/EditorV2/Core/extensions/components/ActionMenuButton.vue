@@ -1,12 +1,31 @@
 <script setup lang="ts">
-import type { StyleValue } from 'vue'
-import { computed, ref } from 'vue'
-import type { Editor } from '@tiptap/vue-3'
+import { StyleValue, VNode } from "vue";
+import { computed, ref } from "vue";
+import { ButtonViewReturnComponentProps } from "@/components/Workspaces/EditorV2/Core/types";
 
-import ActionButton from './ActionButton.vue'
+export interface Item {
+  title: string;
+  icon?: VNode;
+  isActive: NonNullable<ButtonViewReturnComponentProps["isActive"]>;
+  action?: ButtonViewReturnComponentProps["action"];
+  style?: StyleValue;
+  disabled?: boolean;
+  divider?: boolean;
+  default?: boolean;
+}
 
-import { getIcon, IconsOptions } from '@/constants/icons'
-import type { ButtonViewReturnComponentProps } from '@/type'
+interface Props {
+  editor: Editor;
+  disabled?: boolean;
+  color?: string;
+  maxHeight?: string | number;
+
+  icon?: VNode;
+  tooltip?: string;
+  items?: Item[];
+}
+import ActionButton from "./ActionButton.vue";
+import { Editor } from "@tiptap/vue-3";
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
@@ -14,53 +33,29 @@ const props = withDefaults(defineProps<Props>(), {
   maxHeight: undefined,
 
   icon: undefined,
-  tooltip: '',
+  tooltip: "",
   items: () => []
-})
+});
 
-const menu = ref<boolean>(false)
+const menu = ref<boolean>(false);
 
 const active = computed<Item>(() => {
-  const find = props.items.find(k => k.isActive())
+  const find = props.items.find((k) => k.isActive());
   if (find && !find.default) {
     return {
       ...find,
       icon: find.icon ? find.icon : props.icon
-    }
+    };
   }
 
   const item: Item = {
     title: props.tooltip,
     icon: props.icon,
     isActive: () => false
-  }
+  };
 
-  return item
-})
-</script>
-
-<script lang="ts">
-export interface Item {
-  title: string
-  icon?: keyof IconsOptions
-  isActive: NonNullable<ButtonViewReturnComponentProps['isActive']>
-  action?: ButtonViewReturnComponentProps['action']
-  style?: StyleValue
-  disabled?: boolean
-  divider?: boolean
-  default?: boolean
-}
-
-interface Props {
-  editor: Editor
-  disabled?: boolean
-  color?: string
-  maxHeight?: string | number
-
-  icon?: keyof IconsOptions
-  tooltip?: string
-  items?: Item[]
-}
+  return item;
+});
 </script>
 
 <template>
@@ -74,12 +69,18 @@ interface Props {
     <VMenu v-model="menu" activator="parent">
       <VList density="compact" :max-height="maxHeight">
         <template v-for="(item, i) in items" :key="i">
-          <VListItem :active="item.isActive()" :disabled="item.disabled" @click="item.action">
+          <VListItem
+            :active="item.isActive()"
+            :disabled="item.disabled"
+            @click="item.action"
+          >
             <template #prepend>
-              <VIcon v-if="item.icon" :icon="getIcon(item.icon)" />
+              <component :is="item.icon" v-if="item.icon" />
             </template>
 
-            <VListItem-title :style="item.style">{{ item.title }}</VListItem-title>
+            <VListItem-title :style="item.style">
+              {{ item.title }}
+            </VListItem-title>
           </VListItem>
 
           <VDivider v-if="item.divider" />

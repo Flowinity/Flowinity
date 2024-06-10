@@ -14,8 +14,13 @@
         : () => {}
     "
   >
-    <div :id="`dev-header-${id}`" class="dev-header unselectable">
-      <slot name="header"></slot>
+    <div
+      :id="`dev-header-${id}`"
+      class="dev-header unselectable flex justify-between items-center"
+    >
+      <div class="flex gap-2 items-center">
+        <slot name="header"></slot>
+      </div>
       <v-btn size="small" class="float-right" @click="$emit('close')">
         <v-icon>mdi-close</v-icon>
       </v-btn>

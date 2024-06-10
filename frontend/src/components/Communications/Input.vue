@@ -103,78 +103,11 @@
             </v-icon>
           </template>
           <template v-if="!editing" #prepend>
-            <v-menu
+            <add-attachment
               v-model="menu"
-              :close-on-content-click="false"
-              activator="parent"
-              location="top"
-            >
-              <v-card
-                :width="$vuetify.display.mobile ? undefined : 700"
-                height="500"
-                max-width="700"
-              >
-                <v-tabs v-model="tab" align-tabs="center">
-                  <v-tab value="upload">Upload</v-tab>
-                  <v-tab value="gallery">Gallery</v-tab>
-                  <v-tab value="starred">Starred</v-tab>
-                  <v-tab value="gif">GIFs</v-tab>
-                </v-tabs>
-                <v-card-text>
-                  <v-window v-model="tab">
-                    <v-window-item value="upload">
-                      <v-file-input
-                        ref="uploadInput"
-                        hide-input
-                        multiple
-                        style="display: none"
-                        truncate-length="15"
-                        @update:model-value="$emit('fileUpload', $event)"
-                      />
-                      <v-row
-                        align="center"
-                        class="d-flex flex-column"
-                        dense
-                        justify="center"
-                        style="cursor: pointer"
-                        @click="handleClick"
-                      >
-                        <v-icon size="60">mdi-cloud-upload</v-icon>
-                        <p>Drop your file(s) here, or click to select them.</p>
-                      </v-row>
-                    </v-window-item>
-
-                    <v-window-item value="gallery">
-                      <InlineGallery
-                        type="gallery"
-                        @click-item="
-                          $emit('quickTPULink', $event);
-                          menu = false;
-                        "
-                      />
-                    </v-window-item>
-                    <v-window-item value="starred">
-                      <InlineGallery
-                        type="starred"
-                        @click-item="
-                          $emit('quickTPULink', $event);
-                          menu = false;
-                        "
-                      />
-                    </v-window-item>
-                    <v-window-item value="gif">
-                      <InlineGallery
-                        type="tenor"
-                        @click-item="
-                          $emit('quickTPULink', $event);
-                          menu = false;
-                        "
-                      />
-                    </v-window-item>
-                  </v-window>
-                </v-card-text>
-              </v-card>
-            </v-menu>
+              @fileUpload="$emit('fileUpload', $event)"
+              @quickTPULink="$emit('quickTPULink', $event)"
+            />
             <v-icon class="pointer raw-icon">mdi-plus-circle</v-icon>
           </template>
           <template #append-inner>
@@ -206,7 +139,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
 import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
@@ -214,13 +146,14 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 import { Prefix } from "@/gql/graphql";
 import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
+import AddAttachment from "@/components/Communications/Menus/AddAttachment.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
   components: {
+    AddAttachment,
     UserAvatar,
     EmojiPicker,
-    InlineGallery,
     Mentionable
   },
   props: ["modelValue", "editing", "blocked", "active"],
@@ -235,7 +168,6 @@ export default defineComponent({
   ],
   data() {
     return {
-      tab: null as string | null,
       menu: false,
       items: [] as any,
       emojiPicker: false,
@@ -329,10 +261,6 @@ export default defineComponent({
     focus() {
       //@ts-ignore
       this.$refs?.textarea?.focus();
-    },
-    handleClick() {
-      //@ts-ignore
-      this.$refs?.uploadInput?.click();
     },
     async onOpen(key: string) {
       this.key = key;

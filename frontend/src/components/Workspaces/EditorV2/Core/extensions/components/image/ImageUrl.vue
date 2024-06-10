@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-import type { ImageForm } from './types'
-
-import { getIcon } from '@/constants/icons'
+import type { ImageForm } from "./types";
 
 interface Props {
-  modelValue?: ImageForm
-  t: (path: string) => string
+  modelValue?: ImageForm;
+  t: (path: string) => string;
 }
 
 interface Emits {
-  (event: 'update:modelValue', value: ImageForm): void
+  (event: "update:modelValue", value: ImageForm): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => ({})
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
 const form = computed({
   get: () => props.modelValue,
-  set: val => emit('update:modelValue', val)
-})
+  set: (val) => emit("update:modelValue", val)
+});
 </script>
 
 <template>
@@ -32,11 +30,18 @@ const form = computed({
       v-model="form.src"
       :label="t('editor.image.dialog.form.link')"
       autofocus
-      :prepend-icon="getIcon('linkVariant')"
+      prepend-icon="link-variant"
     />
 
-    <VTextField v-model="form.alt" :label="t('editor.image.dialog.form.alt')" :prepend-icon="getIcon('text')" />
+    <VTextField
+      v-model="form.alt"
+      :label="t('editor.image.dialog.form.alt')"
+      :prepend-icon="getIcon('text')"
+    />
 
-    <VCheckbox v-model="form.lockAspectRatio" :label="t('editor.image.dialog.form.aspectRatio')" />
+    <VCheckbox
+      v-model="form.lockAspectRatio"
+      :label="t('editor.image.dialog.form.aspectRatio')"
+    />
   </VForm>
 </template>

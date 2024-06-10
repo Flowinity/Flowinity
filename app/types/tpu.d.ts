@@ -139,4 +139,9 @@ declare type TpuConfig = {
       }
     | undefined
   isV5?: boolean
+  sentry:
+    | {
+        dsn: string | null
+      }
+    | undefined
 }

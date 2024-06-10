@@ -107,7 +107,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Component } from "@/types/userv3";
+import { Component } from "@/components/Workspaces/EditorV2/Core/typess/userv3";
 
 export default defineComponent({
   components: { CoreDialog },

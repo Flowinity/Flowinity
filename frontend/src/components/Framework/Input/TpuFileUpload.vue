@@ -1,49 +1,47 @@
 <template>
   <div
-    class="flex items-center justify-center w-full h-full"
+    class="flex items-center justify-center w-full h-full px-3"
     @drop.prevent.stop="drop"
     @dragover.prevent.stop
   >
     <label
       for="dropzone-file"
-      class="flex flex-col w-full h-64 border-2 border-outline-dark border-dashed rounded-lg mx-3 my-3"
-      :class="{
-        'items-center justify-center cursor-pointer': !files.length,
-        'cursor-normal': files.length
-      }"
-      @click="files.length ? $event.preventDefault() : ''"
+      class="flex flex-col w-full h-64 border-2 border-outline-dark border-dashed rounded-lg px-3 my-3 cursor-pointer"
     >
-      <div class="flex flex-col justify-center pt-3 pb-3 h-full">
+      <div
+        class="flex flex-col justify-center pt-3 pb-3 h-full w-full items-center text-center"
+      >
         <template v-if="!files.length">
-          <RiUploadLine style="height: 50px" class="mb-2" />
+          <RiUploadCloud2Line size="50" class="mb-2" />
           <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
             <span class="font-semibold">
-              {{ t("gallery.dialogs.upload.clickToUpload") }}
+              {{ $t("gallery.dialogs.upload.clickToUpload") }}
             </span>
-            {{ t("gallery.dialogs.upload.dragAndDrop") }}
+            {{ $t("gallery.dialogs.upload.dragAndDrop") }}
           </p>
         </template>
         <slot v-else name="after-select">
-          <div class="flex-col justify-between h-full">
-            <div class="flex-col gap-2 mx-4">
+          <div class="flex-col justify-between h-full w-full">
+            <div class="flex-col gap-2 w-full">
               <div
                 v-for="(file, index) in files"
                 :key="file.name + file.size"
-                class="flex justify-between"
+                class="flex justify-between items-center w-full"
               >
-                {{ file.name }}
-                <tpu-button
-                  class="cursor-pointer"
-                  variant="passive"
-                  @click.prevent="spliceFile(index)"
+                <span class="truncate pr-2">{{ file.name }}</span>
+                <v-btn
+                  size="x-small"
+                  icon
+                  @click.prevent.stop="spliceFile(index)"
+                  class="flex-shrink-0 ml-2"
                 >
                   <RiCloseLine style="width: 20px" />
-                </tpu-button>
+                </v-btn>
               </div>
             </div>
           </div>
           <div class="flex justify-center mx-4">
-            <tpu-progress-bar v-if="loading" :percentage="percentage" />
+            <v-progress-linear v-if="loading" :model-value="percentage" />
           </div>
         </slot>
       </div>
@@ -55,18 +53,19 @@
         type="file"
         :multiple="props.multiple"
         :accept="accept"
-        @change="$emit('update:files', Array.from($event.target?.files))"
+        @change="handleFileChange"
       />
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
-import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import TpuProgressBar from "@/components/Framework/Spinner/TpuProgressBar.vue";
-import { useI18n } from "vue-i18n";
+import {
+  RiCloseLine,
+  RiUploadCloud2Fill,
+  RiUploadCloud2Line,
+  RiUploadLine
+} from "@remixicon/vue";
 
 const props = defineProps({
   files: {
@@ -84,8 +83,6 @@ const props = defineProps({
   accept: String
 });
 
-const { t } = useI18n();
-
 const emit = defineEmits(["update:files"]);
 
 function spliceFile(index: number) {
@@ -100,6 +97,11 @@ function drop(e: Event) {
   e.preventDefault();
   if (!e.dataTransfer?.files?.length) return;
   emit("update:files", [...props.files, ...Array.from(e.dataTransfer.files)]);
+}
+
+function handleFileChange(e: Event) {
+  e.preventDefault();
+  emit("update:files", [...props.files, ...Array.from(e.target?.files)]);
 }
 </script>
 

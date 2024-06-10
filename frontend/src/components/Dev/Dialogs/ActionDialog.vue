@@ -1,8 +1,55 @@
 <template>
   <DevDialog @close="$app.dialogs.actionDialog = false">
-    <template #header>Action Activator</template>
+    <template #header>
+      <RiCodeFill style="height: 18px" />
+      Developer Actions
+    </template>
     <v-container>
       <p class="mb-3">You found the secret menu! (CTRL + ALT + M)</p>
+      <overline>Common</overline>
+      <v-btn @click="$app.dialogs.experiments = !$app.dialogs.experiments">
+        Experiments Manager
+      </v-btn>
+      <v-btn
+        @click="$app.dialogs.networkInspector = !$app.dialogs.networkInspector"
+      >
+        Network Inspector
+      </v-btn>
+      <v-btn
+        @click="$app.dialogs.socketProfiler = !$app.dialogs.socketProfiler"
+      >
+        Legacy Socket Profiler
+      </v-btn>
+      <v-btn
+        @click="$app.dialogs.memoryProfiler = !$app.dialogs.memoryProfiler"
+      >
+        Memory Profiler
+      </v-btn>
+      <v-btn
+        @click="$chat.dialogs.chatDevOptions = !$chat.dialogs.chatDevOptions"
+      >
+        Chat Dev Options
+      </v-btn>
+      <v-btn
+        @click="
+          $router.push('/setup');
+          $app.site.finishedSetup = false;
+          $app.site.step = 1;
+          $nextTick(() => {
+            $app.site.step = 0;
+          });
+        "
+      >
+        Force Setup
+      </v-btn>
+      <v-btn
+        color="blue"
+        variant="tonal"
+        @click="$app.dialogs.feedback = !$app.dialogs.feedback"
+      >
+        Provide Feedback
+      </v-btn>
+      <overline>All Dialogs</overline>
       <v-btn
         v-for="dialog in Object.keys($app.dialogs).filter(
           (key) => typeof $app.dialogs[key] === 'boolean'
@@ -40,22 +87,10 @@
       >
         {{ dialog }}
       </v-btn>
-
+      <overline>UI Options</overline>
       <v-btn
-        @click="
-          $router.push('/setup');
-          $app.site.finishedSetup = false;
-          $app.site.step = 1;
-          $nextTick(() => {
-            $app.site.step = 0;
-          });
-        "
-      >
-        force setup step 0
-      </v-btn>
-      <br />
-      <br />
-      <v-btn
+        :color="$experiments.experiments.PROGRESSIVE_UI ? 'red' : 'blue'"
+        variant="tonal"
         @click="
           $experiments.setExperiment(
             'PROGRESSIVE_UI',
@@ -64,7 +99,7 @@
         "
       >
         {{ $experiments.experiments.PROGRESSIVE_UI ? "Disable" : "Enable" }}
-        Progressive UI
+        New UI (v5in4)
       </v-btn>
       <v-btn
         @click="
@@ -75,15 +110,15 @@
         "
       >
         {{ $experiments.experiments.DISABLE_ANIMATIONS ? "Enable" : "Disable" }}
-        Progressive Animations
+        Animations (New UI)
       </v-btn>
-      <br />
       <template v-if="$app.platform !== Platform.WEB">
         <overline>Desktop</overline>
         <v-btn @click="$app.platform = Platform.WEB">Force Web</v-btn>
         <v-btn @click="emitIPCComms">Send IPC New Comms Message</v-btn>
       </template>
       <v-text-field
+        class="mt-2"
         v-model="route"
         @keydown.enter="goToRoute"
         label="Go to route"
@@ -98,10 +133,17 @@ import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
+import { RiCodeFill, RiSettings5Fill, RiSettings5Line } from "@remixicon/vue";
 
 export default defineComponent({
   name: "ActionDialog",
-  components: { Overline, DevDialog },
+  components: {
+    RiCodeFill,
+    RiSettings5Fill,
+    RiSettings5Line,
+    Overline,
+    DevDialog
+  },
   data() {
     return {
       usage: [],

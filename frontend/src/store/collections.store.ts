@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import { CollectionCache } from "@/types/collection";
+import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
 import {
   UserCollectionsQuery,
   UserLightCollectionsQuery

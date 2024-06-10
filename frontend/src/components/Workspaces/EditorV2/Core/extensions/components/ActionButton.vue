@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
-import type { IconsOptions } from '@/constants/icons'
-import { getIcon } from '@/constants/icons'
-import { ButtonViewReturnComponentProps } from '@/type'
+import { computed, VNode } from "vue";
+import { ButtonViewReturnComponentProps } from "@/components/Workspaces/EditorV2/Core/types";
 
 interface Props {
-  icon?: keyof IconsOptions
-  tooltip?: string
-  disabled?: boolean
-  color?: string
-  action?: ButtonViewReturnComponentProps['action']
-  isActive?: ButtonViewReturnComponentProps['isActive']
+  icon?: VNode;
+  tooltip?: string;
+  disabled?: boolean;
+  color?: string;
+  action?: ButtonViewReturnComponentProps["action"];
+  isActive?: ButtonViewReturnComponentProps["isActive"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,9 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   action: undefined,
   isActive: undefined
-})
-
-const btnIcon = computed(() => getIcon(props.icon))
+});
 </script>
 
 <template>
@@ -39,9 +34,14 @@ const btnIcon = computed(() => getIcon(props.icon))
     }"
     @click="action"
   >
-    <VIcon v-if="btnIcon" :icon="btnIcon" />
+    <component :is="icon" v-if="icon" />
 
-    <VTooltip :eager="false" activator="parent" location="top" :text="props.tooltip" />
+    <VTooltip
+      :eager="false"
+      activator="parent"
+      location="top"
+      :text="props.tooltip"
+    />
 
     <slot></slot>
   </VBtn>

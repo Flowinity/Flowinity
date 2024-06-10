@@ -62,7 +62,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Message as MessageType } from "@/models/message";
-import { Paginate as PaginateType } from "@/types/paginate";
+import { Paginate as PaginateType } from "@/components/Workspaces/EditorV2/Core/typess/paginate";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";

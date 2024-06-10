@@ -146,6 +146,9 @@ export class DefaultTpuConfig {
       "next.privateuploader.com",
       "tpu-mobile.troplo.com"
     ],
-    isV5: false
+    isV5: false,
+    sentry: {
+      dsn: null
+    }
   }
 }

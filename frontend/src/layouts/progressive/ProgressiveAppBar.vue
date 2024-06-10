@@ -4,16 +4,13 @@
     :key="$app.activeNags.offset"
     :class="{
       ...navbarClasses,
-      ...classString,
       ...{
-        'has-image': image,
-        expanded: expanded,
-        collapsed: !expanded
+        'has-image': image
       }
     }"
     :extension-height="$app.activeNags.offset"
     app
-    class="navbar border-b-2 w-full backdrop-blur-lg sticky top-0 z-50 overflow-clip no-image"
+    class="navbar border-b-2 w-full backdrop-blur-lg top-0 z-50 overflow-clip no-image"
     color="dark"
     :flat="true"
     :floating="true"
@@ -24,17 +21,10 @@
       image,
       $vuetify.display.mobile
     ]"
-    :style="{ height: expanded ? '195px' : '64px' }"
-    @mouseover="
-      $experiments.experiments.EXPAND_APP_BAR_IMAGE &&
-        image &&
-        (expanded = true)
-    "
-    @mouseleave="
-      $experiments.experiments.EXPAND_APP_BAR_IMAGE &&
-        image &&
-        (expanded = false)
-    "
+    :style="{
+      height: `${appBarHeight.value}px`
+    }"
+    :height="appBarHeight"
   >
     <div
       v-if="!$user.user"
@@ -52,173 +42,193 @@
         style="height: 40px; z-index: 9999"
       />
     </div>
-    <div
-      class="flex p-4 justify-between z-50 w-full transition-all"
-      style="height: 200px"
-      :class="{
-        'items-center': !expanded,
-        'items-end h-full': expanded,
-        'has-image': image
-      }"
-    >
-      <div class="flex select-none flex-grow">
-        <div v-if="$vuetify.display.mobile">
-          <v-btn
-            v-if="userStore.user"
-            color="white"
-            :icon="true"
-            class="mr-2"
-            @click="appStore.mainDrawer = !appStore.mainDrawer"
-          >
-            <RiMenuLine class="action-bar-item" />
-          </v-btn>
-        </div>
-        <!-- @vue-ignore -->
-        <transition-group name="slide-up" mode="out-in" tag="div" class="flex">
-          <div
-            v-for="(rail, index) in items"
-            :key="rail.path"
-            class="relative overflow-visible whitespace-nowrap items-center flex"
+    <div class="flex flex-col w-full" :class="{ 'h-full': expanded }">
+      <div
+        class="flex p-4 justify-between z-50 w-full transition-all"
+        :class="{
+          'items-center':
+            !expanded || (expanded && uiStore.appBarType === 'stick'),
+          'items-end h-full mb-1':
+            expanded && uiStore.appBarType === 'collapse',
+          'has-image': image
+        }"
+      >
+        <div class="flex select-none flex-grow">
+          <div v-if="$vuetify.display.mobile">
+            <v-btn
+              v-if="userStore.user"
+              color="white"
+              :icon="true"
+              class="mr-2"
+              @click="appStore.mainDrawer = !appStore.mainDrawer"
+            >
+              <RiMenuLine class="action-bar-item" />
+            </v-btn>
+          </div>
+          <!-- @vue-ignore -->
+          <transition-group
+            name="slide-up"
+            mode="out-in"
+            tag="div"
+            class="flex"
           >
             <div
-              class="flex max-sm:hidden app-bar-item items-center"
-              :class="{ 'items-center': !expanded, 'items-end': expanded }"
+              v-for="(rail, index) in items"
+              :key="rail.path"
+              class="relative overflow-visible whitespace-nowrap items-center flex"
             >
-              <RiArrowRightSLine
-                v-if="items.length > 1 && index !== 0"
-                class="w-6 fill-medium-emphasis-dark items-center"
-                style="margin: 0 4px 0 4px"
-              />
-              <div class="flex items-center flex-grow">
-                <router-link
-                  :to="rail.path"
-                  class="cursor-pointer flex items-center"
-                  @click="
-                    !rail?.fake && rail?.id
-                      ? (uiStore.navigationMode = rail?.id)
-                      : ''
-                  "
-                >
-                  <component
-                    :is="rail?.icon"
-                    v-if="rail?.icon"
-                    class="w-8"
-                    :class="
-                      uiStore.currentNavItem?.item?.path === rail.path
-                        ? 'fill-white'
-                        : 'fill-medium-emphasis-dark'
-                    "
-                  />
-                  <span
-                    style="margin: 0 0 0 8px"
-                    class=""
-                    :class="
-                      uiStore.currentNavItem?.item?.path === rail.path
-                        ? 'text-white'
-                        : 'text-medium-emphasis-dark'
+              <div
+                class="flex max-sm:hidden app-bar-item items-center"
+                :class="{ 'items-center': !expanded, 'items-end': expanded }"
+              >
+                <RiArrowRightSLine
+                  v-if="items.length > 1 && index !== 0"
+                  class="w-6 fill-medium-emphasis-dark items-center"
+                  style="margin: 0 4px 0 4px"
+                />
+                <div class="flex items-center flex-grow">
+                  <router-link
+                    :to="rail.path"
+                    class="cursor-pointer flex items-center"
+                    @click="
+                      !rail?.fake && rail?.id
+                        ? (uiStore.navigationMode = rail?.id)
+                        : ''
                     "
                   >
-                    {{ rail.name }}
-                  </span>
-                </router-link>
+                    <component
+                      :is="rail?.icon"
+                      v-if="rail?.icon"
+                      class="w-8"
+                      :class="
+                        uiStore.currentNavItem?.item?.path === rail.path
+                          ? 'fill-white'
+                          : 'fill-medium-emphasis-dark'
+                      "
+                    />
+                    <span
+                      style="margin: 0 0 0 8px"
+                      class=""
+                      :class="
+                        uiStore.currentNavItem?.item?.path === rail.path
+                          ? 'text-white'
+                          : 'text-medium-emphasis-dark'
+                      "
+                    >
+                      {{ uiStore.appBarType }}
+                      {{
+                        uiStore.appBarType === "stick" ||
+                        uiStore.scrollPosition <= appBarHeight
+                      }}
+
+                      {{ rail.name }} {{ getStyle }}
+                    </span>
+                  </router-link>
+                </div>
               </div>
             </div>
-          </div>
-        </transition-group>
-        <!--        <accessible-transition mode="out-in" name="slide-up" appear>-->
-        <!--          <div-->
-        <!--            v-if="-->
-        <!--              uiStore.currentNavItem?.item?.path !==-->
-        <!--              uiStore.currentNavItem?.rail[0]?.path-->
-        <!--            "-->
-        <!--            :key="-->
-        <!--              uiStore.currentNavItem?.item.name +-->
-        <!--              uiStore.currentNavItem?.rail[0]?.id-->
-        <!--            "-->
-        <!--            class="flex items-center"-->
-        <!--          >-->
-        <!--            <RiArrowRightSLine-->
-        <!--              v-if="-->
-        <!--                uiStore.currentNavItem?.item?.path !==-->
-        <!--                  uiStore.currentNavItem?.rail[0]?.path &&-->
-        <!--                uiStore.currentNavItem?.rail?.length-->
-        <!--              "-->
-        <!--              v-memo="[]"-->
-        <!--              class="w-6 fill-medium-emphasis-dark"-->
-        <!--              style="margin: 0px 4px 0px 4px"-->
-        <!--            />-->
-        <!--            <div class="items-center flex">-->
-        <!--              <div>-->
-        <!--                <component-->
-        <!--                  :is="uiStore.currentNavItem?.item.icon"-->
-        <!--                  v-if="uiStore.currentNavItem?.item.icon"-->
-        <!--                  class="w-8 fill-white"-->
-        <!--                />-->
-        <!--              </div>-->
+          </transition-group>
+          <!--        <accessible-transition mode="out-in" name="slide-up" appear>-->
+          <!--          <div-->
+          <!--            v-if="-->
+          <!--              uiStore.currentNavItem?.item?.path !==-->
+          <!--              uiStore.currentNavItem?.rail[0]?.path-->
+          <!--            "-->
+          <!--            :key="-->
+          <!--              uiStore.currentNavItem?.item.name +-->
+          <!--              uiStore.currentNavItem?.rail[0]?.id-->
+          <!--            "-->
+          <!--            class="flex items-center"-->
+          <!--          >-->
+          <!--            <RiArrowRightSLine-->
+          <!--              v-if="-->
+          <!--                uiStore.currentNavItem?.item?.path !==-->
+          <!--                  uiStore.currentNavItem?.rail[0]?.path &&-->
+          <!--                uiStore.currentNavItem?.rail?.length-->
+          <!--              "-->
+          <!--              v-memo="[]"-->
+          <!--              class="w-6 fill-medium-emphasis-dark"-->
+          <!--              style="margin: 0px 4px 0px 4px"-->
+          <!--            />-->
+          <!--            <div class="items-center flex">-->
+          <!--              <div>-->
+          <!--                <component-->
+          <!--                  :is="uiStore.currentNavItem?.item.icon"-->
+          <!--                  v-if="uiStore.currentNavItem?.item.icon"-->
+          <!--                  class="w-8 fill-white"-->
+          <!--                />-->
+          <!--              </div>-->
 
-        <!--              <div style="padding-left: 8px">-->
-        <!--                {{-->
-        <!--                  uiStore.currentNavItem?.item.name || route.name || "Flowinity"-->
-        <!--                }}-->
-        <!--              </div>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </accessible-transition>-->
-      </div>
-      <!-- TODO: Meet Action Bar -->
-      <div class="flex">
-        <accessible-transition mode="out-in" name="slide-up" appear>
-          <div
-            v-if="appStore.dialogs.upload.loading"
-            class="flex gap-2 mr-2"
-            :class="{ 'items-center': !expanded, 'items-end': expanded }"
-          >
-            <v-tooltip activator="parent" location="bottom">
-              Uploading
-              {{
-                appStore.dialogs.upload.files
-                  .map((file: File) => file.name)
-                  .join(", ")
-              }}
-            </v-tooltip>
-            <v-progress-circular
-              :model-value="appStore.dialogs.upload.percentage"
-              size="35"
+          <!--              <div style="padding-left: 8px">-->
+          <!--                {{-->
+          <!--                  uiStore.currentNavItem?.item.name || route.name || "Flowinity"-->
+          <!--                }}-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!--        </accessible-transition>-->
+        </div>
+        <!-- TODO: Meet Action Bar -->
+        <div class="flex">
+          <accessible-transition mode="out-in" name="slide-up" appear>
+            <div
+              v-if="appStore.dialogs.upload.loading"
+              class="flex gap-2 mr-2"
+              :class="{ 'items-center': !expanded, 'items-end': expanded }"
             >
-              <p style="font-size: 9px">
-                {{ appStore.dialogs.upload.percentage }}%
-              </p>
-            </v-progress-circular>
-          </div>
-        </accessible-transition>
-        <accessible-transition mode="out-in" name="slide-up" appear>
+              <v-tooltip activator="parent" location="bottom">
+                Uploading
+                {{
+                  appStore.dialogs.upload.files
+                    .map((file: File) => file.name)
+                    .join(", ")
+                }}
+              </v-tooltip>
+              <v-progress-circular
+                :model-value="appStore.dialogs.upload.percentage"
+                size="35"
+              >
+                <p style="font-size: 9px">
+                  {{ appStore.dialogs.upload.percentage }}%
+                </p>
+              </v-progress-circular>
+            </div>
+          </accessible-transition>
+          <accessible-transition mode="out-in" name="slide-up" appear>
+            <div
+              v-if="showLoading"
+              class="flex gap-2 mr-2"
+              :class="{ 'items-center': !expanded, 'items-end': expanded }"
+            >
+              <v-progress-circular size="24" indeterminate />
+            </div>
+          </accessible-transition>
           <div
-            v-if="showLoading"
+            id="appbar-options-first"
             class="flex gap-2 mr-2"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
-          >
-            <v-progress-circular size="24" indeterminate />
+          />
+          <div
+            id="appbar-options"
+            class="flex gap-2 mr-4"
+            :class="{ 'items-center': !expanded, 'items-end': expanded }"
+          />
+          <div id="logged-out-actions">
+            <v-btn v-if="!$user.user" color="white" class="mr-2" to="/login">
+              {{ $t("generic.login") }}
+            </v-btn>
+            <v-btn
+              v-if="!$user.user"
+              color="blue"
+              variant="tonal"
+              to="/register"
+            >
+              {{ $t("generic.getStarted") }}
+            </v-btn>
           </div>
-        </accessible-transition>
-        <div
-          id="appbar-options-first"
-          class="flex gap-2 mr-2"
-          :class="{ 'items-center': !expanded, 'items-end': expanded }"
-        />
-        <div
-          id="appbar-options"
-          class="flex gap-2 mr-4"
-          :class="{ 'items-center': !expanded, 'items-end': expanded }"
-        />
-        <div id="logged-out-actions">
-          <v-btn v-if="!$user.user" color="white" class="mr-2" to="/login">
-            {{ $t("generic.login") }}
-          </v-btn>
-          <v-btn v-if="!$user.user" color="blue" variant="tonal" to="/register">
-            {{ $t("generic.getStarted") }}
-          </v-btn>
         </div>
       </div>
+      <div id="appbar-under" class="px-4 w-full" />
     </div>
   </v-app-bar>
 </template>
@@ -227,7 +237,7 @@
 import { useAppStore } from "@/store/app.store";
 import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, StyleValue, watch } from "vue";
 import { useRoute } from "vue-router";
 import { RiArrowRightSLine, RiMenuLine } from "@remixicon/vue";
 import { useDisplay } from "vuetify";
@@ -247,8 +257,16 @@ const image = computed(() => {
   return uiStore.appBarImage ? `url(${uiStore.appBarImage})` : undefined;
 });
 const scrolled = ref(false);
-const navbarClasses: Record<any, any> = ref({});
-const expanded = ref(false);
+const navbarClasses = computed(() => {
+  return {
+    fixed:
+      uiStore.appBarType === "stick" ||
+      uiStore.scrollPosition >= appBarHeight.value,
+    absolute:
+      uiStore.appBarType === "collapse" ||
+      uiStore.scrollPosition < appBarHeight.value
+  };
+});
 
 const handleScroll = () => {
   // if (!experimentsStore.experiments.EXPAND_APP_BAR_IMAGE) {
@@ -278,13 +296,6 @@ watch(
 const route = useRoute();
 const experimentsStore = useExperimentsStore();
 const display = useDisplay();
-
-const classString = computed(() => {
-  return {
-    "header-patch-progressive":
-      (!display.mobile.value && userStore.user) || false
-  } as Record<string, boolean>;
-});
 
 const showLoading = ref(false);
 
@@ -341,6 +352,20 @@ watch(
     console.log(val, uiStore.currentNavItem);
   }
 );
+
+const appBarHeight = computed(() => uiStore.appBarHeight);
+const expanded = computed(() => appBarHeight.value >= 256);
+
+const getStyle = computed(() => {
+  const height = `${appBarHeight.value}px`;
+  const position =
+    uiStore.appBarType === "stick" ||
+    uiStore.scrollPosition >= appBarHeight.value
+      ? "fixed !important"
+      : "absolute !important";
+
+  return { height, position } as StyleValue;
+});
 </script>
 
 <style>
@@ -375,16 +400,6 @@ watch(
   width: 100%;
   height: 360px;
   z-index: -1;
-}
-
-.expanded {
-  min-height: 200px !important;
-  max-height: 200px !important;
-}
-
-.collapsed {
-  min-height: 64px !important;
-  max-height: 64px !important;
 }
 
 .has-image,

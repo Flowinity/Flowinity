@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
-import type { Editor } from '@tiptap/vue-3'
+import { VNode, watchEffect } from "vue";
+import type { Editor } from "@tiptap/vue-3";
 
-import ActionButton from './ActionButton.vue'
-import ColorPicker from './ColorPicker.vue'
+import ActionButton from "./ActionButton.vue";
+import ColorPicker from "./ColorPicker.vue";
 
-import type { IconsOptions } from '@/constants/icons'
-import { useTiptapStore } from '@/hooks'
-import { ButtonViewReturnComponentProps } from '@/type'
+import { useEditorStore } from "@/store/editor.store";
+import { ButtonViewReturnComponentProps } from "@/components/Workspaces/EditorV2/Core/types";
 
 interface Props {
-  editor: Editor
-  icon?: keyof IconsOptions
-  tooltip?: string
-  disabled?: boolean
-  action?: ButtonViewReturnComponentProps['action']
-  isActive?: ButtonViewReturnComponentProps['isActive']
+  editor: Editor;
+  icon?: VNode;
+  tooltip?: string;
+  disabled?: boolean;
+  action?: ButtonViewReturnComponentProps["action"];
+  isActive?: ButtonViewReturnComponentProps["isActive"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,22 +23,34 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   action: undefined,
   isActive: undefined
-})
+});
 
-const { state } = useTiptapStore()!
+const state = useEditorStore();
 
 function onChange(color: string) {
-  props.action?.(color)
+  props.action?.(color);
 }
 
 watchEffect(() => {
-  const { color: colorValue } = props.editor.getAttributes('textStyle')
-  state.color = colorValue
-})
+  const { color: colorValue } = props.editor.getAttributes("textStyle");
+  state.color = colorValue;
+});
 </script>
 
 <template>
-  <ActionButton :icon="icon" :tooltip="tooltip" :disabled="disabled" :color="state.color" :is-active="isActive">
-    <ColorPicker v-model="state.color" activator="parent" :nudge-top="-4" :nudge-left="8" @change="onChange" />
+  <ActionButton
+    :icon="icon"
+    :tooltip="tooltip"
+    :disabled="disabled"
+    :color="state.color"
+    :is-active="isActive"
+  >
+    <ColorPicker
+      v-model="state.color"
+      activator="parent"
+      :nudge-top="-4"
+      :nudge-left="8"
+      @change="onChange"
+    />
   </ActionButton>
 </template>

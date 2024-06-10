@@ -1,3 +1,5 @@
+import "@sentry/tracing"
+import "./lib/sentry"
 import express, { NextFunction } from "express"
 import {
   BadRequestError,
@@ -15,6 +17,7 @@ import { Container, Service } from "typedi"
 import sequelize, { Op, ValidationError } from "sequelize"
 import path from "path"
 import fs from "fs"
+import { execute, parse, specifiedRules, subscribe, validate } from "graphql"
 
 // Import Libs
 import Errors from "@app/lib/errors"
@@ -53,7 +56,12 @@ import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 
 // GraphQL
-import { createYoga, maskError, YogaServerInstance } from "graphql-yoga"
+import {
+  createYoga,
+  envelop,
+  maskError,
+  YogaServerInstance
+} from "graphql-yoga"
 import { useHive } from "@graphql-hive/client"
 import { execSync } from "child_process"
 import { GraphQLError } from "graphql/error"
@@ -68,6 +76,9 @@ import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
 import { GqlError } from "@app/lib/gqlErrors"
 import { Response, Request } from "express"
+import { useSentry } from "@envelop/sentry"
+import { useEngine } from "@envelop/core"
+import { usePrometheus } from "@graphql-yoga/plugin-prometheus"
 
 @Service()
 @Middleware({ type: "after" })
@@ -305,8 +316,15 @@ export class Application {
       },
       validation: true
     })
+    // if (config.sentry?.dsn) setupExpressErrorHandler(this.app)
     this.schema = await generateSchema()
-    const gqlPlugins = []
+    const gqlPlugins: any[] = [
+      useEngine({ parse, validate, specifiedRules, execute, subscribe }),
+      useSentry({
+        includeRawResult: true, // set to `true` in order to include the execution result in the metadata collected
+        includeExecuteVariables: true // set to `true` in order to include the operation variables values
+      })
+    ]
     global.gqlCache = createRedisCache({ redis })
     if (config.hive?.enabled) {
       gqlPlugins.push(
@@ -348,9 +366,29 @@ export class Application {
       )
     }
 
+    if (config.release === "dev") {
+      gqlPlugins.push(
+        usePrometheus({
+          endpoint: "/metrics", // optional, default is `/metrics`, you can disable it by setting it to `false` if registry is configured in "push" mode
+          // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+          requestCount: true, // requires `execute` to be true as well
+          requestSummary: true, // requires `execute` to be true as well
+          parse: true,
+          validate: true,
+          contextBuilding: true,
+          execute: true,
+          errors: true,
+          resolvers: true, // requires "execute" to be `true` as well
+          deprecatedFields: true,
+          resolversWhitelist: ["Query.*", "Mutation.*", "Subscription.*"] // optional, by default, all resolvers are included
+        })
+      )
+    }
+
     this.yogaApp = createYoga({
       schema: this.schema,
       plugins: gqlPlugins,
+      healthCheckEndpoint: "/ok",
       graphiql: {
         subscriptionsProtocol: "WS"
       },

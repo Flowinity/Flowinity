@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { computed, ref, unref, watch } from 'vue'
-import type { Editor } from '@tiptap/vue-3'
+import { computed, ref, unref, watch } from "vue";
+import type { Editor } from "@tiptap/vue-3";
 
-import ImageUpload from './ImageUpload.vue'
-import ImageUrl from './ImageUrl.vue'
-import type { ImageAttrsOptions, ImageForm, ImageTab, ImageTabKey } from './types'
-
-import { getIcon } from '@/constants/icons'
-import { useLocale } from '@/locales'
+import ImageUpload from "./ImageUpload.vue";
+import ImageUrl from "./ImageUrl.vue";
+import type {
+  ImageAttrsOptions,
+  ImageForm,
+  ImageTab,
+  ImageTabKey
+} from "./types";
+import { useI18n } from "vue-i18n";
 
 interface Props {
-  value?: ImageAttrsOptions
-  editor: Editor
-  upload?: (file: File) => Promise<string>
-  imageTabs?: ImageTab[]
-  hiddenTabs?: ImageTabKey[]
-  destroy?: () => void
+  value?: ImageAttrsOptions;
+  editor: Editor;
+  upload?: (file: File) => Promise<string>;
+  imageTabs?: ImageTab[];
+  hiddenTabs?: ImageTabKey[];
+  destroy?: () => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,46 +27,46 @@ const props = withDefaults(defineProps<Props>(), {
   imageTabs: () => [],
   hiddenTabs: () => [],
   destroy: undefined
-})
+});
 
-const { t } = useLocale()
+const { t } = useI18n();
 
-const dialog = ref<boolean>(false)
+const dialog = ref<boolean>(false);
 
-const tab = ref<boolean>(false)
-const form = ref<ImageForm>({})
+const tab = ref<boolean>(false);
+const form = ref<ImageForm>({});
 
 const defaultImageTabs = computed<ImageTab[]>(() => {
   const defTabs: ImageTab[] = [
     {
-      name: unref(t)('editor.image.dialog.tab.url'),
-      type: 'url',
+      name: unref(t)("editor.image.dialog.tab.url"),
+      type: "url",
       component: ImageUrl
     },
     {
-      name: unref(t)('editor.image.dialog.tab.upload'),
-      type: 'upload',
+      name: unref(t)("editor.image.dialog.tab.upload"),
+      type: "upload",
       component: ImageUpload
     }
-  ]
+  ];
 
-  const filterDefTabs = defTabs.filter(item => {
-    if (!item.type) return item
-    return !props.hiddenTabs.includes(item.type)
-  })
+  const filterDefTabs = defTabs.filter((item) => {
+    if (!item.type) return item;
+    return !props.hiddenTabs.includes(item.type);
+  });
 
-  return [...filterDefTabs, ...props.imageTabs]
-})
+  return [...filterDefTabs, ...props.imageTabs];
+});
 
 const disabledApply = computed<boolean>(() => {
-  const { src } = unref(form)
-  if (typeof src === 'string' && src !== '') return false
-  return true
-})
+  const { src } = unref(form);
+  if (typeof src === "string" && src !== "") return false;
+  return true;
+});
 
 async function apply() {
-  const { src, lockAspectRatio, height } = unref(form)
-  if (!src) return
+  const { src, lockAspectRatio, height } = unref(form);
+  if (!src) return;
 
   props.editor
     .chain()
@@ -73,40 +76,45 @@ async function apply() {
       src,
       height: lockAspectRatio ? undefined : height
     })
-    .run()
+    .run();
 
-  close()
+  close();
 }
 
 function close() {
-  dialog.value = false
-  form.value = {}
+  dialog.value = false;
+  form.value = {};
 
-  setTimeout(() => props.destroy?.(), 300)
+  setTimeout(() => props.destroy?.(), 300);
 }
 
 watch(
   () => props.value,
-  val => {
+  (val) => {
     form.value = {
       ...unref(form),
       ...val
-    }
+    };
   },
   { immediate: true, deep: true }
-)
+);
 </script>
 
 <template>
-  <VDialog v-model="dialog" max-width="400" activator="parent" @click:outside="close">
+  <VDialog
+    v-model="dialog"
+    max-width="400"
+    activator="parent"
+    @click:outside="close"
+  >
     <VCard>
       <VToolbar class="px-6" density="compact">
-        <span class="headline">{{ t('editor.image.dialog.title') }}</span>
+        <span class="headline">{{ t("editor.image.dialog.title") }}</span>
 
         <VSpacer />
 
         <VBtn class="mx-0" icon @click="close">
-          <VIcon :icon="getIcon('close')" />
+          <v-icon>mdi-close</v-icon>
         </VBtn>
       </VToolbar>
 
@@ -118,15 +126,24 @@ watch(
 
       <VCardText>
         <VWindow v-model="tab">
-          <VWindowItem v-for="(imageTab, i) in defaultImageTabs" :key="i" :value="i">
-            <component :is="imageTab.component" v-model="form" :upload="upload" :t="t" />
+          <VWindowItem
+            v-for="(imageTab, i) in defaultImageTabs"
+            :key="i"
+            :value="i"
+          >
+            <component
+              :is="imageTab.component"
+              v-model="form"
+              :upload="upload"
+              :t="t"
+            />
           </VWindowItem>
         </VWindow>
       </VCardText>
 
       <VCardActions>
         <VBtn :disabled="disabledApply" @click="apply">
-          {{ t('editor.image.dialog.button.apply') }}
+          {{ t("editor.image.dialog.button.apply") }}
         </VBtn>
       </VCardActions>
     </VCard>

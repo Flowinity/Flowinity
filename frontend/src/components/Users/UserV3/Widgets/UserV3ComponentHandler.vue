@@ -132,7 +132,7 @@ import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
 import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
 // import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
 import Crash from "@/components/Core/CrashAlt.vue";
-import { Component } from "@/types/userv3";
+import { Component } from "@/components/Workspaces/EditorV2/Core/typess/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
 import { FriendStatus, ProfileLayoutComponent, User } from "@/gql/graphql";

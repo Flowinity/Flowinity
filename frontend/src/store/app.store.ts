@@ -12,7 +12,7 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
-import { SidebarItem } from "@/types/sidebar";
+import { SidebarItem } from "@/components/Workspaces/EditorV2/Core/typess/sidebar";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { CoreState, Upload, Weather } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
@@ -106,16 +106,12 @@ export const useAppStore = defineStore("app", {
         item: undefined,
         emit: false
       },
-      selectDefaultMobile: false,
       feedback: false,
       inviteAFriend: false,
       experiments: false,
       nickname: {
         value: false,
         userId: 0
-      },
-      pi: {
-        value: false
       },
       gold: {
         value: false
@@ -771,16 +767,24 @@ export const useAppStore = defineStore("app", {
         if (this.dialogs.upload.files.length === 1) {
           functions.copy(data[0].url);
           toast.success(
-            `Successfully uploaded file and copied the ${this.site.name} link to the clipboard!`
+            `Successfully uploaded file and copied ${this.site.name} link to clipboard!`
           );
         } else {
           toast.success("Successfully uploaded files!");
+        }
+        const collectionsStore = useCollectionsStore();
+        if (collectionsStore.selected) {
+          await collectionsStore.addToCollection(
+            collectionsStore.selected.id,
+            data.map((item) => item.upload.id)
+          );
         }
         this.dialogs.upload.value = false;
         this.dialogs.upload.files = [];
         this.dialogs.upload.percentage = 0;
         this.dialogs.upload.loading = false;
       } catch (e) {
+        console.log(e);
         this.dialogs.upload.percentage = 0;
         this.dialogs.upload.loading = false;
         return e;

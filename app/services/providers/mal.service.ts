@@ -163,7 +163,6 @@ export class MyAnimeListService {
       )
       return
     } catch (err) {
-      console.log(err)
       //@ts-ignore
       if (err?.response?.data?.hint) {
         await integration.update({
@@ -177,35 +176,39 @@ export class MyAnimeListService {
   }
 
   async getOverview(userId: number, username: string, accessToken: string) {
-    const cache = await redis.get(`providers:mal:${userId}:overview`)
+    try {
+      const cache = await redis.get(`providers:mal:${userId}:overview`)
 
-    if (cache) return JSON.parse(cache)
+      if (cache) return JSON.parse(cache)
 
-    const { data } = await axios
-      .get(
-        `https://api.myanimelist.net/v2/users/@me/animelist?sort=list_updated_at&fields=updated_at,my_list_status,synopsis,comments,num_episodes,average_episode_duration&limit=10&nsfw=true`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
+      const { data } = await axios
+        .get(
+          `https://api.myanimelist.net/v2/users/@me/animelist?sort=list_updated_at&fields=updated_at,my_list_status,synopsis,comments,num_episodes,average_episode_duration&limit=10&nsfw=true`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
           }
-        }
-      )
-      .catch((e) => {
-        console.log(e)
-        throw Errors.INTEGRATION_ERROR
+        )
+        .catch((e) => {
+          console.log(e)
+          throw Errors.INTEGRATION_ERROR
+        })
+
+      const d = {
+        ...data,
+        user: await this.getUserCache(userId)
+      }
+
+      redis.set(`providers:mal:${userId}:overview`, JSON.stringify(d), {
+        EX: 60 * 15,
+        NX: true
       })
 
-    const d = {
-      ...data,
-      user: await this.getUserCache(userId)
+      return d
+    } catch {
+      throw Errors.INTEGRATION_ERROR
     }
-
-    redis.set(`providers:mal:${userId}:overview`, JSON.stringify(d), {
-      EX: 60 * 15,
-      NX: true
-    })
-
-    return d
   }
 
   async updateAnime(userId: number, accessToken: string, body: MalBody) {

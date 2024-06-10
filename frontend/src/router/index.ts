@@ -210,7 +210,7 @@ const routes = [
       {
         path: "/workspaces/notes/:id/:version?",
         name: "Workspace Item",
-        component: () => import("@/views/Workspaces/WorkspaceItem.vue")
+        component: () => import("@/views/Workspaces/WorkspaceItemHandler.vue")
       },
       {
         path: "/users",

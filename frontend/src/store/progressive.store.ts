@@ -153,6 +153,31 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const appStore = useAppStore();
   const drawer = ref(false);
   const ready = ref(false);
+
+  function getParent(itemPath: string) {
+    let find: NavigationOption | undefined;
+    for (const key in navigation.value.railOptions) {
+      const included = navigation.value.options[key]?.find(
+        (option) => option.path === itemPath
+      );
+      if (included) {
+        find = navigation.value.railOptions.find(
+          (option) => option.path === itemPath
+        );
+        break;
+      }
+      const findIn = navigation.value.options[key]?.find((option) =>
+        option.options?.find((o) => o.path === itemPath)
+      );
+      if (findIn) {
+        find = navigation.value.options[key].find(
+          (option) => option.path === findIn.path
+        );
+      }
+    }
+    return find;
+  }
+
   const lookupNav = computed(() => {
     const pathToOption: Record<string, NavigationOption & { _rail: number }> =
       {};
@@ -165,8 +190,9 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         if (option.path) {
           pathToOption[option.path] = {
             ...option,
-            rail: options[0],
-            _rail: options[0].id,
+            // check if only 1 slash
+            rail: getParent(option.path),
+            _rail: -1,
             parentPath
           };
         }
@@ -178,6 +204,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     for (const mode in navigation.value.options) {
       flattenNavigation(navigation.value.options[mode]);
     }
+    console.log(`opt`, pathToOption);
     return pathToOption;
   });
   const navigationMode = ref<RailMode>(
@@ -187,7 +214,6 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const navigation = computed({
     get() {
       return {
-        mode: navigationMode.value,
         options: {
           [RailMode.HOME]: [
             {
@@ -342,7 +368,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                         chatStore.setNotifications("all", chat.association.id);
                         // TODO: implement proper reactivity
                         _activeContextMenu.value.menu =
-                          navigation.value.options[navigation.value.mode].find(
+                          navigation.value.options[navigationMode.value].find(
                             (option) =>
                               option.path ===
                               `/communications/${chat.association.id}`
@@ -364,7 +390,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                         );
                         // TODO: implement proper reactivity
                         _activeContextMenu.value.menu =
-                          navigation.value.options[navigation.value.mode].find(
+                          navigation.value.options[navigationMode.value].find(
                             (option) =>
                               option.path ===
                               `/communications/${chat.association.id}`
@@ -383,7 +409,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                         chatStore.setNotifications("none", chat.association.id);
                         // TODO: implement proper reactivity
                         _activeContextMenu.value.menu =
-                          navigation.value.options[navigation.value.mode].find(
+                          navigation.value.options[navigationMode.value].find(
                             (option) =>
                               option.path ===
                               `/communications/${chat.association.id}`
@@ -912,11 +938,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     // Sort eligible rails by id in ascending order
     eligible.sort((a, b) => a.id - b.id);
     const currentIndex = eligible.findIndex(
-      (rail) => rail.id === navigation.value.mode
+      (rail) => rail.id === navigationMode.value
     );
     if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
       e.preventDefault();
-      if (navigation.value.mode <= 0) return;
+      if (navigationMode.value <= 0) return;
       navigationMode.value = eligible[currentIndex - 1]?.id || 0;
     } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
       e.preventDefault();
@@ -948,6 +974,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   );
 
   const appBarImage: Ref<string | null> = ref(null);
+  const appBarHeight = ref<"auto" | "unset" | number>(64);
+  const appBarType = ref<"stick" | "collapse">("stick");
 
   const heightOffset = computed(() => {
     return "h-full";
@@ -962,11 +990,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   } | null>(null);
 
   const currentNavOptions = computed(() => {
-    return navigation.value.options[navigation.value.mode as RailMode];
+    return navigation.value.options[navigationMode.value as RailMode];
   });
 
   const currentMiscNavOptions = computed(() => {
-    return navigation.value.miscOptions[navigation.value.mode as RailMode];
+    return navigation.value.miscOptions[navigationMode.value as RailMode];
   });
 
   const currentNavItem = computed({
@@ -1084,6 +1112,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     navigationMode,
     activeContextMenu,
     _activeContextMenu,
-    lastRailRoutes
+    lastRailRoutes,
+    appBarHeight,
+    appBarType
   };
 });

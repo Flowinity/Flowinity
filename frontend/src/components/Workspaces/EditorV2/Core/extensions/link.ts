@@ -1,45 +1,48 @@
-import { getMarkRange } from '@tiptap/core'
-import type { LinkOptions as TiptapLinkOptions } from '@tiptap/extension-link'
-import { Link as TiptapLink } from '@tiptap/extension-link'
-import { Plugin, TextSelection } from '@tiptap/pm/state'
-import type { EditorView } from '@tiptap/pm/view'
+import { getMarkRange } from "@tiptap/core";
+import type { LinkOptions as TiptapLinkOptions } from "@tiptap/extension-link";
+import { Link as TiptapLink } from "@tiptap/extension-link";
+import { Plugin, TextSelection } from "@tiptap/pm/state";
+import type { EditorView } from "@tiptap/pm/view";
 
-import LinkDialog from './components/link/LinkDialog.vue'
-import LinkActionButton from './components/LinkActionButton.vue'
+import LinkDialog from "./components/link/LinkDialog.vue";
+import LinkActionButton from "./components/LinkActionButton.vue";
 
-import type { GeneralOptions } from '@/type'
+import type { GeneralOptions } from "@/components/Workspaces/EditorV2/Core/types";
+import { RiLink } from "@remixicon/vue";
 
 /**
  * Represents the interface for link options, extending TiptapLinkOptions and GeneralOptions.
  */
-export interface LinkOptions extends TiptapLinkOptions, GeneralOptions<LinkOptions> {
+export interface LinkOptions
+  extends TiptapLinkOptions,
+    GeneralOptions<LinkOptions> {
   /** Component for the link dialog */
-  dialogComponent: any
+  dialogComponent: any;
 }
 
-export const Link = /* @__PURE__*/ TiptapLink.extend<LinkOptions>({
+export const Link = TiptapLink.extend<LinkOptions>({
   addOptions() {
     return {
       ...this.parent?.(),
       openOnClick: false,
       dialogComponent: () => LinkDialog,
       button: ({ editor, extension, t }) => {
-        const { dialogComponent } = extension.options
+        const { dialogComponent } = extension.options;
 
         return {
           component: LinkActionButton,
           componentProps: {
-            isActive: () => editor.isActive('link') || false,
-            disabled: !editor.can().setLink({ href: '' }),
-            icon: 'link',
-            tooltip: t('editor.link.tooltip')
+            isActive: () => editor.isActive("link") || false,
+            disabled: !editor.can().setLink({ href: "" }),
+            icon: RiLink,
+            tooltip: t("editor.link.tooltip")
           },
           componentSlots: {
             dialog: dialogComponent()
           }
-        }
+        };
       }
-    }
+    };
   },
 
   addProseMirrorPlugins() {
@@ -47,22 +50,24 @@ export const Link = /* @__PURE__*/ TiptapLink.extend<LinkOptions>({
       new Plugin({
         props: {
           handleClick(view: EditorView, pos: number) {
-            const { schema, doc, tr } = view.state
+            const { schema, doc, tr } = view.state;
 
-            const range = getMarkRange(doc.resolve(pos), schema.marks.link)
+            const range = getMarkRange(doc.resolve(pos), schema.marks.link);
 
-            if (!range) return false
+            if (!range) return false;
 
-            const $start = doc.resolve(range.from)
-            const $end = doc.resolve(range.to)
+            const $start = doc.resolve(range.from);
+            const $end = doc.resolve(range.to);
 
-            const transaction = tr.setSelection(new TextSelection($start, $end))
+            const transaction = tr.setSelection(
+              new TextSelection($start, $end)
+            );
 
-            view.dispatch(transaction)
-            return true
+            view.dispatch(transaction);
+            return true;
           }
         }
       })
-    ]
+    ];
   }
-})
+});
