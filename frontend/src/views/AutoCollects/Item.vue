@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts">
-import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
+import { CollectionCache } from "@/types/collection";
 import { defineComponent, h, markRaw } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";

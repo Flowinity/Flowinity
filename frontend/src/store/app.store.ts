@@ -12,7 +12,7 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
-import { SidebarItem } from "@/components/Workspaces/EditorV2/Core/typess/sidebar";
+import { SidebarItem } from "@/types/sidebar";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { CoreState, Upload, Weather } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
@@ -618,7 +618,7 @@ export const useAppStore = defineStore("app", {
         user.applyTheme();
       }
       this.setFavicon();
-      i18nObject.global.locale =
+      i18nObject.global.locale.value =
         (user.user?.language as "en" | "en-GB" | "fr" | "ru") || "en";
     },
     setFavicon() {

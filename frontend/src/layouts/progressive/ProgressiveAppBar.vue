@@ -343,7 +343,7 @@ const getStyle = computed(() => {
       ? "fixed !important"
       : "absolute !important";
 
-  return { height, position };
+  return { height, position } as unknown as StyleValue;
 });
 
 const isOffset = computed(() => {

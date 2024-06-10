@@ -93,13 +93,13 @@ function spliceFile(index: number) {
   }
 }
 
-function drop(e: Event) {
+function drop(e: DragEvent) {
   e.preventDefault();
   if (!e.dataTransfer?.files?.length) return;
   emit("update:files", [...props.files, ...Array.from(e.dataTransfer.files)]);
 }
 
-function handleFileChange(e: Event) {
+function handleFileChange(e: { target: HTMLInputElement } & Event) {
   e.preventDefault();
   emit("update:files", [...props.files, ...Array.from(e.target?.files)]);
 }

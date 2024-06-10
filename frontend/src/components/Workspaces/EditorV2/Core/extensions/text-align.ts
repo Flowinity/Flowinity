@@ -1,11 +1,13 @@
 import type { TextAlignOptions as TiptapTextAlignOptions } from "@tiptap/extension-text-align";
 import { TextAlign as TiptapTextAlign } from "@tiptap/extension-text-align";
 
-import type { Item } from "./components/ActionMenuButton.vue";
 import ActionMenuButton from "./components/ActionMenuButton.vue";
 
-import type { GeneralOptions } from "@/components/Workspaces/EditorV2/Core/types";
+import { GeneralOptions } from "../types";
 import { RiAlignCenter, RiAlignLeft, RiAlignRight } from "@remixicon/vue";
+import { Editor } from "@tiptap/vue-3";
+import { AnyExtension } from "@tiptap/core";
+import type { Item } from "@/components/Workspaces/EditorV2/Core/extensions/components/ActionMenuButton.vue";
 
 /** Represents the type for text alignments */
 type Alignments = "left" | "center" | "right" | "justify";
@@ -29,7 +31,15 @@ export const TextAlign = TiptapTextAlign.extend<TextAlignOptions>({
     return {
       ...this.parent?.(),
       types: ["heading", "paragraph", "image"],
-      button: ({ editor, extension, t }) => {
+      button: ({
+        editor,
+        extension,
+        t
+      }: {
+        editor: Editor;
+        extension: AnyExtension;
+        t: (key: string) => string;
+      }) => {
         const alignments =
           (extension.options?.alignments as Alignments[]) || [];
 

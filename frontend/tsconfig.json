@@ -32,5 +32,8 @@
     "vite.config.ts",
     "*.vue",
     "../../../../../../opt/webstorm/plugins/javascript-impl/jsLanguageServicesImpl/external/lib.dom.d.ts"
+  ],
+  "exclude": [
+    "src/components/Workspaces/EditorV2/**"
   ]
 }

@@ -1,8 +1,8 @@
 import { Notification } from "@/models/notification";
 import { AutoCollectRule } from "@/models/autoCollectRule";
-import { AlternatePassword } from "@/components/Workspaces/EditorV2/Core/typess/auth";
+import { AlternatePassword } from "@/types/auth";
 import { Integration } from "@/models/integration";
-import { Component } from "@/components/Workspaces/EditorV2/Core/typess/userv3";
+import { Component } from "@/types/userv3";
 import {
   FriendStatus,
   UserInsights,

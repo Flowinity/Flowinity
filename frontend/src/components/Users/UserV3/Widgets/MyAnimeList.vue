@@ -172,8 +172,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import { MalUser } from "@/components/Workspaces/EditorV2/Core/typess/mal/user";
-import { MalAnime } from "@/components/Workspaces/EditorV2/Core/typess/mal/anime";
+import { MalUser } from "@/types/mal/user";
+import { MalAnime } from "@/types/mal/anime";
 
 export default defineComponent({
   components: { MessageSkeleton },

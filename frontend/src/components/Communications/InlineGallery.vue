@@ -36,7 +36,7 @@
 import InlineGalleryItem from "@/components/Communications/InlineGalleryItem.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import { Upload } from "@/models/upload";
-import { CollectionCache } from "@/components/Workspaces/EditorV2/Core/typess/collection";
+import { CollectionCache } from "@/types/collection";
 import { defineComponent } from "vue";
 
 export default defineComponent({
