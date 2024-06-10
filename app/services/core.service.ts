@@ -889,7 +889,6 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
-      experiments.EDITOR_V2 = true
       experiments.CHAT_CACHING = 10
       experiments.PROGRESSIVE_UI = true
       experiments.CHAT_GUIDED_WIZARD = true

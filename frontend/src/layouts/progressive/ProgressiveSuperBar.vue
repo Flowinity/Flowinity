@@ -151,6 +151,7 @@
             :item="item"
           />
           <super-bar-item-template
+            v-if="$experiments.experiments.WIDGETS"
             :item="{
               id: RailMode.COLLECTIONS,
               name: 'Add Widget',
