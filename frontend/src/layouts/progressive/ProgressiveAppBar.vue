@@ -3,10 +3,8 @@
     id="navbar"
     :key="$app.activeNags.offset"
     :class="{
-      ...navbarClasses,
-      ...{
-        'has-image': image
-      }
+      ...classString,
+      ...{}
     }"
     :extension-height="$app.activeNags.offset"
     app
@@ -19,12 +17,13 @@
       uiStore.currentNavItem?.rail[0]?.id,
       expanded,
       image,
-      $vuetify.display.mobile
+      $vuetify.display.mobile,
+      uiStore.appBarType,
+      uiStore.scrollPosition,
+      appBarHeight
     ]"
-    :style="{
-      height: `${appBarHeight.value}px`
-    }"
-    :height="appBarHeight"
+    :style="getStyle"
+    :height="uiStore.appBarType === 'collapse' ? 0 : appBarHeight"
   >
     <div
       v-if="!$user.user"
@@ -42,7 +41,14 @@
         style="height: 40px; z-index: 9999"
       />
     </div>
-    <div class="flex flex-col w-full" :class="{ 'h-full': expanded }">
+    <div
+      class="flex flex-col w-full"
+      :class="{
+        'h-full': expanded,
+        'has-image': uiStore.appBarImage,
+        'image-offset': isOffset
+      }"
+    >
       <div
         class="flex p-4 justify-between z-50 w-full transition-all"
         :class="{
@@ -50,7 +56,7 @@
             !expanded || (expanded && uiStore.appBarType === 'stick'),
           'items-end h-full mb-1':
             expanded && uiStore.appBarType === 'collapse',
-          'has-image': image
+          'image-offset': isOffset
         }"
       >
         <div class="flex select-none flex-grow">
@@ -115,13 +121,7 @@
                           : 'text-medium-emphasis-dark'
                       "
                     >
-                      {{ uiStore.appBarType }}
-                      {{
-                        uiStore.appBarType === "stick" ||
-                        uiStore.scrollPosition <= appBarHeight
-                      }}
-
-                      {{ rail.name }} {{ getStyle }}
+                      {{ rail.name }}
                     </span>
                   </router-link>
                 </div>
@@ -231,6 +231,16 @@
       <div id="appbar-under" class="px-4 w-full" />
     </div>
   </v-app-bar>
+  <teleport to="#main-first" v-if="uiStore.ready">
+    <div
+      v-if="uiStore.appBarType === 'collapse'"
+      id="fake-dom-no-shift"
+      :style="{
+        height: `${uiStore.appBarHeight < uiStore.scrollPosition ? uiStore.appBarHeight : uiStore.appBarHeight}px`,
+        width: '100%'
+      }"
+    />
+  </teleport>
 </template>
 
 <script setup lang="ts">
@@ -256,46 +266,17 @@ const image = computed(() => {
   console.log(uiStore.appBarImage);
   return uiStore.appBarImage ? `url(${uiStore.appBarImage})` : undefined;
 });
-const scrolled = ref(false);
-const navbarClasses = computed(() => {
-  return {
-    fixed:
-      uiStore.appBarType === "stick" ||
-      uiStore.scrollPosition >= appBarHeight.value,
-    absolute:
-      uiStore.appBarType === "collapse" ||
-      uiStore.scrollPosition < appBarHeight.value
-  };
-});
-
-const handleScroll = () => {
-  // if (!experimentsStore.experiments.EXPAND_APP_BAR_IMAGE) {
-  //   return;
-  // }
-  // const hasImage = !!image.value;
-  // scrolled.value = uiStore.scrollPosition > 1;
-  // navbarClasses.value = {
-  //   "border-b-2 w-full dark:border-outline-dark dark:bg-dark backdrop-blur-lg sticky top-0 z-50 overflow-clip":
-  //     true,
-  //   "has-image expanded": hasImage && !scrolled.value,
-  //   "has-image collapsed": hasImage && scrolled.value,
-  //   "no-image collapsed": !hasImage
-  // };
-  // expanded.value = hasImage && !scrolled.value;
-};
-
-const debouncedHandleScroll = debounce(handleScroll, 10);
-
-watch(
-  () => image.value,
-  () => {
-    handleScroll();
-  }
-);
 
 const route = useRoute();
 const experimentsStore = useExperimentsStore();
 const display = useDisplay();
+
+const classString = computed(() => {
+  return {
+    "header-patch-progressive":
+      (!display.mobile.value && userStore.user) || false
+  } as Record<string, boolean>;
+});
 
 const showLoading = ref(false);
 
@@ -326,19 +307,6 @@ onMounted(() => {
   uiStore.ready = true;
 });
 
-watch(
-  () => experimentsStore.experiments.EXPAND_APP_BAR_IMAGE,
-  (val) => {
-    if (val) {
-      document.addEventListener("touchstart", debouncedHandleScroll);
-      document.addEventListener("wheel", debouncedHandleScroll);
-    } else {
-      document.removeEventListener("touchstart", debouncedHandleScroll);
-      document.removeEventListener("wheel", debouncedHandleScroll);
-    }
-  }
-);
-
 const items = computed(() => {
   return [
     ...(uiStore.currentNavItem?.rail || []),
@@ -353,18 +321,36 @@ watch(
   }
 );
 
-const appBarHeight = computed(() => uiStore.appBarHeight);
+const appBarHeight = computed(() => {
+  if (uiStore.appBarType === "stick") {
+    return uiStore.appBarHeight;
+  }
+
+  if (uiStore.scrollPosition > uiStore.appBarHeight - 105) {
+    return 64;
+  }
+
+  return uiStore.appBarHeight;
+});
+const appBarHeightCSS = computed(() => `${appBarHeight.value}px`);
 const expanded = computed(() => appBarHeight.value >= 256);
 
 const getStyle = computed(() => {
   const height = `${appBarHeight.value}px`;
   const position =
     uiStore.appBarType === "stick" ||
-    uiStore.scrollPosition >= appBarHeight.value
+    uiStore.scrollPosition >= appBarHeight.value - 100
       ? "fixed !important"
       : "absolute !important";
 
-  return { height, position } as StyleValue;
+  return { height, position };
+});
+
+const isOffset = computed(() => {
+  return (
+    uiStore.appBarType === "collapse" &&
+    uiStore.appBarHeight - 100 <= uiStore.scrollPosition
+  );
 });
 </script>
 
@@ -398,8 +384,17 @@ const getStyle = computed(() => {
   left: 0px;
   content: "";
   width: 100%;
-  height: 360px;
+  height: 256px;
   z-index: -1;
+}
+
+.image-offset::before {
+  background-position-y: 50%;
+  backdrop-filter: blur(20px);
+}
+
+.image-offset {
+  backdrop-filter: blur(30px);
 }
 
 .has-image,
@@ -411,5 +406,9 @@ const getStyle = computed(() => {
 
 .expanded .v-toolbar__content {
   height: unset !important;
+}
+
+#navbar .v-toolbar__content {
+  height: v-bind(appBarHeightCSS) !important;
 }
 </style>

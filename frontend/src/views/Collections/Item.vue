@@ -303,6 +303,7 @@ export default defineComponent({
       this.onCollectionUserUpdate
     );
     this.$ui.appBarType = "stick";
+    this.$ui.appBarHeight = 64;
   },
   watch: {
     "$route.params.id"(val) {

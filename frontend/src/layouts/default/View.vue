@@ -1,5 +1,6 @@
 <template>
-  <v-main>
+  <v-main id="main">
+    <div id="main-first" />
     <router-view v-slot="{ Component }">
       <keep-alive include="ChatLayout">
         <component :is="Component" />

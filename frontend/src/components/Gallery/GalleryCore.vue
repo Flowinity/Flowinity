@@ -75,14 +75,10 @@
         v-for="item in items.items"
         :key="'item-' + item.id"
         :lg="!inline ? 4 : 12"
-        cols="12"
+        cols="auto"
         md="6"
         sm="6"
-        :xl="
-          $app.workspaceDrawer && !$experiments.experiments.PROGRESSIVE_UI
-            ? 3
-            : 2
-        "
+        xl="3"
       >
         <GalleryItem
           :item="item"
