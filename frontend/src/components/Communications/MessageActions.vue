@@ -18,9 +18,8 @@
         <v-tooltip activator="parent" location="top" :eager="false">
           {{ message.pinned ? "Unpin" : "Pin" }}
         </v-tooltip>
-        <v-icon>
-          {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
-        </v-icon>
+        <RiPushpin2Fill v-if="message.pinned" size="20" />
+        <RiPushpin2Line v-else size="20" />
       </button>
       <button
         v-if="
@@ -34,7 +33,7 @@
         <v-tooltip activator="parent" location="top" :eager="false">
           Edit
         </v-tooltip>
-        <v-icon>mdi-pencil</v-icon>
+        <RiEditLine size="20" />
       </button>
       <button
         v-if="
@@ -50,7 +49,7 @@
         <v-tooltip activator="parent" location="top" :eager="false">
           Delete
         </v-tooltip>
-        <v-icon>mdi-delete</v-icon>
+        <RiDeleteBinLine size="20" />
       </button>
       <button
         type="button"
@@ -60,7 +59,7 @@
         <v-tooltip activator="parent" location="top" :eager="false">
           Reply
         </v-tooltip>
-        <v-icon>mdi-reply</v-icon>
+        <RiReplyLine size="20" />
       </button>
       <button
         v-if="$experiments.experiments.COPY_MSG_ID"
@@ -92,8 +91,24 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { MessageType } from "@/gql/graphql";
+import {
+  RiDeleteBinLine,
+  RiEditLine,
+  RiPushpin2Fill,
+  RiPushpin2Line,
+  RiPushpinLine,
+  RiReplyLine
+} from "@remixicon/vue";
 
 export default defineComponent({
+  components: {
+    RiReplyLine,
+    RiDeleteBinLine,
+    RiPushpin2Fill,
+    RiPushpin2Line,
+    RiPushpinLine,
+    RiEditLine
+  },
   props: ["message", "avoid", "merge"],
   emits: ["delete", "reply", "edit"],
   data() {

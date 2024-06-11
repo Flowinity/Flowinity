@@ -205,13 +205,13 @@
       </v-toolbar>
       <v-toolbar
         v-if="replyId"
-        class="pointer"
+        class="pointer px-3"
         color="card"
         height="35"
         style="opacity: 0.95"
         @click="jumpToBottom"
       >
-        <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
+        <RiReplyLine class="mr-3" />
         <UserAvatar
           :user="$user.users[replying?.userId]"
           class="mr-2"
@@ -306,6 +306,7 @@ import Pins from "@/components/Communications/Menus/Pins.vue";
 import {
   RiPushpin2Line,
   RiPushpinLine,
+  RiReplyLine,
   RiSearchLine,
   RiUserFill,
   RiUserLine
@@ -313,6 +314,7 @@ import {
 
 export default defineComponent({
   components: {
+    RiReplyLine,
     RiUserFill,
     RiUserLine,
     RiSearchLine,

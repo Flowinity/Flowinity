@@ -95,12 +95,10 @@
           @keydown.down="editing ? cursor($event, false) : null"
         >
           <template #append>
-            <v-icon
+            <RiSendPlane2Fill
               class="pointer raw-icon"
               @click.prevent.stop="$emit('sendMessage')"
-            >
-              mdi-send
-            </v-icon>
+            />
           </template>
           <template v-if="!editing" #prepend>
             <add-attachment
@@ -108,14 +106,14 @@
               @fileUpload="$emit('fileUpload', $event)"
               @quickTPULink="$emit('quickTPULink', $event)"
             />
-            <v-icon class="pointer raw-icon">mdi-plus-circle</v-icon>
+            <RiAddCircleFill class="pointer raw-icon" />
           </template>
           <template #append-inner>
             <EmojiPicker
               v-model="emojiPicker"
               @emoji="$emit('emoji', $event)"
             />
-            <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
+            <RiEmotionFill class="pointer raw-icon" />
           </template>
         </v-textarea>
         <div v-if="!editing" style="margin-top: 2px">
@@ -147,10 +145,28 @@ import emojiData from "markdown-it-emoji/lib/data/full.json";
 import { Prefix } from "@/gql/graphql";
 import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
 import AddAttachment from "@/components/Communications/Menus/AddAttachment.vue";
+import {
+  RiAddCircleFill,
+  RiAddCircleLine,
+  RiEmotion2Line,
+  RiEmotionFill,
+  RiEmotionLine,
+  RiSendPlane2Fill,
+  RiSendPlane2Line,
+  RiSendPlaneLine
+} from "@remixicon/vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
   components: {
+    RiAddCircleFill,
+    RiSendPlane2Fill,
+    RiEmotionFill,
+    RiEmotion2Line,
+    RiEmotionLine,
+    RiAddCircleLine,
+    RiSendPlane2Line,
+    RiSendPlaneLine,
     AddAttachment,
     UserAvatar,
     EmojiPicker,
