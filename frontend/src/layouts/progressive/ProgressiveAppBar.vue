@@ -2,10 +2,7 @@
   <v-app-bar
     id="navbar"
     :key="$app.activeNags.offset"
-    :class="{
-      ...classString,
-      ...{}
-    }"
+    :class="classString"
     :extension-height="$app.activeNags.offset"
     app
     class="navbar border-b-2 w-full backdrop-blur-lg top-0 z-50 overflow-clip no-image"
@@ -49,14 +46,15 @@
         'image-offset': isOffset
       }"
     >
+      <AppBarNags />
+
       <div
-        class="flex p-4 justify-between z-50 w-full transition-all"
+        class="flex p-4 justify-between z-50 w-full"
         :class="{
           'items-center':
             !expanded || (expanded && uiStore.appBarType === 'stick'),
-          'items-end h-full mb-1':
-            expanded && uiStore.appBarType === 'collapse',
-          'image-offset': isOffset
+          'items-end h-full': expanded && uiStore.appBarType === 'collapse',
+          'image-offset': uiStore.appBarType === 'collapse'
         }"
       >
         <div class="flex select-none flex-grow">
@@ -90,7 +88,6 @@
                 <RiArrowRightSLine
                   v-if="items.length > 1 && index !== 0"
                   class="w-6 fill-medium-emphasis-dark items-center"
-                  style="margin: 0 4px 0 4px"
                 />
                 <div class="flex items-center flex-grow">
                   <router-link
@@ -113,8 +110,7 @@
                       "
                     />
                     <span
-                      style="margin: 0 0 0 8px"
-                      class=""
+                      style="margin: 0 8px 0 8px"
                       :class="
                         uiStore.currentNavItem?.item?.path === rail.path
                           ? 'text-white'
@@ -228,7 +224,7 @@
           </div>
         </div>
       </div>
-      <div id="appbar-under" class="px-4 w-full" />
+      <div id="appbar-under" class="px-4 w-full"></div>
     </div>
   </v-app-bar>
   <teleport to="#main-first" v-if="uiStore.ready">
@@ -236,7 +232,7 @@
       v-if="uiStore.appBarType === 'collapse'"
       id="fake-dom-no-shift"
       :style="{
-        height: `${uiStore.appBarHeight < uiStore.scrollPosition ? uiStore.appBarHeight : uiStore.appBarHeight}px`,
+        height: `${uiStore.appBarHeight - 20}px`,
         width: '100%'
       }"
     />
@@ -256,6 +252,7 @@ import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { debounce } from "lodash";
+import AppBarNags from "@/layouts/default/AppBarNags.vue";
 
 const uiStore = useProgressiveUIStore();
 const userStore = useUserStore();
@@ -263,7 +260,6 @@ const appStore = useAppStore();
 const chatStore = useChatStore();
 
 const image = computed(() => {
-  console.log(uiStore.appBarImage);
   return uiStore.appBarImage ? `url(${uiStore.appBarImage})` : undefined;
 });
 
@@ -314,23 +310,16 @@ const items = computed(() => {
   ];
 });
 
-watch(
-  () => items.value,
-  (val) => {
-    console.log(val, uiStore.currentNavItem);
-  }
-);
-
 const appBarHeight = computed(() => {
   if (uiStore.appBarType === "stick") {
-    return uiStore.appBarHeight;
+    return uiStore.appBarHeight + appStore.activeNags.offset;
   }
 
   if (uiStore.scrollPosition > uiStore.appBarHeight - 105) {
-    return 64;
+    return 64 + appStore.activeNags.offset;
   }
 
-  return uiStore.appBarHeight;
+  return uiStore.appBarHeight + appStore.activeNags.offset;
 });
 const appBarHeightCSS = computed(() => `${appBarHeight.value}px`);
 const expanded = computed(() => appBarHeight.value >= 256);
@@ -349,8 +338,15 @@ const getStyle = computed(() => {
 const isOffset = computed(() => {
   return (
     uiStore.appBarType === "collapse" &&
-    uiStore.appBarHeight - 100 <= uiStore.scrollPosition
+    uiStore.appBarHeight - 105 <= uiStore.scrollPosition
   );
+});
+
+const blur = computed(() => {
+  // use scrollPosition to determine how blurred the image should be
+  if (!uiStore.appBarImage) return `0px`;
+  if (isOffset.value) return `10px`;
+  return Math.min(uiStore.scrollPosition / 30, 60) + "px";
 });
 </script>
 
@@ -390,11 +386,10 @@ const isOffset = computed(() => {
 
 .image-offset::before {
   background-position-y: 50%;
-  backdrop-filter: blur(20px);
 }
 
 .image-offset {
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(v-bind(blur));
 }
 
 .has-image,

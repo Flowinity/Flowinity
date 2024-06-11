@@ -2,7 +2,10 @@
   <div>
     <v-card v-if="item.id" :id="'item-' + item.id" class="d-flex flex-column">
       <v-toolbar
-        :class="{ unselectable: selected.length }"
+        :class="{
+          unselectable: selected.length,
+          'cursor-pointer': selected.length
+        }"
         style="z-index: 1"
         :color="
           selected.find((select) => select.id === item.id)
@@ -19,13 +22,10 @@
           icon
           @click.prevent.stop="$emit('select', item)"
         >
-          <v-icon>
-            {{
-              selected.find((select) => select.id === item.id)
-                ? "mdi-checkbox-marked-circle"
-                : "mdi-circle-outline"
-            }}
-          </v-icon>
+          <RiCheckboxCircleFill
+            v-if="selected.find((select) => select.id === item.id)"
+          />
+          <RiCircleLine v-else />
         </v-btn>
       </v-toolbar>
       <GalleryPreview :item="item" />
@@ -60,7 +60,7 @@
           <HoverChip
             v-if="supports.permissions.write && supports.collections"
             :text="$t('gallery.collectSelected')"
-            icon="mdi-plus"
+            :icon="RiAddLine"
             @click="$emit('collectivize', item)"
           />
           <v-chip
@@ -75,7 +75,7 @@
               class="ml-1"
               @click.prevent="removeItem(item, collection)"
             >
-              mdi-close
+              <RiCloseLine />
             </v-icon>
           </v-chip>
         </v-chip-group>
@@ -89,7 +89,7 @@
             :text="$t('gallery.actions.delete.text')"
             class="my-1"
             color="red"
-            icon="mdi-delete"
+            :icon="RiDeleteBinLine"
             @click.shift.prevent.stop="$app.deleteItem(item)"
             @click.prevent.stop="
               $event.shiftKey ? null : ($app.dialogs.deleteItem.item = item);
@@ -101,7 +101,7 @@
             :text="$t('gallery.actions.link.text')"
             class="my-1"
             color="teal"
-            icon="mdi-content-copy"
+            :icon="RiFileCopyLine"
             @click="
               $functions.copy(
                 `https://${$user.user?.domain.domain || 'i.troplo.com'}/i/${
@@ -117,7 +117,7 @@
             :text="$t('gallery.actions.download.text')"
             class="my-1"
             color="primary"
-            icon="mdi-download"
+            :icon="RiDownloadLine"
           />
           <HoverChip
             v-if="item.type === 'image'"
@@ -125,7 +125,7 @@
             :text="$t('gallery.actions.ocr.text')"
             class="my-1"
             color="green"
-            icon="mdi-ocr"
+            :icon="RiCharacterRecognitionLine"
             :disabled="!item.textMetadata"
             @click.right.prevent.stop="
               $functions.copy(item.textMetadata);
@@ -139,7 +139,7 @@
           <HoverChip
             v-if="$user.user"
             :aria-label="$t('gallery.actions.star.aria')"
-            :icon="item.starred ? 'mdi-star' : 'mdi-star-outline'"
+            :icon="item.starred ? RiStarFill : RiStarLine"
             :text="$t('gallery.actions.star.text')"
             class="my-1"
             color="amber-darken-2"
@@ -148,7 +148,7 @@
           <HoverChip
             v-if="$user.user && item.item && supports.pins"
             :aria-label="$t('gallery.actions.pin.aria')"
-            :icon="item.item.pinned ? 'mdi-pin' : 'mdi-pin-outline'"
+            :icon="item.item.pinned ? RiPushpinFill : RiPushpinLine"
             :text="$t('gallery.actions.pin.text')"
             class="my-1"
             color="lime"
@@ -171,12 +171,69 @@ import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import { Upload } from "@/models/upload";
 import { Collection } from "@/models/collection";
+import {
+  RiAddLine,
+  RiCharacterRecognitionLine,
+  RiCheckboxCircleFill,
+  RiCheckboxFill,
+  RiCheckboxLine,
+  RiCircleFill,
+  RiCircleLine,
+  RiCloseLine,
+  RiDeleteBinLine,
+  RiDownloadLine,
+  RiFileCopyLine,
+  RiPushpinFill,
+  RiPushpinLine,
+  RiRadioFill,
+  RiRadioLine,
+  RiStarFill,
+  RiStarLine
+} from "@remixicon/vue";
 
 export default defineComponent({
-  components: { HoverChip, GalleryPreview },
+  components: {
+    RiCircleFill,
+    RiCircleLine,
+    RiCheckboxCircleFill,
+    RiCheckboxLine,
+    RiCheckboxFill,
+    RiRadioLine,
+    RiRadioFill,
+    RiCloseLine,
+    HoverChip,
+    GalleryPreview
+  },
   props: ["item", "supports", "selected"],
   emits: ["delete", "refresh", "remove", "select", "collectivize"],
   computed: {
+    RiAddLine() {
+      return RiAddLine;
+    },
+    RiDeleteBinLine() {
+      return RiDeleteBinLine;
+    },
+    RiPushpinLine() {
+      return RiPushpinLine;
+    },
+    RiPushpinFill() {
+      return RiPushpinFill;
+    },
+    RiStarLine() {
+      return RiStarLine;
+    },
+    RiStarFill() {
+      return RiStarFill;
+    },
+    RiCharacterRecognitionLine() {
+      return RiCharacterRecognitionLine;
+    },
+    RiDownloadLine() {
+      return RiDownloadLine;
+    },
+    RiFileCopyLine() {
+      return RiFileCopyLine;
+    },
     fileSize() {
       return this.$functions.fileSize(this.item.fileSize);
     }

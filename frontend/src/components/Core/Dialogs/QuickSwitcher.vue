@@ -344,7 +344,6 @@ watch(
 watch(
   () => uiStore.currentNavItem,
   (_, val) => {
-    console.log(`QS`, val);
     if (val?.item?.path && val?.item?._rail !== -1) {
       uiStore.lastRailRoutes[val.item._rail] = val?.item?.path;
       localStorage.setItem(

@@ -218,7 +218,7 @@ import CoreSidebar from "@/components/Core/Sidebar.vue";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import CrashComponent from "@/components/Core/CrashAlt.vue";
 import functions from "@/plugins/functions";
-import { RiLock2Line, RiLockLine } from "@remixicon/vue";
+import { RiChat1Line, RiLock2Line, RiLockLine } from "@remixicon/vue";
 import { useChatStore } from "@/store/chat.store";
 import { useDisplay } from "vuetify";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";

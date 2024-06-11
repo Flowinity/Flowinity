@@ -31,7 +31,6 @@ const recent: ComputedRef<NavigationOption[]> = computed(() => {
     const item = uiStore.navigation.options[key]?.find(
       (item) => item.path === value
     );
-    console.log(item, key, value);
     if (!item) continue;
     recent.push({
       ...item,

@@ -208,6 +208,9 @@
             :items="items"
             :selected="selected"
             :emit="$emit"
+            :deselect-all="deselectAll"
+            :select-all="selectAll"
+            :bulk-add-collection="bulkAddCollection"
           >
             <v-btn
               icon
@@ -503,10 +506,32 @@ export default defineComponent({
     },
     deselectAll() {
       this.selected = [];
+    },
+    setAppBar() {
+      if (this.page === 1 && !this.$route.params.page) return;
+      const parentPath = this.$route.path.split("/").slice(0, -1).join("/");
+      const rail = this.$ui.navigation.options[
+        parentPath.startsWith("/collections/")
+          ? RailMode.COLLECTIONS
+          : RailMode.GALLERY
+      ].find((item) => item.path === parentPath);
+      this.$ui.currentNavItem = {
+        item: {
+          name: `Page ${this.page}`,
+          path: this.$route.path
+        },
+        rail: rail ? [rail] : []
+      };
     }
   },
   mounted() {
+    this.setAppBar();
     this.$ui.navigationMode = RailMode.GALLERY;
+  },
+  watch: {
+    page() {
+      this.setAppBar();
+    }
   }
 });
 </script>

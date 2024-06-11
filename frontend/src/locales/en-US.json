@@ -797,6 +797,12 @@
     "home": {
       "title": "You have no pending approvals!",
       "subtitle": "You can configure AutoCollects with the button in the top right-hand corner."
+    },
+    "item": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveAll": "Approve All",
+      "rejectAll": "Reject All"
     }
   },
   "themeEditor": {

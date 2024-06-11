@@ -34,9 +34,7 @@
       :items="gallery"
       :page="page"
       :loading="loading"
-      :path="path"
       :random-attachment-loading="randomLoading"
-      :show="show"
       :supports="
         supports || {
           multiSelect: true,
@@ -291,7 +289,6 @@ export default defineComponent({
       }
     },
     "$route.params.page"(page) {
-      if (!page) return;
       this.page = parseInt(page) || 1;
       this.getGallery();
     },

@@ -95,13 +95,6 @@
     <v-btn
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
       class="mt-2"
-      @click="crash"
-    >
-      {{ $t("settings.about.crash") }}
-    </v-btn>
-    <v-btn
-      v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
-      class="mt-2"
       @click="expTrue"
     >
       {{ $t("settings.about.expEnable") }}

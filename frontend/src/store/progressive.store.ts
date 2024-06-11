@@ -97,6 +97,7 @@ import { useFriendsStore } from "@/store/friends.store";
 import { VIcon } from "vuetify/components";
 import functions from "@/plugins/functions";
 import { useTheme } from "vuetify";
+import { useCollectionsStore } from "@/store/collections.store";
 
 export enum RailMode {
   HOME,
@@ -204,7 +205,6 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     for (const mode in navigation.value.options) {
       flattenNavigation(navigation.value.options[mode]);
     }
-    console.log(`opt`, pathToOption);
     return pathToOption;
   });
   const navigationMode = ref<RailMode>(
@@ -769,7 +769,14 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           [RailMode.DEBUG]: [],
           [RailMode.MEET]: [],
           [RailMode.AUTO_COLLECTS]: [],
-          [RailMode.COLLECTIONS]: [],
+          [RailMode.COLLECTIONS]: useCollectionsStore().persistent.map(
+            (collection) => ({
+              icon: markRaw(RiCollageLine),
+              name: collection.name,
+              path: `/collections/${collection.id}`,
+              selectedIcon: markRaw(RiCollageFill)
+            })
+          ),
           [RailMode.USERS]: []
         } as Record<RailMode, NavigationOption[]>,
         miscOptions: {

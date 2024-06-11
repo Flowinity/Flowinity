@@ -590,9 +590,9 @@ export class CoreService {
         },
         GALLERY_INFINITE_SCROLL: {
           description:
-            "Enable next generation gallery experience. Includes drag-to-select and infinite scrolling.",
+            "Enable next generation gallery experience. Includes drag-to-select and infinite scrolling. Removed in 4.1.21.",
           createdAt: "2024-03-11T00:00:00.000Z",
-          versions: [4, 5]
+          versions: [4]
         },
         DOWNLOAD_THE_APP_NAG: {
           description:

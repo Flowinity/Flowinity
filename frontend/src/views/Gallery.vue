@@ -1,13 +1,5 @@
 <template>
-  <component
-    v-bind="$props"
-    :is="
-      $experiments.experiments.GALLERY_INFINITE_SCROLL
-        ? GalleryInfinite
-        : GalleryPaginated
-    "
-    ref="galleryRef"
-  >
+  <component v-bind="$props" :is="GalleryPaginated" ref="galleryRef">
     <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>

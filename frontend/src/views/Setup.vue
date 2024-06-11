@@ -1,7 +1,9 @@
 <template>
+  <NotFound v-if="step === -1" />
   <v-container
     style="align-items: center; height: 100%"
     class="d-flex justify-center align-center"
+    v-if="step !== -1"
   >
     <transition-group name="slide-fade">
       <template v-if="step === 0">
@@ -12,7 +14,7 @@
           class="text-center"
           variant="outlined"
         >
-          <div>
+          <div class="flex flex-col items-center">
             <FlowinityBanner style="width: 300px" class="mt-6" />
             <v-container>
               <v-card-text>
@@ -492,6 +494,7 @@ import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { gql } from "@apollo/client";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
+import NotFound from "@/views/Errors/404.vue";
 
 enum Step {
   Welcome = 0,
@@ -508,7 +511,7 @@ enum Step {
 
 export default defineComponent({
   name: "InstanceSetupWizard",
-  components: { FlowinityBanner, PromoCard },
+  components: { NotFound, FlowinityBanner, PromoCard },
   data() {
     return {
       // TODO: GQL

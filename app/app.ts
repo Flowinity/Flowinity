@@ -366,24 +366,24 @@ export class Application {
       )
     }
 
-    if (config.release === "dev") {
-      gqlPlugins.push(
-        usePrometheus({
-          endpoint: "/metrics", // optional, default is `/metrics`, you can disable it by setting it to `false` if registry is configured in "push" mode
-          // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
-          requestCount: true, // requires `execute` to be true as well
-          requestSummary: true, // requires `execute` to be true as well
-          parse: true,
-          validate: true,
-          contextBuilding: true,
-          execute: true,
-          errors: true,
-          resolvers: true, // requires "execute" to be `true` as well
-          deprecatedFields: true,
-          resolversWhitelist: ["Query.*", "Mutation.*", "Subscription.*"] // optional, by default, all resolvers are included
-        })
-      )
-    }
+    // if (config.release === "dev") {
+    //   gqlPlugins.push(
+    //     usePrometheus({
+    //       endpoint: "/metrics", // optional, default is `/metrics`, you can disable it by setting it to `false` if registry is configured in "push" mode
+    //       // all optional, and by default, all set to false, please opt-in to the metrics you wish to get
+    //       requestCount: true, // requires `execute` to be true as well
+    //       requestSummary: true, // requires `execute` to be true as well
+    //       parse: true,
+    //       validate: true,
+    //       contextBuilding: true,
+    //       execute: true,
+    //       errors: true,
+    //       resolvers: true, // requires "execute" to be `true` as well
+    //       deprecatedFields: true,
+    //       resolversWhitelist: ["Query.*", "Mutation.*"] // optional, by default, all resolvers are included
+    //     })
+    //   )
+    // }
 
     this.yogaApp = createYoga({
       schema: this.schema,

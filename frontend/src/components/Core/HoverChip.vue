@@ -10,12 +10,17 @@
     style="cursor: pointer"
     @click="() => {}"
   >
-    <v-icon
-      v-if="!shortText && icon"
-      :size="icon.includes('numeric') ? 20 : undefined"
-    >
-      {{ icon }}
-    </v-icon>
+    <template v-if="typeof icon === 'string'">
+      <v-icon
+        v-if="!shortText && icon"
+        :size="icon.includes('numeric') ? 20 : undefined"
+      >
+        {{ icon }}
+      </v-icon>
+    </template>
+    <template v-else>
+      <component v-if="!shortText && icon" :is="icon" size="20" />
+    </template>
     <v-img v-if="image" :height="18" :src="image" :width="18" />
     <span v-else class="unselectable">{{ shortText }}</span>
     <v-tooltip
