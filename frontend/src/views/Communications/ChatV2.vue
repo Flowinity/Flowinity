@@ -547,6 +547,7 @@ export default defineComponent({
     this.message = this.$chat.getDraft(this.chatId.toString()) || "";
     this.$app.railMode = "communications";
     this.$ui.navigationMode = RailMode.CHAT;
+    this.focusInput();
   },
   deactivated() {
     this.active = false;
