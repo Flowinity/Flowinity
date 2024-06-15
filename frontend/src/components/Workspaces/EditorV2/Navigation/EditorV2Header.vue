@@ -70,8 +70,6 @@ const items = computed(() => {
 
   let menus = [];
 
-  console.log(sortExtensions);
-
   for (const extension of sortExtensions) {
     const { button, divider = false, spacer = false } = extension.options;
     // TODO: Check if function
