@@ -327,9 +327,9 @@ export class Server {
       this.onError(error)
     )
 
-    this.legacyServer.on("error", (error: NodeJS.ErrnoException) =>
-      this.onError(error)
-    )
+    this.legacyServer.on("close", () => {
+      console.log("Legacy server closed")
+    })
 
     process.on(
       "uncaughtException",
@@ -341,6 +341,9 @@ export class Server {
 
     this.server.on("listening", () => this.onListening())
     this.legacyServer.on("listening", () => this.onLegacyListening())
+    this.legacyServer.on("error", (error: NodeJS.ErrnoException) =>
+      this.onError(error)
+    )
 
     if (mainWorker && !noBackgroundTasks) {
       await this.deletionService.deletionInit()

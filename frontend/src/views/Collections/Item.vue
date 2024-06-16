@@ -267,6 +267,7 @@ export default defineComponent({
         this.$ui.appBarHeight = 256;
       } else {
         this.$ui.appBarType = "stick";
+        this.$ui.appBarHeight = 64;
       }
     },
     async onCollectionUserUpdate(data: { id?: number; collectionId: number }) {

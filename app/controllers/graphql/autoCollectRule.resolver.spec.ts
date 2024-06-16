@@ -8,19 +8,19 @@ import { Container } from "typedi"
 import { Application } from "@app/app"
 import { AutoCollectControllerV3 } from "@app/controllers/v3/autoCollect.controller"
 import { gCall } from "@app/lib/test-utils/gCall"
-import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
+import { CreateCollectionMutation } from "../../../frontend/src/graphql/collections/createCollection.graphql"
 import {
   connectSocket,
   waitForSocketEvent
 } from "@app/lib/test-utils/socketHelper"
 import { Socket } from "socket.io-client"
-import { AutoCollectsQuery } from "../../../frontend-v5/src/graphql/autoCollects/getAutoCollects.graphql"
-import { GalleryQuery } from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
+import { AutoCollectsQuery } from "../../../frontend/src/graphql/autoCollects/getAutoCollects.graphql"
+import { GalleryQuery } from "../../../frontend/src/graphql/gallery/gallery.graphql"
 import {
   AutoCollectAction,
   GalleryType
-} from "../../../frontend-v5/src/gql/graphql"
-import { ActAutoCollectsMutation } from "../../../frontend-v5/src/graphql/autoCollects/actAutoCollects.graphql"
+} from "../../../frontend/src/gql/graphql"
+import { ActAutoCollectsMutation } from "../../../frontend/src/graphql/autoCollects/actAutoCollects.graphql"
 
 let req: supertest.SuperTest<supertest.Test> | null = null
 let user: TestUser | null = null
@@ -144,19 +144,13 @@ describe("AutoCollectRuleResolver", () => {
     await create()
   })
 
-  test("Upload item to gallery, process, approve, and check ", async () => {
-    console.log(
-      `pathyes: ${
-        __dirname + "/../../../frontend/src/assets/images/sidebar.png"
-      }`,
-      __dirname + "/../../assets/AuthRequired.png"
-    )
-
+  test("Upload item to gallery, process, approve, and check", async () => {
     const socketEventPromise = waitForSocketEvent(
       socketClient,
       "autoCollectApproval",
       50000,
       (data) => {
+        console.log("AutoCollect Response Data", data)
         expect(data).toMatchObject({
           type: "new"
         })
@@ -175,7 +169,7 @@ describe("AutoCollectRuleResolver", () => {
       .post("/api/v3/gallery")
       .attach(
         "attachment",
-        __dirname + "/../../../frontend/src/assets/images/sidebar.png"
+        __dirname + "/../../../frontend/src/assets/logo.png"
       )
       .set({
         Authorization: user!.token,

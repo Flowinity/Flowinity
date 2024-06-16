@@ -733,7 +733,7 @@ function createBaseResolver<T extends ClassType>(
 
     async findByToken(token: string | null) {
       if (!token) return null
-      if (token?.startsWith("TPU-OAUTH-")) {
+      if (token?.startsWith("TPU-OAUTH-") || token?.startsWith("FLOWINITY-OAUTH-")) {
         const app = await OauthApp.findOne({
           where: {
             secret: token

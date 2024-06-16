@@ -161,6 +161,7 @@
       v-else
       class="rounded-xl"
       type="heading, image, paragraph, chip, chip, chip, chip, chip"
+      :boilerplate="!loading"
     />
   </div>
 </template>
@@ -204,7 +205,7 @@ export default defineComponent({
     HoverChip,
     GalleryPreview
   },
-  props: ["item", "supports", "selected"],
+  props: ["item", "supports", "selected", "loading"],
   emits: ["delete", "refresh", "remove", "select", "collectivize"],
   computed: {
     RiAddLine() {

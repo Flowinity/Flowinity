@@ -70,7 +70,7 @@
     <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
     <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
     <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
-    <v-row v-if="!loading">
+    <v-row v-if="!loading && items?.items?.length">
       <v-col
         v-for="item in items.items"
         :key="'item-' + item.id"
@@ -106,23 +106,47 @@
         </GalleryItem>
       </v-col>
     </v-row>
-    <v-row v-else>
-      <v-col
-        v-for="item in 24"
-        :key="item"
-        :lg="!inline ? 4 : 12"
-        cols="12"
-        md="6"
-        sm="6"
-        :xl="
-          $app.workspaceDrawer && !$experiments.experiments.PROGRESSIVE_UI
-            ? 3
-            : 2
-        "
+    <div v-else class="relative">
+      <div
+        v-if="!loading"
+        class="absolute inset-0 flex z-10 mt-12 justify-center"
       >
-        <GalleryItem :item="item" />
-      </v-col>
-    </v-row>
+        <div class="flex flex-col items-center">
+          <RiUploadCloud2Line
+            size="100"
+            class="cursor-pointer"
+            @click="$app.dialogs.upload.value = true"
+          />
+          <div class="text-center">
+            <h2 class="text-2xl font-bold">
+              {{ $t("gallery.empty.title") }}
+            </h2>
+            <p class="text-lg">
+              {{ $t("gallery.empty.description") }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <v-row>
+        <v-col
+          v-for="item in 12"
+          :key="item"
+          :lg="!inline ? 4 : 12"
+          cols="12"
+          md="6"
+          sm="6"
+          xl="3"
+        >
+          <GalleryItem
+            :class="{
+              'opacity-25': !loading
+            }"
+            :loading="loading"
+            :item="item"
+          />
+        </v-col>
+      </v-row>
+    </div>
     <Paginate
       v-model="pageComponent"
       :total-pages="items.pager?.totalPages"

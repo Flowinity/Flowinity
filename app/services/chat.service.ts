@@ -1238,8 +1238,9 @@ export class ChatService {
       throw gql
         ? new GqlError("INVALID_FRIEND_SELECTION")
         : Errors.INVALID_FRIEND_SELECTION
-
-    if (!type) type = users.length === 1 ? ChatType.DIRECT : ChatType.GROUP
+    const userUtilsService = Container.get(UserUtilsService)
+    const friends = await userUtilsService.validateFriends(userId, users)
+    if (!type) type = friends.length === 1 ? ChatType.DIRECT : ChatType.GROUP
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
     if (type === ChatType.DIRECT) {
       const chat = await Chat.findOne({

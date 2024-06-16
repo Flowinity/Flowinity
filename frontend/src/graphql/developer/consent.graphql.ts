@@ -41,3 +41,19 @@ export const AddBotToChat = gql`
     }
   }
 `;
+
+export const AuthorizeAppMutation = gql`
+  mutation OauthAppAuthorize($input: AuthorizeAppInput!) {
+    oauthAppAuthorize(input: $input) {
+      token
+    }
+  }
+`;
+
+export const DeauthorizeAppMutation = gql`
+  mutation OauthAppDeauthorize($input: MyAppInput!) {
+    oauthAppDeauthorize(input: $input) {
+      success
+    }
+  }
+`;

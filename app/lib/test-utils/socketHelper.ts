@@ -18,14 +18,18 @@ export async function connectSocket(
       return genPort()
   }
   genPort()
+  console.log(`port: ${port}`)
   await server.init(port, true)
-  server.server.listen(port)
+  server.legacyServer.listen(port)
   await new Promise((resolve) => setTimeout(resolve, 50))
 
   const manager = new Manager(`ws://127.0.0.1:${port}`, {
     transports: ["websocket"],
     reconnection: true,
-    path: `/gateway`
+    path: `/gateway`,
+    query: {
+      version: "5"
+    }
   })
 
   const socketClient = manager.socket(namespace, {
@@ -39,6 +43,9 @@ export async function connectSocket(
   })
   socketClient.on("connect_error", (err) => {
     console.log("socket error", err)
+  })
+  socketClient.on("disconnect", (reason,  description) => {
+    console.log("socket disconnect", reason, description)
   })
   console.log(socketClient?.connect(), "connect try", socketClient)
   socketClient?.connect()

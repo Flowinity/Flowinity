@@ -5,18 +5,18 @@ import { errorConverter } from "@app/lib/test-utils/errorConverter"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
 import { beforeAll, expect, jest } from "@jest/globals"
-import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
-import { CollectionQuery } from "../../../frontend-v5/src/graphql/collections/getCollection.graphql"
-import { UpdateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/updateCollection.graphql"
+import { CreateCollectionMutation } from "../../../frontend/src/graphql/collections/createCollection.graphql"
+import { CollectionQuery } from "../../../frontend/src/graphql/collections/getCollection.graphql"
+import { UpdateCollectionMutation } from "../../../frontend/src/graphql/collections/updateCollection.graphql"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import {
   AddCollectionUserMutation,
   RemoveCollectionUser,
   UpdateCollectionUserPermissionsMutation
-} from "../../../frontend-v5/src/graphql/collections/collectionUser.graphql"
+} from "../../../frontend/src/graphql/collections/collectionUser.graphql"
 import cryptoRandomString from "crypto-random-string"
-import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addFriend.graphql"
-import { FriendAction, GalleryType } from "../../../frontend-v5/src/gql/graphql"
+import { AddFriendMutation } from "../../../frontend/src/graphql/friends/addFriend.graphql"
+import { FriendAction, GalleryType } from "../../../frontend/src/gql/graphql"
 import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
 import fs from "fs"
 import { Container } from "typedi"
@@ -24,9 +24,9 @@ import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
 import {
   AddToCollectionMutation,
   RemoveFromCollectionMutation
-} from "../../../frontend-v5/src/graphql/collections/addToCollection.graphql"
-import { GalleryQuery } from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
-import { Collection } from "../../../frontend-v5/src/gql/graphql"
+} from "../../../frontend/src/graphql/collections/addToCollection.graphql"
+import { GalleryQuery } from "../../../frontend/src/graphql/gallery/gallery.graphql"
+import { Collection } from "../../../frontend/src/gql/graphql"
 import { resetState } from "@app/lib/init-tests"
 let user: TestUser | null = null
 
@@ -460,21 +460,25 @@ describe("CollectionItemResolver", () => {
       }
     } as any
     const upload = await galleryController.upload(
-      user as any,
       {
         filename: cryptoRandomString({ length: 12 }) + ".png",
         mimetype: "image/png",
         size: file.byteLength,
         originalname: "AuthRequired.png"
+      } as any,
+      {
+        user
       } as any
     )
     const uploadFriendToShare = await galleryController.upload(
-      friendToShare as any,
       {
         filename: cryptoRandomString({ length: 12 }) + ".png",
         mimetype: "image/png",
         size: file.byteLength,
         originalname: "AuthRequired.png"
+      } as any,
+      {
+        user: friendToShare
       } as any
     )
     expect(upload).toBeDefined()
@@ -814,4 +818,5 @@ describe("CollectionItemResolver", () => {
 beforeAll(async () => {
   await resetState()
   user = await getUser()
+  console.log(`CollectionItem User`, user)
 })

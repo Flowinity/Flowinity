@@ -63,9 +63,10 @@ export class ProviderService {
   }
 
   async tenor(search: string, next: string | undefined = undefined) {
+    if(!search.length) return { results: [] }
     const { data } = await axios.get(`https://tenor.googleapis.com/v2/search`, {
       params: {
-        q: search ? search : this.randomTenor(),
+        q: search,
         key: config.providers.tenor,
         limit: 20,
         pos: next
@@ -110,30 +111,5 @@ export class ProviderService {
     )
       throw Errors.PROVIDER_WIDGET_DISABLED
     return user
-  }
-
-  randomTenor() {
-    const options = [
-      "alyx vance",
-      "jitsi",
-      "gordon freeman",
-      "when node.js",
-      "epic embed fail",
-      "loosey goosey",
-      "my reaction to that information",
-      "deez nuts breaking bad",
-      "embed perms at level 10"
-    ]
-    // check if system time is 4:20-9am/pm
-    const date = new Date()
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    if (
-      (hours === 4 && minutes >= 20) ||
-      (hours >= 5 && hours <= 9) ||
-      (hours === 16 && minutes <= 20)
-    )
-      return "420 missed"
-    return options[Math.floor(Math.random() * options.length)]
   }
 }

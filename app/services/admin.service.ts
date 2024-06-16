@@ -771,10 +771,12 @@ export class AdminService {
   async resetOauthSecret(appId: string, userId: number) {
     const app = await this.getOauthById(appId, userId)
     if (!app) throw Errors.NOT_FOUND
+    const oldSecret = app.secret
     const secret = await utils.generateAPIKey("oauth")
     await app.update({
       secret
     })
+    await redis.json.del(`session:${oldSecret}`)
     return {
       secret
     }

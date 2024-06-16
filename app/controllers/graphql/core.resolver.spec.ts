@@ -21,7 +21,7 @@ test("Get core state", async () => {
   expect(state).toMatchObject({
     data: {
       coreState: {
-        name: "PrivateUploader",
+        name: "Flowinity",
         server: expect.any(String),
         domain: "localhost",
         connection: {

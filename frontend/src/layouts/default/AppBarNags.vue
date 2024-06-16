@@ -128,6 +128,21 @@
   </v-alert>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { IpcChannels } from "@/electron-types/ipc";
+import { useExperimentsStore } from "@/store/experiments.store";
+
+const experimentsStore = useExperimentsStore();
+
+const enableStartup = () => {
+  window.electron.ipcRenderer.send(
+    IpcChannels.SET_SETTINGS,
+    JSON.stringify({
+      startup: true
+    })
+  );
+  experimentsStore.setExperiment("ENABLE_AUTOSTART_APP_NAG", 2);
+};
+</script>
 
 <style scoped></style>

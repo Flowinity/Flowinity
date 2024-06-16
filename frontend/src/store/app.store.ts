@@ -154,7 +154,7 @@ export const useAppStore = defineStore("app", {
             ? userStore.user?.emailVerified
             : experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 2) &&
           !vuetify.display.mobile.value,
-        EMAIL_VERIFICATION: !userStore.user?.emailVerified,
+        EMAIL_VERIFICATION: !userStore.user?.emailVerified && userStore.user,
         ENABLE_AUTOSTART_APP_NAG:
           this.platform !== Platform.WEB &&
           !this.desktop.nagStartup &&
@@ -164,7 +164,7 @@ export const useAppStore = defineStore("app", {
 
       return {
         ...nags,
-        offset: Object.keys(nags).filter((key) => nags[key]).length * 42,
+        offset: Object.keys(nags).filter((key) => nags[key]).length * 40,
         IAF_PROMO:
           experimentsStore.experiments.IAF_NAG === 0 || experimentsStore
       };
@@ -179,7 +179,6 @@ export const useAppStore = defineStore("app", {
       const chat = useChatStore();
       const experiments = useExperimentsStore();
       const mail = useMailStore();
-      const app = useAppStore();
 
       if (!user.user) return [];
       const items = [
@@ -420,8 +419,8 @@ export const useAppStore = defineStore("app", {
             ?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
-              ? `/workspaces/notes/${state.lastNote}`
-              : "/workspaces",
+            ? `/workspaces/notes/${state.lastNote}`
+            : "/workspaces",
           icon: "mdi-folder-account",
           scope: "workspaces.view",
           experimentsRequired: ["INTERACTIVE_NOTES"]
@@ -602,12 +601,9 @@ export const useAppStore = defineStore("app", {
         this.connected = true;
       });
       const user = useUserStore();
-      setInterval(
-        () => {
-          this.getWeather();
-        },
-        1000 * 60 * 15
-      );
+      setInterval(() => {
+        this.getWeather();
+      }, 1000 * 60 * 15);
       this._postInitRan = true;
       this.getWeather();
       if (

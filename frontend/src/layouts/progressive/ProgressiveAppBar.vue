@@ -47,7 +47,6 @@
       }"
     >
       <AppBarNags />
-
       <div
         class="flex p-4 justify-between z-50 w-full"
         :class="{
@@ -394,9 +393,7 @@ const blur = computed(() => {
 
 .has-image,
 .no-image {
-  transition:
-    min-height 0.2s ease,
-    max-height 0.2s ease;
+  transition: min-height 0.2s ease, max-height 0.2s ease;
 }
 
 .expanded .v-toolbar__content {
@@ -405,5 +402,9 @@ const blur = computed(() => {
 
 #navbar .v-toolbar__content {
   height: v-bind(appBarHeightCSS) !important;
+}
+
+#navbar .v-alert--density-compact {
+  padding-top: 16px !important;
 }
 </style>

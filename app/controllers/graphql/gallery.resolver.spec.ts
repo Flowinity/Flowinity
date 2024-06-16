@@ -4,31 +4,31 @@ import { gCall } from "@app/lib/test-utils/gCall"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, testUser, TestUser } from "@app/lib/test-utils/testUser"
 import { beforeAll, expect, jest, beforeEach, afterEach } from "@jest/globals"
-import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
-import { CollectionQuery } from "../../../frontend-v5/src/graphql/collections/getCollection.graphql"
-import { UpdateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/updateCollection.graphql"
+import { CreateCollectionMutation } from "../../../frontend/src/graphql/collections/createCollection.graphql"
+import { CollectionQuery } from "../../../frontend/src/graphql/collections/getCollection.graphql"
+import { UpdateCollectionMutation } from "../../../frontend/src/graphql/collections/updateCollection.graphql"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import {
   AddCollectionUserMutation,
   RemoveCollectionUser,
   UpdateCollectionUserPermissionsMutation
-} from "../../../frontend-v5/src/graphql/collections/collectionUser.graphql"
+} from "../../../frontend/src/graphql/collections/collectionUser.graphql"
 import cryptoRandomString from "crypto-random-string"
-import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addFriend.graphql"
-import { FriendAction } from "../../../frontend-v5/src/gql/graphql"
+import { AddFriendMutation } from "../../../frontend/src/graphql/friends/addFriend.graphql"
+import { FriendAction } from "../../../frontend/src/gql/graphql"
 import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
 import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
 import {
   DeleteUploadMutation,
   GalleryQuery,
   UpdateUploadMutation
-} from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
+} from "../../../frontend/src/graphql/gallery/gallery.graphql"
 import axios from "axios"
 import fs from "fs"
 import { Container } from "typedi"
 import path from "path"
-import { StarUploadMutation } from "../../../frontend-v5/src/graphql/gallery/starUpload"
-import { GalleryType } from "../../../frontend-v5/src/gql/graphql"
+import { StarUploadMutation } from "../../../frontend/src/graphql/gallery/starUpload"
+import { GalleryType } from "../../../frontend/src/gql/graphql"
 import { resetState } from "@app/lib/init-tests"
 import { Application } from "@app/app"
 import { Server } from "@app/server"

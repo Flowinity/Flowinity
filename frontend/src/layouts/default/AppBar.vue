@@ -309,16 +309,6 @@ const dropdown = computed(() => {
   ];
 });
 
-const enableStartup = () => {
-  window.electron.ipcRenderer.send(
-    IpcChannels.SET_SETTINGS,
-    JSON.stringify({
-      startup: true
-    })
-  );
-  experimentsStore.setExperiment("ENABLE_AUTOSTART_APP_NAG", 2);
-};
-
 const updateDesktopApp = () => {
   if (appStore.platform === Platform.WEB) return;
   window.electron.ipcRenderer.send(IpcChannels.UPDATE);

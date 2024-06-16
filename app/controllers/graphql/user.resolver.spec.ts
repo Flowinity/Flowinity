@@ -10,10 +10,10 @@ import { User } from "@app/models/user.model"
 import {
   SendEmailVerificationMutation,
   VerifyEmailMutation
-} from "../../../frontend-v5/src/graphql/user/verifyEmail.graphql"
-import { SessionsQuery } from "../../../frontend-v5/src/graphql/user/sessions.graphql"
+} from "../../../frontend/src/graphql/user/verifyEmail.graphql"
+import { SessionsQuery } from "../../../frontend/src/graphql/user/sessions.graphql"
 import { UpdateUserMutation } from "../../../frontend/src/graphql/user/update.graphql"
-import { UpdateUserStatusMutation } from "../../../frontend-v5/src/graphql/user/update.graphql"
+import { UpdateUserStatusMutation } from "../../../frontend/src/graphql/user/update.graphql"
 import { UserStoredStatus } from "../../../frontend/src/gql/graphql"
 import {
   ChangeUserEmailMutation,

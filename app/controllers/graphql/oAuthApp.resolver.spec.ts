@@ -10,10 +10,10 @@ import { User } from "@app/models/user.model"
 import {
   SendEmailVerificationMutation,
   VerifyEmailMutation
-} from "../../../frontend-v5/src/graphql/user/verifyEmail.graphql"
-import { SessionsQuery } from "../../../frontend-v5/src/graphql/user/sessions.graphql"
+} from "../../../frontend/src/graphql/user/verifyEmail.graphql"
+import { SessionsQuery } from "../../../frontend/src/graphql/user/sessions.graphql"
 import { UpdateUserMutation } from "../../../frontend/src/graphql/user/update.graphql"
-import { UpdateUserStatusMutation } from "../../../frontend-v5/src/graphql/user/update.graphql"
+import { UpdateUserStatusMutation } from "../../../frontend/src/graphql/user/update.graphql"
 import { UserStoredStatus } from "../../../frontend/src/gql/graphql"
 import {
   ChangeUserEmailMutation,
@@ -24,17 +24,17 @@ import { errorConverter } from "@app/lib/test-utils/errorConverter"
 import { resetState } from "@app/lib/init-tests"
 import { AdminService } from "@app/services/admin.service"
 import { OAuthAppResolver } from "@app/controllers/graphql/oAuthApp.resolver"
-import { CreateOauthAppMutation } from "../../../frontend-v5/src/graphql/developer/createApp.graphql"
+import { CreateOauthAppMutation } from "../../../frontend/src/graphql/developer/createApp.graphql"
 import {
   MyAppQuery,
   MyAppsQuery
-} from "../../../frontend-v5/src/graphql/developer/myApps.graphql"
+} from "../../../frontend/src/graphql/developer/myApps.graphql"
 import utils from "@app/lib/utils"
 import {
   AuthorizeAppMutation,
   DeauthorizeAppMutation,
   OauthAppConsentQuery
-} from "../../../frontend-v5/src/graphql/developer/consent.graphql"
+} from "../../../frontend/src/graphql/developer/consent.graphql"
 import supertest from "supertest"
 import { Container } from "typedi"
 import { Server } from "@app/server"
@@ -44,7 +44,7 @@ import {
   AddOauthUserMutation,
   ResetOauthAppSecretMutation,
   UpdateOauthAppMutation
-} from "../../../frontend-v5/src/graphql/developer/updateApp.graphql"
+} from "../../../frontend/src/graphql/developer/updateApp.graphql"
 import { CreateBotAccountMutation } from "../../../frontend/src/graphql/developer/createApp.graphql"
 
 let adminUser: TestUser | null = null
@@ -876,6 +876,7 @@ describe("OAuthAppResolver", () => {
       token: appSecret
     })
     expect(acc.errors).toBeUndefined()
+    console.log("details acc, ", acc.data.currentUser, appSecret, acc)
     expect(acc.data.currentUser).toMatchObject({
       username: `OauthBot-${rid}`,
       id: expect.any(Number)

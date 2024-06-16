@@ -20,16 +20,16 @@ import {
   connectSocket,
   waitForSocketEvent
 } from "@app/lib/test-utils/socketHelper"
-import { CreateChatMutation } from "../../../frontend-v5/src/graphql/chats/createChat.graphql"
+import { CreateChatMutation } from "../../../frontend/src/graphql/chats/createChat.graphql"
 import { errorConverter } from "@app/lib/test-utils/errorConverter"
-import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addFriend.graphql"
-import { SendMessageMutation } from "../../../frontend-v5/src/graphql/chats/sendMessage.graphql"
+import { AddFriendMutation } from "../../../frontend/src/graphql/friends/addFriend.graphql"
+import { SendMessageMutation } from "../../../frontend/src/graphql/chats/sendMessage.graphql"
 import { messageExpectations } from "@app/lib/test-utils/chatExpectations"
-import { ChatsQuery } from "../../../frontend-v5/src/graphql/chats/chats.graphql"
+import { ChatsQuery } from "../../../frontend/src/graphql/chats/chats.graphql"
 import {
   MessagesQuery,
   PagedMessagesQuery
-} from "../../../frontend-v5/src/graphql/chats/messages.graphql"
+} from "../../../frontend/src/graphql/chats/messages.graphql"
 
 const users: {
   [key: string]: {
@@ -68,6 +68,7 @@ describe("ChatResolver", () => {
         }
       }
     })
+    console.log(dm?.data?.createChat?.association)
     expect(dm.errors).toMatchObject([
       errorConverter(undefined, "INVALID_FRIEND_SELECTION")
     ])
@@ -96,6 +97,8 @@ describe("ChatResolver", () => {
     expect(addFriend.data?.friend).toBe(true)
     expect(acceptFriend.errors).toBeUndefined()
     expect(acceptFriend.data?.friend).toBe(true)
+
+    console.log(users.normal.socketClient)
 
     const wait1 = waitForSocketEvent(
       users.normal.socketClient,
