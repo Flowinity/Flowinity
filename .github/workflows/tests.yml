@@ -39,10 +39,10 @@ jobs:
         run: npm install -g yarn
 
       - name: Install dependencies
-        run: yarn
+        run: yarn --network-timeout 3000000
 
       - name: Install global dependencies
-        run: yarn global add sequelize-cli mariadb
+        run: yarn global add sequelize-cli mariadb --network-timeout 1000000
 
       - name: Install Tesseract OCR
         run: sudo apt update -y && sudo apt install tesseract-ocr tesseract-ocr-eng -y
@@ -75,7 +75,7 @@ jobs:
                     "statusPage": "https://status.troplo.com",
                     "message": ""
                   },
-                  "siteName": "PrivateUploader",
+                  "siteName": "Flowinity",
                   "hostname": "test.privateuploader.gql.troplo.com",
                   "hostnameWithProtocol": "https://test.privateuploader.gql.troplo.com",
                   "release": "dev",
