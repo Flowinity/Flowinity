@@ -6,6 +6,8 @@ import {
 } from "@/graphql/core/experiments.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ref, watch } from "vue";
+import { gql } from "@apollo/client";
+import { ExperimentOverrideInput } from "@/gql/graphql";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;
@@ -89,10 +91,62 @@ export const useExperimentsStore = defineStore("experiments", () => {
     localStorage.setItem("experimentsStore", JSON.stringify(experiments.value));
   }
 
+  async function getEmergencyOverrides() {
+    const {
+      data: { adminGetExperimentOverrides }
+    } = await useApolloClient().client.query({
+      query: gql`
+        query AdminGetExperimentOverrides {
+          adminGetExperimentOverrides {
+            id
+            value
+            force
+            userId
+          }
+        }
+      `,
+      fetchPolicy: "network-only"
+    });
+    return adminGetExperimentOverrides;
+  }
+
+  async function deleteEmergencyOverride(id: string) {
+    await useApolloClient().client.mutate({
+      mutation: gql`
+        mutation AdminDeleteExperimentOverride($id: String!) {
+          adminDeleteExperimentOverride(id: $id) {
+            success
+          }
+        }
+      `,
+      variables: {
+        id
+      }
+    });
+  }
+
+  async function createEmergencyOverride(override: ExperimentOverrideInput) {
+    await useApolloClient().client.mutate({
+      mutation: gql`
+        mutation AdminSetExperimentOverride($input: ExperimentOverrideInput!) {
+          adminSetExperimentOverride(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: {
+        input: override
+      }
+    });
+  }
+
   return {
     experiments,
     setExperiment,
     init,
-    experimentsInherit
+    experimentsInherit,
+    getEmergencyOverrides,
+    deleteEmergencyOverride,
+    createEmergencyOverride
   };
 });

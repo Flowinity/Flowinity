@@ -328,7 +328,7 @@ export const useAppStore = defineStore("app", {
         warning: i18n.t("generic.beta"),
         scope: "",
         icon: "mdi-new-box",
-        experimentsRequired: ["EARLY_ACCESS"]
+        experimentsRequired: ["CAN_ENABLE_PROGRESSIVE_UI"]
       });
       /*
       if (state.site.officialInstance) {

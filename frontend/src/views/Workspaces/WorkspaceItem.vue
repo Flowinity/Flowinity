@@ -107,7 +107,7 @@
 //@ts-ignore
 import Header from "editorjs-header-with-anchor";
 //@ts-ignore
-import NestedList from "@troplo/tpu-editorjs-nested-list";
+import NestedList from "@flowinity/tpu-editorjs-nested-list";
 //@ts-ignore
 import CodeTool from "@editorjs/code";
 //@ts-ignore
@@ -146,7 +146,7 @@ import WorkspaceHome from "@/views/Workspaces/WorkspaceHome.vue";
 import Undo from "editorjs-undo";
 import { defineComponent, h, markRaw } from "vue";
 //@ts-ignore
-import SimpleImage from "@troplo/tpu-simple-image";
+import SimpleImage from "@flowinity/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
 import {
   CollabEventType,
@@ -412,7 +412,9 @@ export default defineComponent({
           // on hover, tooltip with username
           cursor.onmouseover = () => {
             this.$toast.success(
-              `${this.$user.users[updateData.userId].username} (dev placeholder)`
+              `${
+                this.$user.users[updateData.userId].username
+              } (dev placeholder)`
             );
           };
           document.body.appendChild(cursor);
@@ -748,9 +750,9 @@ export default defineComponent({
                 block.type === "block_added"
                   ? UpdateNoteEventType.Insert
                   : //@ts-ignore
-                    block.type === "block_removed"
-                    ? UpdateNoteEventType.Delete
-                    : UpdateNoteEventType.Update;
+                  block.type === "block_removed"
+                  ? UpdateNoteEventType.Delete
+                  : UpdateNoteEventType.Update;
               console.log(data, block);
               window.__TROPLO_INTERNALS_EDITOR_SAVE_BLOCK(
                 //@ts-ignore
@@ -835,7 +837,10 @@ export default defineComponent({
         let versionItem = null;
         if (this.$route.params.version) {
           versionItem = {
-            name: `${this.$date(res.versions?.find((v) => v.id === this.$route.params.version).createdAt).fromNow()}`,
+            name: `${this.$date(
+              res.versions?.find((v) => v.id === this.$route.params.version)
+                .createdAt
+            ).fromNow()}`,
             icon: markRaw(RiHistoryLine),
             path: this.$route.path
           };

@@ -6,7 +6,7 @@ import graphql from "@rollup/plugin-graphql";
 // Utilities
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-import ViteVersion from "@troplo/vite-version";
+import ViteVersion from "@flowinity/vite-version";
 import path from "path";
 import * as fs from "fs";
 

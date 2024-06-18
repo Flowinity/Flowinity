@@ -5,6 +5,38 @@
         <v-toolbar-title>Dashboard</v-toolbar-title>
       </v-toolbar>
       <v-container>
+        <v-card-title style="padding: 0">New UI Options</v-card-title>
+        <p class="text-grey mb-4">
+          The new UI is still in development, but if you'd like, you can enable
+          it here for all users by default. Users will still be able to switch
+          back at any time.
+        </p>
+        <tpu-switch
+          v-model="newUI"
+          label="Enable New UI by default"
+          class="mb-4"
+          @update:model-value="
+            $experiments.createEmergencyOverride({
+              id: 'PROGRESSIVE_UI',
+              value: $event ? 1 : 0,
+              force: false
+            })
+          "
+        />
+
+        <tpu-switch
+          v-model="newUISwitch"
+          label="Allow users to switch to new UI"
+          class="mb-4"
+          @update:model-value="
+            $experiments.createEmergencyOverride({
+              id: 'CAN_ENABLE_PROGRESSIVE_UI',
+              value: $event ? 1 : 0,
+              force: false
+            })
+          "
+        />
+
         More options here are coming soon. You can modify tpu.json in
         app/config/tpu.json or /var/lib/tpu_server/config/tpu.json (Docker
         environments) to make manual changes to the TPU environment, and press
@@ -69,20 +101,28 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import ConfigObject from "@/components/Admin/ConfigObject.vue";
+import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { ConfigObject },
+  components: { TpuSwitch, ConfigObject },
   data() {
     return {
       dashboard: null,
       config: null,
-      loading: false
+      loading: false,
+      newUI: false,
+      newUISwitch: false
     };
   },
-  mounted() {
+  async mounted() {
     this.getDashboard();
     this.getConfig();
+    const experiments = await this.$experiments.getEmergencyOverrides();
+    this.newUI = experiments.find((k) => k.id === "PROGRESSIVE_UI")?.value;
+    this.newUISwitch = experiments.find(
+      (k) => k.id === "CAN_ENABLE_PROGRESSIVE_UI"
+    )?.value;
   },
   methods: {
     update(object: { key: string; value: any }) {

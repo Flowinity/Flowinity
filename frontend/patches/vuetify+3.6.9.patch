@@ -1,8 +1,8 @@
 diff --git a/node_modules/vuetify/dist/vuetify-labs.esm.js b/node_modules/vuetify/dist/vuetify-labs.esm.js
-index 276bd71..b6eac66 100644
+index 90a440b..169a861 100644
 --- a/node_modules/vuetify/dist/vuetify-labs.esm.js
 +++ b/node_modules/vuetify/dist/vuetify-labs.esm.js
-@@ -5300,6 +5300,7 @@ function rippleShow(e) {
+@@ -5350,6 +5350,7 @@ function rippleShow(e) {
      if (element._ripple.isTouch) return;
    }
    value.center = element._ripple.centered || isKeyboardEvent(e);
@@ -11,10 +11,10 @@ index 276bd71..b6eac66 100644
      value.class = element._ripple.class;
    }
 diff --git a/node_modules/vuetify/dist/vuetify-labs.js b/node_modules/vuetify/dist/vuetify-labs.js
-index f9834b3..8233773 100644
+index 6fd9654..62bedf6 100644
 --- a/node_modules/vuetify/dist/vuetify-labs.js
 +++ b/node_modules/vuetify/dist/vuetify-labs.js
-@@ -5304,6 +5304,7 @@
+@@ -5354,6 +5354,7 @@
        if (element._ripple.isTouch) return;
      }
      value.center = element._ripple.centered || isKeyboardEvent(e);
@@ -23,10 +23,10 @@ index f9834b3..8233773 100644
        value.class = element._ripple.class;
      }
 diff --git a/node_modules/vuetify/dist/vuetify.esm.js b/node_modules/vuetify/dist/vuetify.esm.js
-index 28ff521..e16057d 100644
+index b889451..ae99fce 100644
 --- a/node_modules/vuetify/dist/vuetify.esm.js
 +++ b/node_modules/vuetify/dist/vuetify.esm.js
-@@ -5533,6 +5533,7 @@ function rippleShow(e) {
+@@ -5583,6 +5583,7 @@ function rippleShow(e) {
      if (element._ripple.isTouch) return;
    }
    value.center = element._ripple.centered || isKeyboardEvent(e);
@@ -35,10 +35,10 @@ index 28ff521..e16057d 100644
      value.class = element._ripple.class;
    }
 diff --git a/node_modules/vuetify/dist/vuetify.js b/node_modules/vuetify/dist/vuetify.js
-index cceeb0b..4ce4413 100644
+index c97b294..25abf22 100644
 --- a/node_modules/vuetify/dist/vuetify.js
 +++ b/node_modules/vuetify/dist/vuetify.js
-@@ -5537,6 +5537,7 @@
+@@ -5587,6 +5587,7 @@
        if (element._ripple.isTouch) return;
      }
      value.center = element._ripple.centered || isKeyboardEvent(e);

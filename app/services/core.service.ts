@@ -371,10 +371,10 @@ export class CoreService {
             override?.dataValues?.value === "true"
               ? true
               : override?.dataValues?.value === "false"
-                ? false
-                : isNumeric(override?.dataValues?.value)
-                  ? parseInt(override?.dataValues?.value)
-                  : experiment.value
+              ? false
+              : isNumeric(override?.dataValues?.value)
+              ? parseInt(override?.dataValues?.value)
+              : experiment.value
         }
       })
     ]
@@ -386,6 +386,7 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Promise<Record<string, any>> {
     const experiments = {
+      CAN_ENABLE_PROGRESSIVE_UI: false,
       EDITOR_V2: false,
       WIDGETS: false,
       BADGES: !config.officialInstance,
@@ -463,6 +464,12 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        CAN_ENABLE_PROGRESSIVE_UI: {
+          description:
+            "Provide the option for users to enable the experimental UI.",
+          createdAt: "2024-06-18T00:00:00.000Z",
+          versions: [4]
+        },
         EDITOR_V2: {
           description: "Enable the new Workspaces editor.",
           createdAt: "2024-06-06T00:00:00.000Z",
@@ -902,8 +909,10 @@ export class CoreService {
       experiments.SURVEYS = true
       experiments.WEBMAIL = true
       experiments.EARLY_ACCESS = true
+      experiments.CAN_ENABLE_PROGRESSIVE_UI = true
     } else if (gold) {
       experiments.EARLY_ACCESS = true
+      experiments.CAN_ENABLE_PROGRESSIVE_UI = true
     }
 
     // only return experiments that are available for the major version

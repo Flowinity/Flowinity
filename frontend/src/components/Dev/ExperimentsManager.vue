@@ -195,23 +195,10 @@ export default defineComponent({
   },
   methods: {
     async createEmergencyOverride() {
-      await this.$apollo.mutate({
-        mutation: gql`
-          mutation AdminSetExperimentOverride(
-            $input: ExperimentOverrideInput!
-          ) {
-            adminSetExperimentOverride(input: $input) {
-              id
-            }
-          }
-        `,
-        variables: {
-          input: {
-            id: this.emergency.experiment.id,
-            value: parseInt(this.emergency.experiment.value),
-            force: this.emergency.experiment.force
-          }
-        }
+      await this.$experiments.createEmergencyOverride({
+        id: this.emergency.experiment.id,
+        value: parseInt(this.emergency.experiment.value),
+        force: this.emergency.experiment.force
       });
       this.emergency.experiment = {
         value: 0,
@@ -221,37 +208,11 @@ export default defineComponent({
       this.getEmergencyOverrides();
     },
     async deleteEmergencyOverride(id: string) {
-      await this.$apollo.mutate({
-        mutation: gql`
-          mutation AdminDeleteExperimentOverride($id: String!) {
-            adminDeleteExperimentOverride(id: $id) {
-              success
-            }
-          }
-        `,
-        variables: {
-          id
-        }
-      });
+      await this.$experiments.deleteEmergencyOverride(id);
       this.getEmergencyOverrides();
     },
     async getEmergencyOverrides() {
-      const {
-        data: { adminGetExperimentOverrides }
-      } = await this.$apollo.query({
-        query: gql`
-          query AdminGetExperimentOverrides {
-            adminGetExperimentOverrides {
-              id
-              value
-              force
-              userId
-            }
-          }
-        `,
-        fetchPolicy: "network-only"
-      });
-      this.emergency.active = adminGetExperimentOverrides;
+      this.emergency.active = await this.$experiments.getEmergencyOverrides();
     }
   },
   watch: {

@@ -6,7 +6,7 @@
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
-//import "@troplo/vuetify/styles";
+//import "@flowinity/vuetify/styles";
 //import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
 import "vuetify/lib/styles/main.sass";
 // Composables
@@ -18,6 +18,11 @@ import {
   VInfiniteScroll,
   VSkeletonLoader
 } from "vuetify/lib/components/index.mjs";
+import {
+  VTreeview,
+  VTreeviewItem,
+  VTreeviewGroup
+} from "vuetify/labs/components";
 
 export class DefaultThemes {
   themes: any;
@@ -117,7 +122,10 @@ export default createVuetify({
     VBottomNavigation,
     VDataTable,
     VInfiniteScroll,
-    VSkeletonLoader
+    VSkeletonLoader,
+    VTreeview,
+    VTreeviewItem,
+    VTreeviewGroup
   },
   display: {
     thresholds: {
