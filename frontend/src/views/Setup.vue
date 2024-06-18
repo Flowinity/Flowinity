@@ -333,6 +333,7 @@
             />
           </PromoCard>
           <v-card-actions>
+            <v-btn @click="step--">Back</v-btn>
             <v-spacer />
             <v-btn
               :loading="loading"
