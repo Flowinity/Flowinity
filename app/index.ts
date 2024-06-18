@@ -49,9 +49,10 @@ async function checkFrontend() {
       )
       return buildFrontend()
     }
-    const pkg = require(
-      path.join(global.rawAppRoot, "../frontend/package.json")
-    )
+    const pkg = require(path.join(
+      global.rawAppRoot,
+      "../frontend/package.json"
+    ))
     console.info(
       `[FRONTEND] Compiled frontend version: ${version}, latest frontend revision from local disk: ${pkg.version}`
     )
@@ -71,10 +72,13 @@ async function buildFrontend() {
       cwd: path.join(global.rawAppRoot, "../frontend"),
       stdio: "inherit"
     })
-    await execSync(config.officialInstance ? "yarn build-prod" : "yarn build", {
-      cwd: path.join(global.rawAppRoot, "../frontend"),
-      stdio: "inherit"
-    })
+    await execSync(
+      config.officialInstance ? "yarn build-only-prod" : "yarn build-only",
+      {
+        cwd: path.join(global.rawAppRoot, "../frontend"),
+        stdio: "inherit"
+      }
+    )
     // write version.txt
     console.log(pkg.version)
     await fs.writeFileSync(
