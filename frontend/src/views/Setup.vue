@@ -485,10 +485,14 @@
           class="text-center"
           variant="outlined"
         >
-          <FlowinityBanner style="width: 300px" class="mt-6" />
-          <v-card-text>
-            {{ $t("setup.step8.title") }}
-          </v-card-text>
+          <div class="flex flex-col items-center">
+            <FlowinityBanner style="width: 300px" class="mt-6" />
+            <v-container>
+              <v-card-text>
+                {{ $t("setup.step8.title") }}
+              </v-card-text>
+            </v-container>
+          </div>
         </v-card>
       </template>
     </transition-group>
