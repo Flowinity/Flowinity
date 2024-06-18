@@ -3,7 +3,9 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint("Stars", "stars_ibfk_2")
+    try {
+      await queryInterface.removeConstraint("Stars", "stars_ibfk_2")
+    } catch {}
     await queryInterface.changeColumn("Stars", "attachmentId", {
       type: Sequelize.BIGINT,
       references: {

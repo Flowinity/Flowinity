@@ -7,6 +7,8 @@ module.exports = {
       type: Sequelize.BIGINT,
       allowNull: true
     })
-    await queryInterface.removeConstraint("ChatEmojis", "chatemojis_ibfk_2")
+    try {
+      await queryInterface.removeConstraint("ChatEmojis", "chatemojis_ibfk_2")
+    } catch {}
   }
 }
