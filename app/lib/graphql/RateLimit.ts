@@ -19,6 +19,7 @@ export default function RateLimit({
       { info: { variableValues, fieldName }, context }: ResolverData<Context>,
       next
     ) => {
+      if (!redis) return next()
       const visitorKey = context.user
         ? "user:" + context.user.id
         : "ip:" + context.ip
