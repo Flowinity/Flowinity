@@ -3,7 +3,7 @@ import probe, { ProbeResult } from "probe-image-size"
 import jwt from "jsonwebtoken"
 
 // Import Miscellaneous
-import ogs from "@troplo/tpu-ogs"
+import ogs from "@flowinity/tpu-ogs"
 import blacklist from "./blacklist.json"
 
 // Import Models
@@ -404,8 +404,8 @@ async function ogsMetadataParser(
                 }
               ]
             : videoEmbed
-              ? [videoEmbed]
-              : [])
+            ? [videoEmbed]
+            : [])
         ],
         version: EmbedVersion.V2
       }
@@ -488,10 +488,10 @@ export function embedTranslator(embed: any): EmbedDataV2 | null {
             embed.data.upload.type === "image"
               ? EmbedMediaType.IMAGE
               : embed.data.upload.type === "video"
-                ? EmbedMediaType.VIDEO
-                : embed.data.upload.type === "audio"
-                  ? EmbedMediaType.AUDIO
-                  : EmbedMediaType.FILE
+              ? EmbedMediaType.VIDEO
+              : embed.data.upload.type === "audio"
+              ? EmbedMediaType.AUDIO
+              : EmbedMediaType.FILE
         }
       ],
       text: [],
