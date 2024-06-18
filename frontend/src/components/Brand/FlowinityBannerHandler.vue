@@ -1,6 +1,10 @@
 <template>
   <FlowinityBanner
-    v-if="$experiments.experiments.FLOWINITY && !$experiments.experiments.PRIDE"
+    v-if="
+      $experiments.experiments.FLOWINITY &&
+      !$experiments.experiments.PRIDE &&
+      $app.site.officialInstance
+    "
     id="tpu-brand-logo"
     style="
       min-height: 48px;
@@ -14,7 +18,9 @@
   />
   <FlowinityBannerRainbow
     v-else-if="
-      $experiments.experiments.FLOWINITY && $experiments.experiments.PRIDE
+      $experiments.experiments.FLOWINITY &&
+      $experiments.experiments.PRIDE &&
+      $app.site.officialInstance
     "
     id="tpu-brand-logo"
     style="

@@ -931,20 +931,22 @@ export class CoreService {
       }
     }
 
-    const global:
-      | {
-          id: keyof typeof experiments
-          value: never
-          force: boolean
-          userId: number
-        }[]
-      | null = await redis.json.get("experimentOverridesGlobal")
-    if (global) {
-      for (const override of global) {
-        if (experiments[override.id] !== undefined) {
-          experiments[override.id] = override.value
-          experiments.meta[override.id].force = override.force
-          experiments.meta[override.id].override = true
+    if (config.finishedSetup) {
+      const global:
+        | {
+            id: keyof typeof experiments
+            value: never
+            force: boolean
+            userId: number
+          }[]
+        | null = await redis.json.get("experimentOverridesGlobal")
+      if (global) {
+        for (const override of global) {
+          if (experiments[override.id] !== undefined) {
+            experiments[override.id] = override.value
+            experiments.meta[override.id].force = override.force
+            experiments.meta[override.id].override = true
+          }
         }
       }
     }

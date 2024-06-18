@@ -28,6 +28,10 @@
       style="z-index: 999"
     >
       <FlowinityBanner
+        v-if="
+          experimentsStore.experiments.OFFICIAL_INSTANCE &&
+          !$vuetify.display.mobile
+        "
         alt="Flowinity Logo"
         @click="
           $router.push('/');
@@ -37,6 +41,7 @@
         draggable="false"
         style="height: 40px; z-index: 9999"
       />
+      <FlowinityBannerHandler v-else-if="!$vuetify.display.mobile" />
     </div>
     <div
       class="flex flex-col w-full"
@@ -252,6 +257,7 @@ import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { debounce } from "lodash";
 import AppBarNags from "@/layouts/default/AppBarNags.vue";
+import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vue";
 
 const uiStore = useProgressiveUIStore();
 const userStore = useUserStore();
@@ -295,6 +301,7 @@ watch(
 );
 
 onUnmounted(() => {
+  uiStore.ready = false;
   loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
 });
 

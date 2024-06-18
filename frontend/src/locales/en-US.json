@@ -404,7 +404,8 @@
       "database": "Database Name",
       "test": "Test Connection",
       "testSuccess": "Connection successful!",
-      "testError": "Connection failed, please check your credentials and try again."
+      "testError": "Connection failed, please check your credentials and try again.",
+      "mariaHint": "If you are using Docker, the MariaDB hostname will likely be \"mariadb\"."
     },
     "step2": {
       "title": "Admin Account",

@@ -345,7 +345,7 @@ export class Server {
       this.onError(error)
     )
 
-    if (mainWorker && !noBackgroundTasks) {
+    if (mainWorker && !noBackgroundTasks && config.finishedSetup) {
       await this.deletionService.deletionInit()
       await this.cacheService.cacheInit()
       await this.billingService.billingInit()

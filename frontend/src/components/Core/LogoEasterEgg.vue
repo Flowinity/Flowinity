@@ -3,12 +3,8 @@
     v-if="!$vuetify.display.mobile && event !== 'bc'"
     id="tpu-brand-logo"
     :title="event === 'j' ? 'Jitsi Anniversary' : $app.site.name || 'Flowinity'"
-    class="unselectable ml-4 relative"
+    class="unselectable ml-4 relative text-gradient"
     style="z-index: 10; cursor: pointer; font-size: 32px; font-weight: 500"
-    :class="{
-      'text-gradient':
-        !$experiments.experiments.FLOWINITY && $app.site.officialInstance
-    }"
     @click="$router.push('/')"
   >
     <div class="d-flex align-center">
@@ -29,52 +25,54 @@
       <template v-else>
         {{ $app.site.name || "TPU" }}
       </template>
-      <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
-        <span class="ml-3" v-bind="props">
-          <template v-if="isHovering">
-            <span style="font-size: 1.15em">
-              {{ Math.PI }}
-            </span>
-          </template>
-          <template v-else>
-            <span style="font-size: 1.15em">π</span>
-          </template>
-        </span>
-      </v-hover>
-      <v-icon
-        v-if="event === 'bd'"
-        class="text-gradient"
-        size="23"
-        style="bottom: 0.05em"
-      >
-        mdi-numeric-1-box
-      </v-icon>
-      <v-icon
-        v-if="event === 'bd'"
-        class="text-gradient"
-        size="23"
-        style="bottom: 0.05em"
-      >
-        mdi-numeric-8-box
-      </v-icon>
-      <v-img
-        v-if="event === 'j'"
-        height="32"
-        src="https://i.troplo.com/i/1bcf4db450ba.svg"
-        style="position: relative; top: 0.15em; display: inline-block"
-        width="32"
-      />
-      <v-icon
-        v-if="event === '420'"
-        class="text-gradient ml-n1"
-        size="34"
-        style="bottom: 0.05em"
-      >
-        mdi-cannabis
-      </v-icon>
+      <template v-if="$app.site.officialInstance">
+        <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
+          <span class="ml-3" v-bind="props">
+            <template v-if="isHovering">
+              <span style="font-size: 1.15em">
+                {{ Math.PI }}
+              </span>
+            </template>
+            <template v-else>
+              <span style="font-size: 1.15em">π</span>
+            </template>
+          </span>
+        </v-hover>
+        <v-icon
+          v-if="event === 'bd'"
+          class="text-gradient"
+          size="23"
+          style="bottom: 0.05em"
+        >
+          mdi-numeric-1-box
+        </v-icon>
+        <v-icon
+          v-if="event === 'bd'"
+          class="text-gradient"
+          size="23"
+          style="bottom: 0.05em"
+        >
+          mdi-numeric-8-box
+        </v-icon>
+        <v-img
+          v-if="event === 'j'"
+          height="32"
+          src="https://i.troplo.com/i/1bcf4db450ba.svg"
+          style="position: relative; top: 0.15em; display: inline-block"
+          width="32"
+        />
+        <v-icon
+          v-if="event === '420'"
+          class="text-gradient ml-n1"
+          size="34"
+          style="bottom: 0.05em"
+        >
+          mdi-cannabis
+        </v-icon>
+      </template>
     </div>
   </h1>
-  <template v-if="event === 'bc'">
+  <template v-if="event === 'bc' && $app.site.officialInstance">
     <v-card-title
       id="bettercompass-title"
       class="text-gradient unselectable"

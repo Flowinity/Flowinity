@@ -163,7 +163,7 @@
           <v-btn aria-label="Personal Menu" icon v-bind="props">
             <UserAvatar
               :user="$user.user"
-              size="38"
+              size="32"
               :dot-status="true"
               :status="true"
             />
@@ -227,6 +227,7 @@ import { useDisplay, useTheme } from "vuetify";
 import { useChatStore } from "@/store/chat.store";
 import { useRouter } from "vue-router";
 import AppBarNags from "@/layouts/default/AppBarNags.vue";
+import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vue";
 
 const theme = useTheme();
 const editingName = ref(false);

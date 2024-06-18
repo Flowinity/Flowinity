@@ -198,6 +198,7 @@
           <super-bar-item
             highlighted
             @click="
+              $ui.ready = false;
               $experiments.setExperiment('PROGRESSIVE_UI', 0);
               $app.dialogs.feedback = true;
             "

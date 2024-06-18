@@ -74,7 +74,7 @@ export const authChecker: AuthChecker<Context> = async (
     } else {
       user = null
     }
-  } else {
+  } else if (config.finishedSetup) {
     session = cache
     const userCache = await redis.json.get(`user:${session!.userId}`)
     if (userCache) {

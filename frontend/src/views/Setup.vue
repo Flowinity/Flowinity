@@ -76,6 +76,10 @@
                 type="password"
                 @keyup.enter="testMariaDBConnection"
               />
+              <small class="text-red">
+                <strong>IMPORTANT:</strong>
+                {{ $t("setup.step1.mariaHint") }}
+              </small>
             </v-card-text>
           </v-form>
           <v-card-actions>
@@ -208,12 +212,12 @@
               <v-text-field
                 v-model="instance.hostname"
                 :label="$t('setup.step3.hostname')"
-                placeholder="privateuploader.com"
+                placeholder="flowinity.com"
               />
               <v-text-field
                 v-model="instance.hostnameWithProtocol"
                 :label="$t('setup.step3.hostnameWithProtocol')"
-                placeholder="https://privateuploader.com"
+                placeholder="https://flowinity.com"
               />
               <v-text-field
                 v-model="instance.port"
@@ -239,7 +243,8 @@
                 v-model="instance.redisPort"
                 :label="$t('setup.step3.redisPort')"
               />
-              <small>
+              <small class="text-red">
+                <strong>IMPORTANT:</strong>
                 {{ $t("setup.step3.redisHint") }}
               </small>
             </v-card-text>
@@ -347,6 +352,7 @@
           :flat="$vuetify.display.mobile"
           class="text-center"
           variant="outlined"
+          :width="800"
         >
           <v-card-title>
             {{ $t("setup.step6.title") }}
@@ -424,7 +430,7 @@
           <v-card-text class="text-grey overflow">
             {{ $t("setup.step9.subtitle") }}
           </v-card-text>
-          <v-form @submit="setupDomain">
+          <v-form @submit.prevent.stop="setupDomain">
             <v-card-text>
               <v-text-field
                 v-model="domain.domain"
@@ -450,23 +456,25 @@
           class="text-center"
           variant="outlined"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
-          </p>
-          <v-card-title>
-            {{ $t("setup.step7.title") }}
-          </v-card-title>
-          <v-card-text class="text-grey overflow">
-            {{ $t("setup.step7.subtitle") }}
-          </v-card-text>
-          <v-btn
-            :loading="loading"
-            class="mb-4"
-            color="primary"
-            @click="restartTPU"
-          >
-            {{ $t("setup.step7.restart") }}
-          </v-btn>
+          <div class="flex flex-col items-center">
+            <FlowinityBanner style="width: 300px" class="mt-6" />
+            <v-container>
+              <v-card-title>
+                {{ $t("setup.step7.title") }}
+              </v-card-title>
+              <v-card-text class="text-grey overflow">
+                {{ $t("setup.step7.subtitle") }}
+              </v-card-text>
+              <v-btn
+                :loading="loading"
+                class="mb-4"
+                color="primary"
+                @click="restartTPU"
+              >
+                {{ $t("setup.step7.restart") }}
+              </v-btn>
+            </v-container>
+          </div>
         </v-card>
       </template>
       <template v-if="step === 9">
@@ -477,9 +485,7 @@
           class="text-center"
           variant="outlined"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
-          </p>
+          <FlowinityBanner style="width: 300px" class="mt-6" />
           <v-card-text>
             {{ $t("setup.step8.title") }}
           </v-card-text>
@@ -531,7 +537,7 @@ export default defineComponent({
         email: ""
       },
       instance: {
-        name: "TPU",
+        name: "Flowinity",
         hostname: "",
         hostnameWithProtocol: "",
         port: 34582,
