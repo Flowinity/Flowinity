@@ -38,6 +38,7 @@ export class FileControllerV3 {
         }
       ]
     })
+    res.setHeader("Content-Security-Policy", "default-src 'none'")
     if (config.release === "dev") {
       try {
         await fs.accessSync(
