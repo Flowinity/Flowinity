@@ -410,8 +410,4 @@ const blur = computed(() => {
 #navbar .v-toolbar__content {
   height: v-bind(appBarHeightCSS) !important;
 }
-
-#navbar .v-alert--density-compact {
-  padding-top: 16px !important;
-}
 </style>

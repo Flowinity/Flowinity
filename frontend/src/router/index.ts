@@ -21,13 +21,13 @@ const routes = [
       {
         path: "/communications/home",
         name: "Communications Home (Social Hub)",
-        redirect: "/social"
+        component: () => import("@/views/Communications/Home.vue")
       },
       {
         path: "/communications",
         name: "Communications",
         component: () => import("@/layouts/communications/Comms.vue"),
-        redirect: "/social",
+        redirect: "/communications/home",
         children: [
           {
             path: ":chatId",

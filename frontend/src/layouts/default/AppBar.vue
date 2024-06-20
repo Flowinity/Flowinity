@@ -208,7 +208,7 @@
       </v-btn>
     </template>
     <template #extension>
-      <AppBarNags />
+      <div class="d-flex flex-column" style="width: 100%"><AppBarNags /></div>
     </template>
   </v-app-bar>
 </template>

@@ -13,6 +13,7 @@ export class MediaProxyControllerV3 {
   async getEmbed(@Param("token") token: string, @Res() res: Response) {
     const data = await this.mediaProxyService.proxyEmbedJWT(token)
     const { mimeType } = data.data as ImagePayload
+    res.setHeader("Content-Security-Policy", "default-src 'none'")
     res.set("Content-Type", mimeType || "image/png")
     res.set("Cache-Control", "public, max-age=31536000")
     res.send(data.file)
