@@ -5,7 +5,6 @@
  */
 
 // Plugins
-import { loadFonts } from "./webfontloader";
 import pinia from "../store";
 // Types
 import { App, markRaw } from "vue";
@@ -13,7 +12,6 @@ import { useRouter, useRoute } from "vue-router";
 import router from "@/router";
 
 export function registerPlugins(app: App) {
-  loadFonts();
   app.use(router);
   pinia.use(({ store }) => {
     store.$apollo = app.config.globalProperties.$apollo;
