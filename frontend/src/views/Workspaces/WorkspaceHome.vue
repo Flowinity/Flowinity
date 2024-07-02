@@ -4,54 +4,51 @@
     <v-row class="mt-2">
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
-            mdi-note-outline
-          </v-icon>
+          <v-icon class="mt-2 mb-n3" size="120">mdi-note-outline</v-icon>
           <v-card-title class="justify-center text-center">
-            <h3 style="opacity: 0.7">Documents</h3>
+            <h3>Documents</h3>
           </v-card-title>
           <v-card-text>
             <p>
               Documents within workspaces allow you to easily write down notes,
-              and other information which automatically sync to your TPU account
-              and can be accessed anywhere.
+              and other information which automatically sync to your
+              {{ $app.site.name }} account and can be accessed anywhere.
             </p>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
+          <v-icon class="mt-2 mb-n3" size="120">
             mdi-account-group-outline
           </v-icon>
           <v-card-title class="justify-center text-center">
-            <h3 style="opacity: 0.7">
+            <h3>
               Collaboration
-              <v-chip class="ml-2" small style="opacity: 0.7">Soon™</v-chip>
+              <v-chip class="ml-2" small>Soon™</v-chip>
             </h3>
           </v-card-title>
           <v-card-text>
             <p>
-              Multiple TPU users can be in a workspace which allows for easy
-              collaboration between one or more documents at a time.
+              Multiple {{ $app.site.name }} users can be in a workspace which
+              allows for easy collaboration between one or more documents at a
+              time.
             </p>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
-            mdi-lock-outline
-          </v-icon>
+          <v-icon class="mt-2 mb-n3" size="120">mdi-lock-outline</v-icon>
           <v-card-title class="justify-center text-center">
-            <h3 style="opacity: 0.7">Fine-grained access controls.</h3>
+            <h3>Fine-grained access controls.</h3>
           </v-card-title>
           <v-card-text>
             <p>
               With the addition of scoped passwords or alternate passwords, you
               can set a unique password which permits access to workspaces, and
-              disallow access to the rest of your TPU account for extra security
-              on public or untrusted computers or networks.
+              disallow access to the rest of your {{ $app.site.name }} account
+              for extra security on public or untrusted computers or networks.
             </p>
           </v-card-text>
         </v-card>

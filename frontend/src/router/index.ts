@@ -188,7 +188,7 @@ const routes = [
         component: () => import("@/views/AutoCollects/Configure.vue")
       },
       {
-        path: "/autoCollect/:id",
+        path: "/autoCollect/:id/:page?",
         name: "AutoCollect",
         component: () => import("@/views/AutoCollects/Item.vue")
       },

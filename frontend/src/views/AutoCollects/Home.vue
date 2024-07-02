@@ -22,16 +22,9 @@
     <PromoNoContent
       v-else-if="!$app.componentLoading"
       :description="$t('autoCollects.home.subtitle')"
-      icon="mdi-tooltip-check"
+      :icon="RiCheckboxMultipleFill"
       :title="$t('autoCollects.home.title')"
     />
-    <small>
-      {{
-        $t("gallery.totalItems", {
-          count: autoCollects.length
-        })
-      }}
-    </small>
   </v-container>
   <teleport
     v-if="$experiments.experiments.PROGRESSIVE_UI && $ui.ready"
@@ -50,9 +43,15 @@ import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import { RiCheckboxMultipleFill } from "@remixicon/vue";
 
 export default defineComponent({
   name: "AutoCollectsHome",
+  computed: {
+    RiCheckboxMultipleFill() {
+      return RiCheckboxMultipleFill;
+    }
+  },
   components: { AccessibleTransition, PromoNoContent, CollectionCard },
   data() {
     return {

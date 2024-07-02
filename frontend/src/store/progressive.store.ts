@@ -1083,6 +1083,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     heightOffset,
     scrollPosition,
     currentNavItem,
+    _currentNavItem,
     currentNavOptions,
     currentMiscNavOptions,
     currentRail,

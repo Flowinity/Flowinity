@@ -12,7 +12,7 @@
       <div id="tpu-editor" />
     </div>
     <v-toolbar
-      v-if="!id"
+      v-if="!id && !fail"
       id="workspaces-word-count"
       :class="{ patch: !$vuetify.display.mobile && $user.user?.id }"
       bottom
@@ -37,7 +37,23 @@
         </template>
       </v-card-subtitle>
     </v-toolbar>
-    <WorkspaceHome v-if="fail" />
+    <template v-if="fail">
+      <PromoNoContent
+        :icon="RiCloseCircleLine"
+        title="Note not found."
+        description="The note you are trying to access may not exist or you may not have permission to view it."
+        @button:click="$router.push('/')"
+      >
+        <template #button v-if="!$user.user">
+          <FlowinityLogoAnimated
+            v-if="$app.site.officialInstance"
+            style="width: 24px"
+            class="mr-2"
+          />
+          Learn more about {{ $app.site.name }}
+        </template>
+      </PromoNoContent>
+    </template>
     <template v-if="collaborators.length">
       <teleport
         v-if="
@@ -166,6 +182,9 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import functions from "@/plugins/functions";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import {
+  RiCloseCircleFill,
+  RiCloseCircleLine,
+  RiCloseLine,
   RiCollageFill,
   RiCollageLine,
   RiFileTextFill,
@@ -178,6 +197,9 @@ import {
   RiStickyNoteLine
 } from "@remixicon/vue";
 import { RailMode } from "@/store/progressive.store";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
+import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 
 interface NoteCollabPositionWithTyping extends NoteCollabPosition {
   typing: boolean;
@@ -186,6 +208,9 @@ interface NoteCollabPositionWithTyping extends NoteCollabPosition {
 
 export default defineComponent({
   components: {
+    FlowinityLogoAnimated,
+    FlowinityLogo,
+    PromoNoContent,
     RiHistoryLine,
     RiShareForwardFill,
     RiShareLine,
@@ -217,6 +242,15 @@ export default defineComponent({
     };
   },
   computed: {
+    RiCloseCircleLine() {
+      return RiCloseCircleLine;
+    },
+    RiCloseCircleFill() {
+      return RiCloseCircleFill;
+    },
+    RiCloseLine() {
+      return RiCloseLine;
+    },
     RailMode() {
       return RailMode;
     },

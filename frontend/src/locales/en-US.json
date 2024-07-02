@@ -118,6 +118,14 @@
     "empty": {
       "title": "Upload files to get started!",
       "description": "You can upload files by dragging and dropping them here, or by clicking the upload button above."
+    },
+    "noResults": {
+      "title": "No results found.",
+      "description": "Try changing your search query or filters."
+    },
+    "upToDate": {
+      "title": "Your AutoCollects are up to date!",
+      "description": "You have no new approvals. You will be redirected momentarily."
     }
   },
   "settings": {

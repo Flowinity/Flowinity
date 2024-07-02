@@ -293,18 +293,16 @@ export default defineComponent({
       if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index]?.collections, collection]
+        collections: [
+          ...(this.gallery.gallery[index]?.collections || []),
+          collection
+        ]
       };
     },
     async getCollection() {
-      if (!this.collection && this.$collections.items.length) {
-        this.collection = this.$collections.items.find(
-          (c: CollectionCache) =>
-            c.id === parseInt(<string>this.$route.params.id)
-        );
-      }
       this.$app.componentLoading = true;
       const data = await this.$collections.getCollection(this.$route.params.id);
+      console.log(data);
       this.$app.componentLoading = false;
       this.collection = data;
       if (this.collection)
@@ -320,29 +318,6 @@ export default defineComponent({
       } else {
         this.$ui.appBarType = "stick";
       }
-
-      this.$ui.currentNavItem = {
-        item: {
-          name: this.collection?.name || "Loading...",
-          icon: this.collection?.avatar
-            ? h(UserAvatar, {
-                user: {
-                  avatar: this.collection?.avatar,
-                  username: this.collection?.name
-                },
-                size: 32,
-                style: "margin: 0px 4px 0px 4px"
-              })
-            : markRaw(RiCollageLine),
-          path: this.$route.path,
-          selectedIcon: markRaw(RiCollageFill)
-        },
-        rail: [
-          this.$ui.navigation.railOptions.find(
-            (rail) => rail.id === RailMode.AUTO_COLLECTS
-          )
-        ]
-      };
     },
     selectAll(selected: any[]) {
       //

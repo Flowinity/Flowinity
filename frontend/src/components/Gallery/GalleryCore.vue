@@ -113,16 +113,27 @@
       >
         <div class="flex flex-col items-center">
           <RiUploadCloud2Line
+            v-if="emptyType === 'empty'"
             size="100"
             class="cursor-pointer"
             @click="$app.dialogs.upload.value = true"
           />
+          <RiCheckboxMultipleFill
+            v-if="emptyType === 'upToDate'"
+            size="100"
+            class="cursor-pointer"
+          />
+          <RiSearchLine
+            v-if="emptyType === 'noResults'"
+            size="100"
+            class="cursor-pointer"
+          />
           <div class="text-center">
             <h2 class="text-2xl font-bold">
-              {{ $t("gallery.empty.title") }}
+              {{ $t(`gallery.${emptyType}.title`) }}
             </h2>
             <p class="text-lg">
-              {{ $t("gallery.empty.description") }}
+              {{ $t(`gallery.${emptyType}.description`) }}
             </p>
           </div>
         </div>
@@ -338,6 +349,7 @@ import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 import { Pager, Upload } from "@/gql/graphql";
 import {
   RiAddLine,
+  RiCheckboxMultipleFill,
   RiCloseLine,
   RiCollageFill,
   RiCollageLine,
@@ -345,6 +357,7 @@ import {
   RiDownloadLine,
   RiFolderImageFill,
   RiImageAddLine,
+  RiSearchLine,
   RiUploadCloud2Line,
   RiUploadLine
 } from "@remixicon/vue";
@@ -352,9 +365,13 @@ import { NavigationOption, RailMode } from "@/store/progressive.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import RiImageCloseLine from "@/components/Icons/v5/ri-image-close-line.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
+import RiCheckLine from "@/components/Icons/v5/ri-check-line.vue";
 
 export default defineComponent({
   components: {
+    RiCheckboxMultipleFill,
+    RiSearchLine,
+    RiCheckLine,
     WorkspaceDeleteDialog,
     RiImageCloseLine,
     RiDownloadLine,
@@ -415,6 +432,9 @@ export default defineComponent({
           }
         };
       }
+    },
+    searched: {
+      type: Boolean
     }
   },
   emits: [
@@ -451,6 +471,15 @@ export default defineComponent({
       },
       set(value: number) {
         this.$emit("page-change", value);
+      }
+    },
+    emptyType() {
+      if (this.$route.path.startsWith("/autoCollect/")) {
+        return "upToDate";
+      } else if (this.searched) {
+        return "noResults";
+      } else {
+        return "empty";
       }
     }
   },
@@ -539,21 +568,38 @@ export default defineComponent({
           c.id === parseInt(this.$route.params.id) ||
           c.shareLink === this.$route.params.id
       );
-      const rail = {
+      const option = {
         icon: markRaw(RiCollageLine),
         name: collection?.name,
-        path: `/collections/${collection?.id}`,
+        path: `${
+          this.$route.path.startsWith("/autoCollect/")
+            ? "/autoCollect"
+            : "/collections"
+        }/${collection?.id}`,
         selectedIcon: markRaw(RiCollageFill)
       };
+      let rail: NavigationOption[] = [];
+      if (this.$route.path.startsWith("/autoCollect/")) {
+        rail.push(
+          this.$ui.navigation.options[RailMode.GALLERY].find(
+            (i) => i.path === "/autoCollect"
+          )
+        );
+      }
+
+      if (this.page !== 1 || this.$route.params.page) {
+        rail.push(option);
+      }
+
       this.$ui.currentNavItem = {
         item:
           this.page === 1 && !this.$route.params.page
-            ? rail
+            ? option
             : {
                 name: `Page ${this.page}`,
                 path: this.$route.path
               },
-        rail: rail && this.page !== 1 && this.$route.params.page ? [rail] : []
+        rail
       };
     }
   },
@@ -562,7 +608,7 @@ export default defineComponent({
     this.$ui.navigationMode = RailMode.GALLERY;
   },
   watch: {
-    page() {
+    "$route.params.page"() {
       this.setAppBar();
     }
   }

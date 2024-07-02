@@ -46,6 +46,7 @@
           }
         }
       "
+      :searched="show.searched"
       @delete="deleteItem"
       @refresh="getGallery()"
       @remove="removeItemFromCollection($event.item, $event.collection)"
@@ -111,7 +112,11 @@ export default defineComponent({
         metadata: true,
         selected: [GalleryFilter.IncludeMetadata],
         sort: GallerySort.CreatedAt,
-        order: GalleryOrder.Desc
+        order: GalleryOrder.Desc,
+        /**
+         * @description If the current state is a search
+         */
+        searched: false
       },
       randomLoading: false,
       createSubscription: null as UseSubscriptionReturn<any, any> | null,
@@ -204,6 +209,7 @@ export default defineComponent({
           }
         } as GalleryInput
       });
+      this.show.searched = !!this.show.search.length;
       this.gallery = gallery;
       this.loading = false;
       if (this.$experiments.experiments.PROGRESSIVE_UI) {
