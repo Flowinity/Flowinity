@@ -10,6 +10,7 @@ import fs from "fs"
 import { Response } from "express"
 import { promisify } from "util"
 import path from "path"
+import { Domain } from "@app/models/domain.model"
 
 @Service()
 @Controller("/i/")
@@ -38,7 +39,6 @@ export class FileControllerV3 {
         }
       ]
     })
-    res.setHeader("Content-Security-Policy", "default-src 'none'")
     if (config.release === "dev") {
       try {
         await fs.accessSync(

@@ -301,12 +301,12 @@ watch(
 );
 
 onUnmounted(() => {
-  uiStore.ready = false;
+  uiStore.appBarReady = false;
   loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
 });
 
 onMounted(() => {
-  uiStore.ready = true;
+  uiStore.appBarReady = true;
 });
 
 const items = computed(() => {

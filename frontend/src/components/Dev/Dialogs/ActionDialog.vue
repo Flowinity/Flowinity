@@ -26,7 +26,10 @@
         Memory Profiler
       </v-btn>
       <v-btn
-        @click="$chat.dialogs.chatDevOptions = !$chat.dialogs.chatDevOptions"
+        @click="
+          $chat.dialogs.chatDevOptions.value =
+            !$chat.dialogs.chatDevOptions.value
+        "
       >
         Chat Dev Options
       </v-btn>

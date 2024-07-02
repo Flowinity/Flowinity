@@ -34,7 +34,6 @@
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
     <UploadFileV2 v-model="$app.dialogs.upload.value" />
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
-    <NetworkInspector v-if="$app.dialogs.networkInspector" />
     <v-overlay
       v-if="!$experiments.experiments.PROGRESSIVE_UI"
       persistent

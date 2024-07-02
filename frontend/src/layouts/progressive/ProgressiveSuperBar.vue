@@ -19,7 +19,7 @@
       <div class="flex flex-col flex-grow overflow-y-auto items-center">
         <div class="flex flex-col gap-y-4">
           <div
-            class="flex cursor-pointer select-none justify-between pt-0 border-b-2 flowinity-border relative"
+            class="flex cursor-pointer select-none pt-0 border-b-2 flowinity-border relative justify-center"
             style="min-height: 64px; max-height: 64px"
           >
             <component
@@ -198,7 +198,8 @@
           <super-bar-item
             highlighted
             @click="
-              $ui.ready = false;
+              $ui.appBarReady = false;
+              $ui.loggedInViewReady = false;
               $experiments.setExperiment('PROGRESSIVE_UI', 0);
               $app.dialogs.feedback = true;
             "
@@ -278,6 +279,7 @@ import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.v
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import SuperBarItemTemplate from "@/layouts/progressive/SuperBarItemTemplate.vue";
+import FlowinityLogoConcept from "@/components/Brand/FlowinityLogoConcept.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();

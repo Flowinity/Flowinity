@@ -52,5 +52,3 @@ export type { TextAlignOptions } from "./text-align";
 export { TextAlign } from "./text-align";
 export type { UnderlineOptions } from "./underline";
 export { Underline } from "./underline";
-export type { VideoOptions } from "./video";
-export { Video } from "./video";

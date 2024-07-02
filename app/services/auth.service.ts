@@ -282,7 +282,10 @@ export class AuthService {
         email,
         inviteId: invite?.id || null,
         planId: config.defaultPlanId || 1,
-        emailVerified: !config.email.enabled || invite?.email === email || process.env.NODE_ENV === "test"
+        emailVerified:
+          !config.email.enabled ||
+          invite?.email === email ||
+          process.env.NODE_ENV === "test"
       })
       if (invite) {
         await Invite.update(
@@ -341,6 +344,7 @@ export class AuthService {
       throw new GraphQLError("Invalid token")
     }
     await session.destroy()
+    await redis.json.del(`session:${token}`)
     return true
   }
 

@@ -79,6 +79,7 @@ import { Response, Request } from "express"
 import { useSentry } from "@envelop/sentry"
 import { useEngine } from "@envelop/core"
 import { usePrometheus } from "@graphql-yoga/plugin-prometheus"
+import { generateCSP } from "@app/lib/contentSecurityPolicy"
 
 @Service()
 @Middleware({ type: "after" })
@@ -254,8 +255,11 @@ export class Application {
     process.env.TPU_COMMIT_HASH = execSync("git rev-parse --short HEAD")
       .toString()
       .trim()
-    this.app.use((req, res, next: NextFunction): void => {
+    this.app.use(async (req, res, next: NextFunction) => {
       res.setHeader("X-Powered-By", "Flowinity/4.0.0")
+      /*if (config.finishedSetup) {
+        res.setHeader("Content-Security-Policy", await generateCSP())
+      }*/
       next()
     })
 

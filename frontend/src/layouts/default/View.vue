@@ -9,10 +9,18 @@
   </v-main>
 </template>
 
-<!--<script lang="ts" setup>-->
-<!--import Crash from "@/components/Core/CrashAlt.vue";-->
-<!--import { ref } from "vue";-->
+<script lang="ts" setup>
+import Crash from "@/components/Core/CrashAlt.vue";
+import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
+import { useProgressiveUIStore } from "@/store/progressive.store";
 
-<!--const skullCrash = Crash;-->
-<!--const error = ref(null);-->
-<!--</script>-->
+const uiStore = useProgressiveUIStore();
+
+onMounted(() => {
+  uiStore.loggedInViewReady = true;
+});
+
+onBeforeUnmount(() => {
+  uiStore.loggedInViewReady = false;
+});
+</script>

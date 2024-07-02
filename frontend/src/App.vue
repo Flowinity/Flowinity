@@ -7,6 +7,7 @@
       v-if="$app.site.maintenance.enabled"
       v-model="$app.site.maintenance.enabled"
     />
+    <NetworkInspector v-if="$app.dialogs.networkInspector" />
     <router-view />
   </template>
   <template v-else-if="slideshow === true">
@@ -23,10 +24,12 @@ import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import Slideshow from "@/views/Slideshow.vue";
+import NetworkInspector from "@/components/Dev/Dialogs/NetworkInspector.vue";
 
 export default defineComponent({
   name: "TPUApp",
   components: {
+    NetworkInspector,
     ExperimentsManagerDialog,
     ActionDialog,
     SocketProfiler,

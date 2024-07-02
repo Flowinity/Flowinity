@@ -29,6 +29,34 @@ export class DefaultThemes {
 
   constructor(gold: boolean = false) {
     this.themes = {
+      dark_v5: {
+        colors: {
+          surface: "#121212",
+          "surface-bright": "#ccbfd6",
+          "surface-variant": "#a3a3a3",
+          "on-surface-variant": "#424242",
+          "primary-darken-1": "#3700B3",
+          "secondary-darken-1": "#03DAC5",
+          primary: "#0190ea",
+          logo1: "#096fea",
+          logo2: "#0166ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#F44336",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#161616",
+          toolbar: "#191919",
+          sheet: "#151515",
+          text: "#000000",
+          dark: "#151515",
+          background: "#191D20",
+          background2: "#191D20",
+          gold: "#ffd700"
+        },
+        dark: true
+      },
       dark: {
         colors: {
           surface: "#212121",
@@ -220,7 +248,7 @@ export default createVuetify({
     }
   },
   theme: {
-    defaultTheme: ["dark", "amoled", "light"].includes(
+    defaultTheme: ["dark", "amoled", "light", "dark_v5"].includes(
       localStorage.getItem("theme") || "dark"
     )
       ? localStorage.getItem("theme") || "dark"

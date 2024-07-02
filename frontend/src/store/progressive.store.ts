@@ -108,11 +108,7 @@ export enum RailMode {
   MAIL,
   ADMIN,
   DEBUG,
-  SETTINGS,
-  // Fake rail-modes
-  AUTO_COLLECTS,
-  COLLECTIONS,
-  USERS
+  SETTINGS
 }
 
 export interface NavigationOption {
@@ -153,7 +149,12 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const friendStore = useFriendsStore();
   const appStore = useAppStore();
   const drawer = ref(false);
-  const ready = ref(false);
+  const appBarReady = ref(false);
+  const loggedInViewReady = ref(false);
+
+  const ready = computed(() => {
+    return appBarReady.value && loggedInViewReady.value;
+  });
 
   function getParent(itemPath: string) {
     let find: NavigationOption | undefined;
@@ -671,10 +672,10 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                       appStore.platform === Platform.WINDOWS
                         ? RiMicrosoftLine
                         : appStore.platform === Platform.MAC
-                          ? RiAppleLine
-                          : h(VIcon, {
-                              icon: "mdi-linux"
-                            })
+                        ? RiAppleLine
+                        : h(VIcon, {
+                            icon: "mdi-linux"
+                          })
                     ),
                     name: "Desktop Settings",
                     path: "/settings/desktop",
@@ -682,10 +683,10 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                       appStore.platform === Platform.WINDOWS
                         ? RiMicrosoftFill
                         : appStore.platform === Platform.MAC
-                          ? RiAppleFill
-                          : h(VIcon, {
-                              icon: "mdi-linux"
-                            })
+                        ? RiAppleFill
+                        : h(VIcon, {
+                            icon: "mdi-linux"
+                          })
                     )
                   }
                 ]
@@ -700,7 +701,13 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           [RailMode.ADMIN]: [
             {
               icon: null,
-              name: `Access Level: ${userStore.user?.administrator ? "Admin" : userStore.user?.moderator ? "Moderator" : "User"}`,
+              name: `Access Level: ${
+                userStore.user?.administrator
+                  ? "Admin"
+                  : userStore.user?.moderator
+                  ? "Moderator"
+                  : "User"
+              }`,
               path: "",
               selectedIcon: null
             },
@@ -767,17 +774,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             badge: mailbox.unread ? mailbox.unread.toLocaleString() : undefined
           })),
           [RailMode.DEBUG]: [],
-          [RailMode.MEET]: [],
-          [RailMode.AUTO_COLLECTS]: [],
-          [RailMode.COLLECTIONS]: useCollectionsStore().persistent.map(
-            (collection) => ({
-              icon: markRaw(RiCollageLine),
-              name: collection.name,
-              path: `/collections/${collection.id}`,
-              selectedIcon: markRaw(RiCollageFill)
-            })
-          ),
-          [RailMode.USERS]: []
+          [RailMode.MEET]: []
         } as Record<RailMode, NavigationOption[]>,
         miscOptions: {
           [RailMode.HOME]: [
@@ -888,30 +885,6 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             selectedIcon: markRaw(RiSettings5Fill),
             misc: true,
             scopesRequired: ["user.modify"]
-          },
-          {
-            icon: markRaw(RiSparkling2Line),
-            name: "AutoCollects",
-            id: RailMode.AUTO_COLLECTS,
-            selectedIcon: markRaw(RiSparkling2Fill),
-            path: "/autoCollect",
-            fake: true
-          },
-          {
-            icon: markRaw(RiCollageLine),
-            name: "Collections",
-            id: RailMode.COLLECTIONS,
-            selectedIcon: markRaw(RiCollageFill),
-            path: "/gallery",
-            fake: true
-          },
-          {
-            icon: markRaw(RiGroupLine),
-            name: "Users",
-            id: RailMode.USERS,
-            selectedIcon: markRaw(RiGroupFill),
-            path: "/users",
-            fake: true
           }
         ]
       };
@@ -1121,6 +1094,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     _activeContextMenu,
     lastRailRoutes,
     appBarHeight,
-    appBarType
+    appBarType,
+    loggedInViewReady,
+    appBarReady
   };
 });

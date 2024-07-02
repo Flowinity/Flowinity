@@ -24,6 +24,8 @@ import { ProfileQuery } from "@/graphql/user/profile.graphql";
 import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { IpcChannels } from "@/electron-types/ipc";
+import { useProgressiveUIStore } from "@/store/progressive.store";
+import { LogoutMutation } from "@/graphql/user/logout.graphql";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -288,6 +290,11 @@ export const useUserStore = defineStore("user", {
       }
     },
     async logout() {
+      const uiStore = useProgressiveUIStore();
+      uiStore.loggedInViewReady = false;
+      await useApolloClient().client.mutate({
+        mutation: LogoutMutation
+      });
       localStorage.removeItem("token");
       localStorage.removeItem("userStore");
       localStorage.removeItem("friendsStore");

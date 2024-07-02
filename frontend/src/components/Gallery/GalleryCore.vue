@@ -329,7 +329,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, markRaw } from "vue";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
 import { CollectionCache } from "@/types/collection";
@@ -339,6 +339,8 @@ import { Pager, Upload } from "@/gql/graphql";
 import {
   RiAddLine,
   RiCloseLine,
+  RiCollageFill,
+  RiCollageLine,
   RiDeleteBinLine,
   RiDownloadLine,
   RiFolderImageFill,
@@ -346,7 +348,7 @@ import {
   RiUploadCloud2Line,
   RiUploadLine
 } from "@remixicon/vue";
-import { RailMode } from "@/store/progressive.store";
+import { NavigationOption, RailMode } from "@/store/progressive.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import RiImageCloseLine from "@/components/Icons/v5/ri-image-close-line.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
@@ -532,19 +534,26 @@ export default defineComponent({
       this.selected = [];
     },
     setAppBar() {
-      if (this.page === 1 && !this.$route.params.page) return;
-      const parentPath = this.$route.path.split("/").slice(0, -1).join("/");
-      const rail = this.$ui.navigation.options[
-        parentPath.startsWith("/collections/")
-          ? RailMode.COLLECTIONS
-          : RailMode.GALLERY
-      ].find((item) => item.path === parentPath);
+      const collection = this.$collections.persistent.find(
+        (c) =>
+          c.id === parseInt(this.$route.params.id) ||
+          c.shareLink === this.$route.params.id
+      );
+      const rail = {
+        icon: markRaw(RiCollageLine),
+        name: collection?.name,
+        path: `/collections/${collection?.id}`,
+        selectedIcon: markRaw(RiCollageFill)
+      };
       this.$ui.currentNavItem = {
-        item: {
-          name: `Page ${this.page}`,
-          path: this.$route.path
-        },
-        rail: rail ? [rail] : []
+        item:
+          this.page === 1 && !this.$route.params.page
+            ? rail
+            : {
+                name: `Page ${this.page}`,
+                path: this.$route.path
+              },
+        rail: rail && this.page !== 1 && this.$route.params.page ? [rail] : []
       };
     }
   },

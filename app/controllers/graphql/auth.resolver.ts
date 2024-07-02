@@ -38,7 +38,10 @@ export class AuthResolver {
     )
   }
 
-  @Authorized()
+  @Authorization({
+    scopes: [],
+    emailOptional: true
+  })
   @Mutation(() => Boolean)
   async logout(@Ctx() ctx: Context) {
     return await this.authService.logout(ctx.token)
