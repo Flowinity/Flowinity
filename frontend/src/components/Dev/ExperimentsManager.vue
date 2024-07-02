@@ -23,19 +23,22 @@
         <v-btn @click="createEmergencyOverride" color="red">Create</v-btn>
       </v-container>
       <v-card-title>Active</v-card-title>
-      <v-card
-        v-for="override in emergency.active"
-        :key="override.id"
-        class="my-2"
-      >
-        <v-card-title>ID: {{ override.id }}</v-card-title>
-        <v-card-subtitle>Value: {{ override.value }}</v-card-subtitle>
-        <v-card-subtitle>Forced: {{ override.force }}</v-card-subtitle>
-        <v-card-subtitle>User ID: {{ override.userId }}</v-card-subtitle>
-        <v-btn @click="deleteEmergencyOverride(override.id)" color="red">
-          Delete
-        </v-btn>
-      </v-card>
+      <v-list>
+        <v-card
+          v-for="override in emergency.active"
+          :key="override.id"
+          class="my-2"
+          rounded="0"
+        >
+          <v-card-title>ID: {{ override.id }}</v-card-title>
+          <v-card-subtitle>Value: {{ override.value }}</v-card-subtitle>
+          <v-card-subtitle>Forced: {{ override.force }}</v-card-subtitle>
+          <v-card-subtitle>User ID: {{ override.userId }}</v-card-subtitle>
+          <v-btn @click="deleteEmergencyOverride(override.id)" color="red">
+            Delete
+          </v-btn>
+        </v-card>
+      </v-list>
     </DevDialog>
   </teleport>
   <v-btn color="red" variant="tonal" @click="emergency.value = true">

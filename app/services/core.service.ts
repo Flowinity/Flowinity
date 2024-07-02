@@ -904,7 +904,7 @@ export class CoreService {
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
       experiments.DEBUG_FAVICON = true
-      experiments.FLOWINITY = true
+      // experiments.FLOWINITY = true
       experiments.ACCOUNT_DEV_ELIGIBLE = true
       experiments.SURVEYS = true
       experiments.WEBMAIL = true

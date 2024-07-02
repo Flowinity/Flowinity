@@ -23,27 +23,6 @@
     :height="uiStore.appBarType === 'collapse' ? 0 : appBarHeight"
   >
     <div
-      v-if="!$user.user"
-      class="bg-dark h-full flex items-center justify-center p-4"
-      style="z-index: 999"
-    >
-      <FlowinityBanner
-        v-if="
-          experimentsStore.experiments.OFFICIAL_INSTANCE &&
-          !$vuetify.display.mobile
-        "
-        alt="Flowinity Logo"
-        @click="
-          $router.push('/');
-          uiStore.navigationMode = RailMode.HOME;
-        "
-        class="cursor-pointer"
-        draggable="false"
-        style="height: 40px; z-index: 9999"
-      />
-      <FlowinityBannerHandler v-else-if="!$vuetify.display.mobile" />
-    </div>
-    <div
       class="flex flex-col w-full"
       :class="{
         'h-full': expanded,
@@ -61,7 +40,28 @@
           'image-offset': uiStore.appBarType === 'collapse'
         }"
       >
-        <div class="flex select-none flex-grow">
+        <div
+          v-if="!$user.user"
+          class="bg-dark h-full flex items-center justify-center"
+          style="z-index: 999"
+        >
+          <FlowinityBanner
+            v-if="
+              experimentsStore.experiments.OFFICIAL_INSTANCE &&
+              !$vuetify.display.mobile
+            "
+            alt="Flowinity Logo"
+            @click="
+              $router.push('/');
+              uiStore.navigationMode = RailMode.HOME;
+            "
+            class="cursor-pointer"
+            draggable="false"
+            style="height: 40px; z-index: 9999"
+          />
+          <FlowinityBannerHandler v-else-if="!$vuetify.display.mobile" />
+        </div>
+        <div class="flex select-none">
           <div v-if="$vuetify.display.mobile">
             <v-btn
               v-if="userStore.user"

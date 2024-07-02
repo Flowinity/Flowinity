@@ -589,10 +589,12 @@ p:has(.emoji-large) img {
 
 .dev-overlay.foreground .content {
   border: 1px solid #0190ea;
+  opacity: 1;
 }
 
 .dev-overlay .content {
   border: 1px solid #757575;
+  opacity: 0.7;
 }
 
 // Align v-icon with text
