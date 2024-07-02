@@ -65,9 +65,6 @@ export default defineComponent({
       this.$app.mainDrawer = false;
       this.$chat.memberSidebarShown = false;
     }
-    if (window._cordovaNative) {
-      this.$app.cordova = true;
-    }
 
     if (this.$app.platform !== Platform.WEB) {
       console.log("Electron detected");

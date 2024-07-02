@@ -51,7 +51,6 @@ export const useAppStore = defineStore("app", {
     },
     fluidGradient: false,
     demo: false,
-    cordova: false,
     lastRoute: "/",
     domain: "/i/",
     mainDrawer: true,

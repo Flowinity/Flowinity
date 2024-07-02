@@ -81,8 +81,6 @@ declare global {
     _paq: {
       push: (args: any[]) => void;
     };
-    _cordovaNative: any;
-    cordova?: any;
     central: {
       user: any;
       emit: (platform: string, event: string, data: any) => void;

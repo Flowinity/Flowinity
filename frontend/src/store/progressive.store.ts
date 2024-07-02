@@ -1030,7 +1030,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
       name: user?.username,
       icon: h(UserAvatar, {
         user,
-        size: 30
+        size: 30,
+        class: "ml-1"
       }),
       path: `/u/${user?.username}`
     };

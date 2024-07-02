@@ -153,7 +153,7 @@
           <super-bar-item-template
             v-if="$experiments.experiments.WIDGETS"
             :item="{
-              id: RailMode.COLLECTIONS,
+              id: RailMode.HOME,
               name: 'Add Widget',
               icon: RiAddLine,
               selectedIcon: RiAddLine

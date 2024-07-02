@@ -231,7 +231,7 @@
       <div id="appbar-under" class="px-4 w-full"></div>
     </div>
   </v-app-bar>
-  <teleport to="#main-first" v-if="uiStore.ready">
+  <teleport to="#main-first" v-if="uiStore.ready && userStore.user">
     <div
       v-if="uiStore.appBarType === 'collapse'"
       id="fake-dom-no-shift"
@@ -247,7 +247,16 @@
 import { useAppStore } from "@/store/app.store";
 import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
-import { computed, onMounted, onUnmounted, ref, StyleValue, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  onUnmounted,
+  ref,
+  StyleValue,
+  watch
+} from "vue";
 import { useRoute } from "vue-router";
 import { RiArrowRightSLine, RiMenuLine } from "@remixicon/vue";
 import { useDisplay } from "vuetify";
@@ -300,12 +309,13 @@ watch(
   }
 );
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   uiStore.appBarReady = false;
   loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
 });
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
   uiStore.appBarReady = true;
 });
 

@@ -11,12 +11,13 @@
 
 <script lang="ts" setup>
 import Crash from "@/components/Core/CrashAlt.vue";
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
 import { useProgressiveUIStore } from "@/store/progressive.store";
 
 const uiStore = useProgressiveUIStore();
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
   uiStore.loggedInViewReady = true;
 });
 

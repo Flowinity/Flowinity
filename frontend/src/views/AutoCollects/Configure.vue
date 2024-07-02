@@ -264,8 +264,8 @@ export default defineComponent({
               )
             ]
           : []),
-        this.$ui.navigation.railOptions.find(
-          (rail) => rail.id === RailMode.AUTO_COLLECTS
+        this.$ui.navigation.options[RailMode.GALLERY].find(
+          (option) => option.path === "/autoCollect"
         )
       ]
     };

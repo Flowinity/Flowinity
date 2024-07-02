@@ -39,6 +39,10 @@ export class FileControllerV3 {
         }
       ]
     })
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'none'; media-src *; img-src *; style-src 'unsafe-inline';"
+    )
     if (config.release === "dev") {
       try {
         await fs.accessSync(

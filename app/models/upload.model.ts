@@ -1,4 +1,14 @@
-import { BelongsTo, BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table, Unique } from "sequelize-typescript"
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
@@ -73,7 +83,6 @@ export class Upload extends Model {
   @Column
   deletable: boolean
 
-  // TODO: GraphQL type, unused anyway
   @Column({
     type: DataType.JSON
   })

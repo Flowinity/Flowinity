@@ -15,11 +15,7 @@
           {{ $t("settings.tabs.security") }}
         </v-tab>
         <v-tab prepend-icon="mdi-cellphone-cog" to="/settings/clients">
-          {{
-            $app.cordova
-              ? $t("settings.tabs.mobileSetup")
-              : $t("settings.tabs.setup")
-          }}
+          {{ $t("settings.tabs.setup") }}
         </v-tab>
         <v-tab
           v-if="$app.site.officialInstance"
