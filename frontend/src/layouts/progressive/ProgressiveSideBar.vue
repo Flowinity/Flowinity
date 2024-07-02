@@ -230,18 +230,6 @@ const uiStore = useProgressiveUIStore();
 const display = useDisplay();
 
 watch(
-  () => uiStore.currentRail,
-  async (val) => {
-    await nextTick();
-    const yOffset = -10;
-    const element = document.getElementById("sidebar-content");
-    if (element) {
-      element.scrollTop = 0;
-    }
-  }
-);
-
-watch(
   () => appStore.mainDrawer,
   (val) => {
     if (!val && !display.mobile.value) {

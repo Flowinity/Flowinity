@@ -232,10 +232,10 @@ export class GalleryService {
             input.type === Type.COLLECTION
               ? { model: CollectionItem, as: "item" }
               : input.type === Type.STARRED
-                ? { model: Star, as: "starred" }
-                : input.type === Type.AUTO_COLLECT
-                  ? { model: AutoCollectApproval, as: "autoCollectApproval" }
-                  : {},
+              ? { model: Star, as: "starred" }
+              : input.type === Type.AUTO_COLLECT
+              ? { model: AutoCollectApproval, as: "autoCollectApproval" }
+              : {},
             "createdAt",
             input.order || "DESC"
           ]
@@ -295,8 +295,8 @@ export class GalleryService {
         input.type === Type.PERSONAL || input.filters?.includes(Filter.OWNED)
           ? id
           : input.filters?.includes(Filter.SHARED)
-            ? { [Op.not]: id }
-            : undefined,
+          ? { [Op.not]: id }
+          : undefined,
       [Op.or]: [
         input.filters?.includes(Filter.INCLUDE_METADATA)
           ? [{ textMetadata: { [Op.like]: "%" + input.search + "%" } }]
