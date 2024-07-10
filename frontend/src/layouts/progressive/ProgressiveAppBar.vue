@@ -1,14 +1,5 @@
 <template>
   <v-app-bar
-    id="navbar"
-    :key="$app.activeNags.offset"
-    :class="classString"
-    :extension-height="$app.activeNags.offset"
-    app
-    class="navbar border-b-2 w-full backdrop-blur-lg top-0 z-50 overflow-clip no-image"
-    color="dark"
-    :flat="true"
-    :floating="true"
     v-memo="[
       uiStore.currentNavItem?.item?.name,
       uiStore.currentNavItem?.rail[0]?.id,
@@ -19,6 +10,15 @@
       uiStore.scrollPosition,
       appBarHeight
     ]"
+    id="navbar"
+    :key="$app.activeNags.offset"
+    :class="classString"
+    :extension-height="$app.activeNags.offset"
+    app
+    class="navbar border-b-2 w-full backdrop-blur-lg top-0 z-50 overflow-clip no-image"
+    color="dark"
+    :flat="true"
+    :floating="true"
     :style="getStyle"
     :height="uiStore.appBarType === 'collapse' ? 0 : appBarHeight"
   >
