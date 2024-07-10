@@ -6,15 +6,8 @@
       $app.site.officialInstance
     "
     id="tpu-brand-logo"
-    style="
-      min-height: 48px;
-      min-width: 150px;
-      max-height: 48px;
-      max-width: 150px;
-    "
     class="ml-4 unselectable pointer"
     src="@/assets/images/flowinity-logo-banner.svg"
-    @click="$router.push('/')"
   />
   <FlowinityBannerRainbow
     v-else-if="
@@ -23,15 +16,8 @@
       $app.site.officialInstance
     "
     id="tpu-brand-logo"
-    style="
-      min-height: 48px;
-      min-width: 150px;
-      max-height: 48px;
-      max-width: 150px;
-    "
     class="ml-4 unselectable pointer"
     src="@/assets/images/flowinity-logo-banner.svg"
-    @click="$router.push('/')"
   />
   <h1
     v-else

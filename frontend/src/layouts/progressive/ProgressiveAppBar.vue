@@ -59,7 +59,10 @@
             draggable="false"
             style="height: 40px; z-index: 9999"
           />
-          <FlowinityBannerHandler v-else-if="!$vuetify.display.mobile" />
+          <FlowinityBannerHandler
+            @click="$router.push('/')"
+            v-else-if="!$vuetify.display.mobile"
+          />
         </div>
         <div class="flex select-none">
           <div v-if="$vuetify.display.mobile">

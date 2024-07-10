@@ -108,6 +108,19 @@ if (process.env.NODE_ENV === "development") {
       console.log(
         `[TPU/Dev] ${this.$options.__file?.split("/")?.pop()} mounted`
       );
+    },
+    updated() {
+      if (
+        //@ts-ignore
+        this.$options?.name?.startsWith("V") ||
+        //@ts-ignore
+        this.$options?.name === "BaseTransition"
+      )
+        return;
+      //@ts-ignore
+      console.log(
+        `[TPU/Dev] ${this.$options.__file?.split("/")?.pop()} updated`
+      );
     }
   };
   app.mixin(loggingMixin);

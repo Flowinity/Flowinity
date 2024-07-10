@@ -1,17 +1,8 @@
 <template>
   <v-container class="text-center">
-    <v-img
-      v-if="rainbow()"
-      src="@/assets/images/flowinity-logo-banner-rainbow.svg"
-      max-height="120"
-      class="mb-3"
-      @click="rainbowMode(false)"
-    />
-    <v-img
-      v-else
-      src="@/assets/images/flowinity-logo-banner.svg"
-      max-height="120"
-      class="mb-3"
+    <FlowinityBannerHandler
+      style="max-height: 120px; max-width: 100%"
+      class="mb-4"
       @click="rainbowMode(true)"
     />
     <v-divider />
@@ -112,9 +103,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Platform } from "../../store/app.store";
+import FlowinityBannerRainbow from "@/components/Brand/FlowinityBannerRainbow.vue";
+import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vue";
 
 export default defineComponent({
   name: "About",
+  components: { FlowinityBannerHandler, FlowinityBannerRainbow },
   computed: {
     Platform() {
       return Platform;

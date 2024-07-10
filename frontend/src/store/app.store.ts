@@ -164,14 +164,8 @@ export const useAppStore = defineStore("app", {
       return {
         ...nags,
         offset: Object.keys(nags).filter((key) => nags[key]).length * 40,
-        IAF_PROMO:
-          experimentsStore.experiments.IAF_NAG === 0 || experimentsStore
+        IAF_PROMO: iaf !== 5 && iaf !== 0
       };
-    },
-    quickActionItem(state): SidebarItem {
-      const item = this.sidebar.find((item) => item.id === state.quickAction);
-      if (!item) return this.sidebar.find((item) => item.id === 1);
-      return item;
     },
     sidebar(state): SidebarItem[] {
       const user = useUserStore();

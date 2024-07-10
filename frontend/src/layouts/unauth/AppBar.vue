@@ -8,7 +8,16 @@
     flat
     floating
   >
-    <FlowinityBannerHandler v-if="!$vuetify.display.mobile" />
+    <FlowinityBannerHandler
+      v-if="!$vuetify.display.mobile"
+      style="
+        min-height: 48px;
+        min-width: 150px;
+        max-height: 48px;
+        max-width: 150px;
+      "
+      @click="$router.push('/')"
+    />
     <v-spacer />
     <!-- theme v-menu -->
     <v-menu

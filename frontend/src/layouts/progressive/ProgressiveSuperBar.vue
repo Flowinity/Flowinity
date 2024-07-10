@@ -45,6 +45,7 @@
                   ? '#F44336'
                   : undefined
               "
+              :key="$experiments.experiments.PRIDE"
               @click="
                 $router.push('/');
                 uiStore.navigationMode = RailMode.HOME;

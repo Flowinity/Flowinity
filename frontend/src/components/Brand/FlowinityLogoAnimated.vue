@@ -1,12 +1,13 @@
 <template>
   <svg
+    v-if="!$experiments.experiments.NEW_BRANDING"
     :id="id"
     viewBox="0 0 741 741"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <rect width="741" height="741" :fill="internalColor" />
-    <circle cx="370.5" cy="370.5" r="370.5" fill="url(#paint0_linear_370_5)" />
+    <circle cx="370.5" cy="370.5" r="370.5" :fill="fillColor" />
     <path
       d="M108 426C108 409.984 120.984 397 137 397C153.016 397 166 409.984 166 426V691H108V426Z"
       :fill="internalColor"
@@ -48,12 +49,46 @@
       </linearGradient>
     </defs>
   </svg>
+  <svg
+    v-else
+    :id="id"
+    viewBox="0 0 472 472"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      :id="`${id}-path-0`"
+      d="M202.542 235.958L235.549 202.95L268.609 236.01L235.601 269.018L202.542 235.958Z"
+      :fill="$vuetify.theme.current.dark ? 'white' : 'black'"
+      :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+      stroke-width="20"
+    />
+    <g id="outer-paths" style="transform-origin: 50% 50%">
+      <path
+        :id="`${id}-path-1`"
+        d="M380.043 236.015L380.043 236.008V236.001C380.038 228.808 377.185 221.894 372.085 216.794L202.49 47.1989L235.547 14.1421L416.383 194.978C439.044 217.639 439.044 254.381 416.383 277.041L329.951 363.473L296.892 330.414L372.085 255.22C377.176 250.129 380.037 243.218 380.043 236.015Z"
+        fill="transparent"
+        :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+        stroke-width="20"
+      />
+      <path
+        :id="`${id}-path-2`"
+        d="M91.5139 235.78L91.5139 235.788V235.795C91.5185 242.987 94.3719 249.902 99.4717 255.002L269.067 424.597L236.01 457.653L55.1735 276.817C32.5124 254.156 32.5131 217.415 55.1737 194.754L141.605 108.322L174.665 141.382L99.4718 216.575C94.3806 221.666 91.5197 228.577 91.5139 235.78Z"
+        fill="transparent"
+        :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+        stroke-width="20"
+      />
+    </g>
+    <defs v-html="pride" />
+  </svg>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useTheme } from "vuetify";
 import anime from "animejs";
+import { useExperimentsStore } from "@/store/experiments.store";
+import { usePride } from "@/plugins/pride";
 
 const theme = useTheme();
 
@@ -68,6 +103,7 @@ const props = defineProps({
     default: false
   }
 });
+const pride = usePride();
 
 // random id
 const id = `flowinity-logo-animated-${Math.random().toString(36).substring(7)}`;
@@ -79,10 +115,17 @@ const internalColor = computed(() => {
   return props.color;
 });
 
+const fillColor = computed(() => {
+  return experimentsStore.experiments.PRIDE
+    ? "url(#pride_gradient)/* "
+    : useTheme().current.value.dark
+    ? "white/*"
+    : "dark/*";
+});
+
 const hasPlayedInit = ref(false);
 
 const tlLoading = anime.timeline({
-  easing: "easeInOutQuad",
   duration: 250,
   loop: true,
   autoplay: false,
@@ -102,89 +145,153 @@ const tlInit = anime.timeline({
   autoplay: true
 });
 
+const experimentsStore = useExperimentsStore();
+
+const FILL_DURATION = 100;
+const STROKE_DURATION = 1000;
+
 onMounted(() => {
+  console.log(
+    `FlowinityLogoAnimated ${id} mounted, skipInit: ${props.skipInit}, new branding: ${experimentsStore.experiments.NEW_BRANDING}`
+  );
   // animate each path separately to animate up and down, one by one
   // play tlInit, all paths will start at the bottom and animate up
   if (props.skipInit) {
     hasPlayedInit.value = true;
   } else {
-    setTimeout(() => {
-      tlInit
+    if (experimentsStore.experiments.NEW_BRANDING) {
+      setTimeout(() => {
+        tlInit
+          .add({
+            targets: `#${id}-path-1`,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            easing: "easeInOutSine",
+            duration: STROKE_DURATION,
+            loop: true,
+            fill: "transparent",
+            stroke: fillColor.value
+          })
+          .add({
+            targets: `#${id}-path-2`,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            easing: "easeInOutSine",
+            duration: STROKE_DURATION,
+            fill: "transparent",
+            stroke: fillColor.value
+          })
+          .add({
+            targets: `#${id} path`,
+            // gradient
+            fill: fillColor.value,
+            stroke: fillColor.value,
+            duration: 500,
+            easing: "easeInOutQuad"
+          }).complete = () => {
+          hasPlayedInit.value = true;
+        };
+      }, 0);
+    } else {
+      setTimeout(() => {
+        tlInit
+          .add({
+            targets: `#${id}-path-0`,
+            translateY: [1000, 0],
+            delay: 50
+          })
+          .add({
+            targets: `#${id}-path-1`,
+            translateY: [1000, 0]
+          })
+          .add({
+            targets: `#${id}-path-2`,
+            translateY: [1000, 0]
+          })
+          .add({
+            targets: `#${id}-path-3`,
+            translateY: [1000, 0]
+          }).complete = () => {
+          hasPlayedInit.value = true;
+        };
+      }, 0);
+    }
+
+    if (experimentsStore.experiments.NEW_BRANDING) {
+      tlLoading
+        .add({
+          targets: "#outer-paths",
+          rotate: [0, 180],
+          duration: 1500,
+          loop: true,
+          easing: "easeInOutElastic"
+        })
+        .add({
+          duration: 200
+        })
+        .add({
+          targets: "#outer-paths",
+          rotate: [180, 360],
+          duration: 1500,
+          loop: true,
+          easing: "easeInOutElastic"
+        })
+        .add({
+          duration: 1000
+        });
+    } else {
+      tlLoading
         .add({
           targets: `#${id}-path-0`,
-          translateY: [1000, 0],
-          delay: 50
+          translateY: [0, 1000],
+          loop: true,
+          direction: "alternate"
         })
         .add({
           targets: `#${id}-path-1`,
-          translateY: [1000, 0] // Animate from 1000px translateY to 0px
+          translateY: [0, 1000],
+          loop: true,
+          direction: "alternate"
         })
         .add({
           targets: `#${id}-path-2`,
-          translateY: [1000, 0] // Animate from 1000px translateY to 0px
+          translateY: [0, 1000],
+          loop: true,
+          direction: "alternate"
         })
         .add({
           targets: `#${id}-path-3`,
-          translateY: [1000, 0] // Animate from 1000px translateY to 0px
-        }).complete = () => {
-        hasPlayedInit.value = true;
-      };
-      // animate each path separately to animate up and down, one by one
-    }, 0);
+          translateY: [0, 1000],
+          loop: true,
+          direction: "alternate"
+        })
+        .add({
+          targets: `#${id}-path-0`,
+          translateY: [1000, 0],
+          loop: true,
+          direction: "alternate"
+        })
+        .add({
+          targets: `#${id}-path-1`,
+          translateY: [1000, 0],
+          loop: true,
+          direction: "alternate"
+        })
+        .add({
+          targets: `#${id}-path-2`,
+          translateY: [1000, 0],
+          loop: true,
+          direction: "alternate"
+        })
+        .add({
+          targets: `#${id}-path-3`,
+          translateY: [1000, 0],
+          loop: true,
+          direction: "alternate"
+        })
+        .add({
+          duration: 1000
+        });
+    }
   }
-
-  tlLoading
-    .add({
-      targets: `#${id}-path-0`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-1`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-2`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-3`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-0`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-1`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-2`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-3`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      duration: 1000
-    });
   if (!props.skipInit) tlLoading.pause();
   if (props.skipInit) tlLoading.play();
 });

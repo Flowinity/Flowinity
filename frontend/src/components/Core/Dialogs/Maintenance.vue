@@ -8,7 +8,7 @@
     <div class="crash-parent">
       <div class="crashed">
         <FlowinityBannerHandler
-          style="max-width: 500px; max-height: 80px; margin-left: 0 !important"
+          style="max-width: 100%; max-height: 80px; margin-left: 0 !important"
           class="mb-2"
         />
         <div class="title">Maintenance...</div>
