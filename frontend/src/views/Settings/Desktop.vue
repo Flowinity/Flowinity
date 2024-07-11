@@ -3,6 +3,14 @@
     {{ $t("settings.desktop.settings") }}
   </v-card-title>
   <div class="mx-4">
+    <v-text-field
+      v-model="settings.instance"
+      :label="$t('settings.desktop.instance')"
+    />
+    <v-btn class="mt-n4 mb-4" color="red" @click="changeInstance">
+      {{ $t("settings.desktop.instanceChange") }}
+    </v-btn>
+
     <tpu-switch
       v-model="settings.startup"
       :label="$t('settings.desktop.startup')"
@@ -83,7 +91,8 @@ const settings = ref({
   windowBorder: false,
   restartRequired: false,
   init: false,
-  startMinimized: false
+  startMinimized: false,
+  instance: ""
 });
 
 const flowshotVersion = ref("");
@@ -116,6 +125,13 @@ function updateSettings() {
 
 function restart() {
   window.electron.ipcRenderer.send(IpcChannels.RESTART);
+}
+
+function changeInstance() {
+  window.electron.ipcRenderer.send(
+    IpcChannels.CHANGE_INSTANCE,
+    settings.value.instance
+  );
 }
 </script>
 
