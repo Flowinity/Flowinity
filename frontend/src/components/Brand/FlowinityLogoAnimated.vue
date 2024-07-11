@@ -140,9 +140,6 @@ const FILL_DURATION = 100;
 const STROKE_DURATION = 1000;
 
 onMounted(() => {
-  console.log(
-    `FlowinityLogoAnimated ${id} mounted, skipInit: ${props.skipInit}, new branding: ${experimentsStore.experiments.NEW_BRANDING}`
-  );
   // animate each path separately to animate up and down, one by one
   // play tlInit, all paths will start at the bottom and animate up
   if (props.skipInit) {
@@ -238,83 +235,82 @@ onMounted(() => {
         };
       }, 0);
     }
-
-    if (experimentsStore.experiments.NEW_BRANDING) {
-      tlLoading
-        .add({
-          targets: `#${id} #outer-paths`,
-          rotate: [0, 180],
-          duration: 1500,
-          loop: true,
-          easing: "easeInOutElastic"
-        })
-        .add({
-          duration: 200
-        })
-        .add({
-          targets: `#${id} #outer-paths`,
-          rotate: [180, 360],
-          duration: 1500,
-          loop: true,
-          easing: "easeInOutElastic"
-        })
-        .add({
-          duration: 1000
-        });
-    } else {
-      tlLoading
-        .add({
-          targets: `#${id}-path-0`,
-          translateY: [0, 1000],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-1`,
-          translateY: [0, 1000],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-2`,
-          translateY: [0, 1000],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-3`,
-          translateY: [0, 1000],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-0`,
-          translateY: [1000, 0],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-1`,
-          translateY: [1000, 0],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-2`,
-          translateY: [1000, 0],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          targets: `#${id}-path-3`,
-          translateY: [1000, 0],
-          loop: true,
-          direction: "alternate"
-        })
-        .add({
-          duration: 1000
-        });
-    }
+  }
+  if (experimentsStore.experiments.NEW_BRANDING) {
+    tlLoading
+      .add({
+        targets: `#${id} #outer-paths`,
+        rotate: [0, 180],
+        duration: 1500,
+        loop: true,
+        easing: "easeInOutElastic"
+      })
+      .add({
+        duration: 200
+      })
+      .add({
+        targets: `#${id} #outer-paths`,
+        rotate: [180, 360],
+        duration: 1500,
+        loop: true,
+        easing: "easeInOutElastic"
+      })
+      .add({
+        duration: 1000
+      });
+  } else {
+    tlLoading
+      .add({
+        targets: `#${id}-path-0`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-1`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-2`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-3`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-0`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-1`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-2`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-3`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        duration: 1000
+      });
   }
   if (!props.skipInit) tlLoading.pause();
   if (props.skipInit) tlLoading.play();

@@ -12,7 +12,9 @@
             v-if="$experiments.experiments.FLOWINITY"
             class="d-flex justify-center my-4"
           >
-            <FlowinityBanner style="width: 256px"></FlowinityBanner>
+            <FlowinityBanner
+              style="width: 256px; height: auto"
+            ></FlowinityBanner>
           </div>
           <p
             v-else

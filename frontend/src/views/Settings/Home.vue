@@ -179,7 +179,6 @@
       item-value="key"
       @update:model-value="$emit('update')"
     />
-    <PrideSelector class="px-6" />
     <tpu-switch
       :model-value="!disableProfileColors"
       :label="$t('settings.home.preferences.disableProfileColors')"
@@ -203,6 +202,7 @@
       item-value="value"
       @update:model-value="$emit('update')"
     />
+    <PrideSelector class="px-6" />
     <!-- select between Farenheit, Celsius or Kelvin -->
     <tpu-switch
       :model-value="!!$experiments.experiments.WEATHER"
