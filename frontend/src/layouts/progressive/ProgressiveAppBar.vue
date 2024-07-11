@@ -57,7 +57,7 @@
             "
             class="cursor-pointer"
             draggable="false"
-            style="height: 40px; z-index: 9999"
+            style="height: 40px; z-index: 9999; width: auto"
           />
           <FlowinityBannerHandler
             @click="$router.push('/')"
