@@ -268,7 +268,8 @@ import {
   RiSearchLine,
   RiUserLine,
   RiLogoutBoxLine,
-  RiAddLine
+  RiAddLine,
+  RiDownloadCloud2Fill
 } from "@remixicon/vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
