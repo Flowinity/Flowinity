@@ -170,6 +170,22 @@
     <div class="items-center sticky bottom-0">
       <div class="border-b-2 mb-3 w-full flowinity-border" />
       <div class="flex flex-col gap-y-2 items-center">
+        <super-bar-item
+          v-if="$app.desktop.updateAvailable"
+          highlighted
+          @click="
+            $app.platform === Platform.LINUX ? () => {} : updateDesktopApp()
+          "
+        >
+          <v-tooltip activator="parent" location="right">
+            {{
+              $app.platform === Platform.LINUX
+                ? "Update available in your package manager"
+                : "Update available to install"
+            }}
+          </v-tooltip>
+          <RiDownloadCloud2Fill />
+        </super-bar-item>
         <super-bar-item-template
           v-for="item in uiStore.navigation.railOptions.filter(
             (opt) => opt.misc
@@ -206,6 +222,16 @@
               My Profile
             </v-list-item>
             <v-list-item
+              v-if="$app.platform !== Platform.WEB"
+              style="color: rgb(var(--v-theme-error))"
+              @click="resetInstance"
+            >
+              <template #prepend>
+                <RiLogoutCircleLine class="mr-2" style="width: 36px" />
+              </template>
+              Change Instance
+            </v-list-item>
+            <v-list-item
               style="color: rgb(var(--v-theme-error))"
               @click="$user.logout"
             >
@@ -222,23 +248,24 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store/app.store";
-import { useProgressiveUIStore, RailMode } from "@/store/progressive.store";
+import { Platform, useAppStore } from "@/store/app.store";
+import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
 import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import SuperBarItem from "@/layouts/default/SuperBarItem.vue";
 import {
+  RiAddLine,
   RiFeedbackLine,
+  RiLogoutBoxLine,
   RiLogoutCircleLine,
   RiNotificationFill,
   RiNotificationLine,
   RiSearchLine,
   RiUserLine,
-  RiLogoutBoxLine,
-  RiAddLine
+  RiDownloadCloud2Fill
 } from "@remixicon/vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
@@ -246,6 +273,7 @@ import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.v
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import SuperBarItemTemplate from "@/layouts/default/SuperBarItemTemplate.vue";
+import { IpcChannels } from "@/electron-types/ipc";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
@@ -274,4 +302,13 @@ watch(
     }
   }
 );
+
+function resetInstance() {
+  window.electron.ipcRenderer.send(IpcChannels.CHANGE_INSTANCE, null);
+}
+
+const updateDesktopApp = () => {
+  if (appStore.platform === Platform.WEB) return;
+  window.electron.ipcRenderer.send(IpcChannels.UPDATE);
+};
 </script>

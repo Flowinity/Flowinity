@@ -363,7 +363,9 @@
         "title": "Flowshot Settings (Flowinity Flameshot)",
         "launchConfig": "Launch Flowshot Configurator"
       },
-      "startMinimized": "Start Flowinity minimized"
+      "startMinimized": "Start Flowinity minimized",
+      "instance": "Instance Domain",
+      "instanceChange": "Change Instance"
     }
   },
   "generic": {
