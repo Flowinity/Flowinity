@@ -252,14 +252,14 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import { useProgressiveUIStore, RailMode } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
 import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { onMounted, ref, watch } from "vue";
-import SuperBarItem from "@/layouts/default/SuperBarItem.vue";
+import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
   RiFeedbackLine,
   RiLogoutCircleLine,
@@ -275,7 +275,8 @@ import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import Notifications from "@/components/Core/Notifications.vue";
-import SuperBarItemTemplate from "@/layouts/default/SuperBarItemTemplate.vue";
+import SuperBarItemTemplate from "@/layouts/progressive/SuperBarItemTemplate.vue";
+import { IpcChannels } from "@/electron-types/ipc";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
@@ -304,4 +305,9 @@ watch(
     }
   }
 );
+
+const updateDesktopApp = () => {
+  if (appStore.platform === Platform.WEB) return;
+  window.electron.ipcRenderer.send(IpcChannels.UPDATE);
+};
 </script>
