@@ -2437,58 +2437,58 @@ export type Subscription = {
 };
 
 
-export type SubscriptiononCollectionRemovedArgs = {
+export type SubscriptionOnCollectionRemovedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptiononCollectionUpdatedArgs = {
+export type SubscriptionOnCollectionUpdatedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptiononCollectionUserAddedArgs = {
+export type SubscriptionOnCollectionUserAddedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptiononCollectionUserRemovedArgs = {
+export type SubscriptionOnCollectionUserRemovedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptiononCollectionUserUpdatedArgs = {
+export type SubscriptionOnCollectionUserUpdatedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptiononCreateUploadArgs = {
+export type SubscriptionOnCreateUploadArgs = {
   input?: InputMaybe<GalleryInput>;
 };
 
 
-export type SubscriptiononDeleteMessageArgs = {
+export type SubscriptionOnDeleteMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptiononEditMessageArgs = {
+export type SubscriptionOnEditMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptiononMessageArgs = {
+export type SubscriptionOnMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptiononNoteCollabPositionArgs = {
+export type SubscriptionOnNoteCollabPositionArgs = {
   noteId?: InputMaybe<Scalars['Int']['input']>;
   shareLink?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-export type SubscriptiononUpdateNoteArgs = {
+export type SubscriptionOnUpdateNoteArgs = {
   id?: InputMaybe<Scalars['Int']['input']>;
   shareLink?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2503,7 +2503,7 @@ export type SubscriptionMetadata = {
   hours: Scalars['Float']['output'];
 };
 
-export type TPUSubscription = {
+export type TpuSubscription = {
   __typename?: 'TPUSubscription';
   cancelled: Scalars['Boolean']['output'];
   cancelledAt?: Maybe<Scalars['DateTimeISO']['output']>;
@@ -2520,8 +2520,8 @@ export type TPUSubscription = {
 
 /** Whether the user should be added, or removed from the group. */
 export enum ToggleUser {
-  ADD = 'ADD',
-  REMOVE = 'REMOVE'
+  Add = 'ADD',
+  Remove = 'REMOVE'
 }
 
 export type TransferCollectionOwnershipInput = {
@@ -2607,9 +2607,9 @@ export type UpdateNoteEventInput = {
 };
 
 export enum UpdateNoteEventType {
-  DELETE = 'DELETE',
-  INSERT = 'INSERT',
-  UPDATE = 'UPDATE'
+  Delete = 'DELETE',
+  Insert = 'INSERT',
+  Update = 'UPDATE'
 }
 
 export type UpdateRank = {
@@ -2764,7 +2764,7 @@ export type User = {
   storedStatus: UserStoredStatus;
   /** @deprecated Subdomains are no longer available as of TPUv2/NEXT. */
   subdomainId?: Maybe<Scalars['Float']['output']>;
-  subscription?: Maybe<TPUSubscription>;
+  subscription?: Maybe<TpuSubscription>;
   /** Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions. */
   subscriptionId?: Maybe<Scalars['Float']['output']>;
   themeEngine?: Maybe<Scalars['JSON']['output']>;
@@ -2781,7 +2781,7 @@ export type User = {
 };
 
 
-export type UsersessionsArgs = {
+export type UserSessionsArgs = {
   input?: InputMaybe<SessionInput>;
 };
 
@@ -2795,21 +2795,21 @@ export type UserCollectionsInput = {
 
 /** Preference of who can send them friend requests. */
 export enum UserFriendRequestPrivacy {
-  EVERYONE = 'EVERYONE',
-  NOBODY = 'NOBODY'
+  Everyone = 'EVERYONE',
+  Nobody = 'NOBODY'
 }
 
 /** Preference of who can add them directly into groups. */
 export enum UserGroupPrivacy {
-  FRIENDS = 'FRIENDS',
-  NOBODY = 'NOBODY'
+  Friends = 'FRIENDS',
+  Nobody = 'NOBODY'
 }
 
 /** Insights privacy preference. */
 export enum UserInsights {
-  EVERYONE = 'EVERYONE',
-  FRIENDS = 'FRIENDS',
-  NOBODY = 'NOBODY'
+  Everyone = 'EVERYONE',
+  Friends = 'FRIENDS',
+  Nobody = 'NOBODY'
 }
 
 export type UserProfileInput = {
@@ -2819,18 +2819,18 @@ export type UserProfileInput = {
 
 /** User status/presence shown to other users. */
 export enum UserStatus {
-  BUSY = 'BUSY',
-  IDLE = 'IDLE',
-  OFFLINE = 'OFFLINE',
-  ONLINE = 'ONLINE'
+  Busy = 'BUSY',
+  Idle = 'IDLE',
+  Offline = 'OFFLINE',
+  Online = 'ONLINE'
 }
 
 /** User status/presence that has `invisible` and is shown to the current user. */
 export enum UserStoredStatus {
-  BUSY = 'BUSY',
-  IDLE = 'IDLE',
-  INVISIBLE = 'INVISIBLE',
-  ONLINE = 'ONLINE'
+  Busy = 'BUSY',
+  Idle = 'IDLE',
+  Invisible = 'INVISIBLE',
+  Online = 'ONLINE'
 }
 
 export type Weather = {
@@ -2885,9 +2885,9 @@ export type WorkspaceFolder = {
 
 /** The type of workspace item */
 export enum WorkspaceItemType {
-  FOLDER = 'FOLDER',
-  NOTE = 'NOTE',
-  WORKSPACE = 'WORKSPACE'
+  Folder = 'FOLDER',
+  Note = 'NOTE',
+  Workspace = 'WORKSPACE'
 }
 
 export type WorkspaceNote = {

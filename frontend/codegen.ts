@@ -10,7 +10,7 @@ const config: CodegenConfig = {
   config: {
     // Super hacky way to retain the experiments as is
     namingConvention: (str: string) => {
-      if (str === "Experiments") {
+      if (str === "ACCOUNT_DEV_ELIGIBLE") {
         isExperiments = true;
       }
       if (isExperiments) {
