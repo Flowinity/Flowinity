@@ -178,20 +178,6 @@
           :item="item"
           :highlighted="true"
         />
-        <super-bar-item
-          highlighted
-          @click="
-            $ui.appBarReady = false;
-            $ui.loggedInViewReady = false;
-            $experiments.setExperiment('PROGRESSIVE_UI', 0);
-            $app.dialogs.feedback = true;
-          "
-        >
-          <v-tooltip activator="parent" location="right">
-            Restore Old Layout
-          </v-tooltip>
-          <RiLogoutCircleLine />
-        </super-bar-item>
         <super-bar-item highlighted @click="$app.dialogs.feedback = true">
           <v-tooltip activator="parent" location="right">
             Provide Feedback

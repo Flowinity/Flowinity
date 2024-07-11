@@ -135,7 +135,7 @@ export default function setup(app: App) {
       return {
         authorization: getToken(app),
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
+        "x-tpu-client": window.electron ? "Flowinity5 Electron" : "Flowinity5"
       };
     },
     lazy: false,
@@ -176,7 +176,7 @@ export default function setup(app: App) {
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
+        "x-tpu-client": window.electron ? "Flowinity5 Electron" : "Flowinity5"
       }
     });
     return forward(operation);

@@ -224,7 +224,7 @@ export default defineComponent({
         if (this.touchEndX - this.touchStartX > 130) {
           this.touchStartX = null;
           this.touchEndX = null;
-          this.$app.toggleMain();
+          this.$app.mainDrawer = !this.$app.mainDrawer;
         }
       } else if (this.touchEndX < this.touchStartX) {
         if (this.touchStartX - this.touchEndX > 130) {

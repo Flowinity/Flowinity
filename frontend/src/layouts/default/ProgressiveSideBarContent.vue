@@ -78,6 +78,11 @@
           </p>
         </div>
       </accessible-transition>
+      <small
+        class="absolute bottom-0 right-0 text-xs text-medium-emphasis mb-1 mr-1"
+      >
+        {{ $app.version.current }}
+      </small>
       <div id="sidebar-actions" class="flex items-center mr-4" />
     </div>
   </router-link>
