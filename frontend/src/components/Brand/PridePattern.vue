@@ -106,7 +106,12 @@ function setTheme() {
 .bg-outline-dark,
 .dark\\:bg-outline-dark {
   background: var(--pride-gradient-opaque) !important;
-}`;
+}
+
+.bg-primary {
+  background: var(--pride-gradient) !important;
+}
+`;
   document.head.appendChild(style);
 }
 
