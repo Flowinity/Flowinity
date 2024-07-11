@@ -186,7 +186,9 @@
       item-title="title"
       item-value="key"
       :items="prideVariants"
-      @update:model-value="$experiments.setExperiment('PRIDE', $event)"
+      @update:model-value="
+        $experiments.setExperiment('PRIDE', $event as number)
+      "
     >
       <template #label>
         {{ $t("settings.home.preferences.pride") }}

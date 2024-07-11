@@ -18,8 +18,8 @@
         Set Brand Version
       </v-btn>
       <br />
-      ANIMATION DOES NOT SUPPORT COMPONENT HOTSWAP
-      <div :key="$experiments.experiments.NEW_BRANDING">
+      ANIMATION DOES NOT SUPPORT SVG HOTSWAP
+      <div :key="$experiments.experiments.NEW_BRANDING as number">
         <small>
           Variant:
           {{

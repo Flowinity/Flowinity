@@ -29,7 +29,7 @@
                 ? '#F44336'
                 : 'transparent'
             "
-            :key="$experiments.experiments.PRIDE"
+            :key="$experiments.experiments.PRIDE as number"
             @click="
               $router.push('/');
               uiStore.navigationMode = RailMode.HOME;
