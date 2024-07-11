@@ -251,24 +251,18 @@ export const useUserStore = defineStore("user", {
         document.body.style.setProperty("--gradient-offset", "100%");
       }
     },
-    primaryColorResult(primaryColor?: string | null, gold?: boolean) {
-      if (primaryColor && gold)
+    primaryColorResult(primaryColor?: string | null) {
+      if (primaryColor)
         return {
           gradient1: primaryColor,
           gradient2: primaryColor,
           primary: primaryColor
         };
-      return gold || this.gold
-        ? {
-            gradient1: "#ffdb1b",
-            gradient2: "#ffd700",
-            primary: "#ffd700"
-          }
-        : {
-            gradient1: "#096fea",
-            gradient2: "#0166ea",
-            primary: "#0190ea"
-          };
+      return {
+        gradient1: "#096fea",
+        gradient2: "#0166ea",
+        primary: "#0190ea"
+      };
     },
     async resendVerificationEmail() {
       try {

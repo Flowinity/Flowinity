@@ -70,6 +70,7 @@
         label="Base Theme"
         @update:modelValue="triggerSave"
       />
+      <PrideSelector />
     </v-card-title>
     <v-card
       :class="{ 'v-card--disabled': !$user.gold && $app.site.officialInstance }"
@@ -253,9 +254,11 @@ import { DefaultThemes } from "@/plugins/vuetify";
 import { defineComponent } from "vue";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
 import { useTheme } from "vuetify/lib/framework.mjs";
+import PrideSelector from "@/components/Settings/PrideSelector.vue";
 
 export default defineComponent({
   components: {
+    PrideSelector,
     VueMonacoEditor
   },
   setup() {

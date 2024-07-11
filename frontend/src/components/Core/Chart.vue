@@ -43,6 +43,7 @@ import chartJS, {
   Tooltip
 } from "chart.js";
 import { defineComponent } from "vue";
+import { PrideVariant } from "@/types/pride";
 
 ChartJS.register(
   Title,
@@ -226,9 +227,12 @@ export default defineComponent({
           0,
           chartArea.top
         );
-        gradient.addColorStop(0, "#ff4e50");
-        gradient.addColorStop(0.5, "#ffd700");
-        gradient.addColorStop(1, "#0190ea");
+        PrideVariant.gradient(this.$experiments.experiments.PRIDE).forEach(
+          (color, index) => {
+            const offset = !color.offset ? 0 : color.offset;
+            gradient.addColorStop(offset, color.stopColor);
+          }
+        );
       }
 
       this.gradient = gradient;

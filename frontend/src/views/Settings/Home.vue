@@ -179,37 +179,7 @@
       item-value="key"
       @update:model-value="$emit('update')"
     />
-    <v-select
-      v-model="$experiments.experiments.PRIDE"
-      :label="$t('settings.home.preferences.pride')"
-      class="px-6"
-      item-title="title"
-      item-value="key"
-      :items="prideVariants"
-      @update:model-value="
-        $experiments.setExperiment('PRIDE', $event as number)
-      "
-    >
-      <template #label>
-        {{ $t("settings.home.preferences.pride") }}
-        <v-chip
-          size="x-small"
-          variant="tonal"
-          style="
-            background: linear-gradient(
-              to bottom right,
-              #f293ab60,
-              #f293ab60,
-              #88a4f560,
-              #88a4f560
-            );
-            color: white;
-          "
-        >
-          {{ $t("generic.new") }}
-        </v-chip>
-      </template>
-    </v-select>
+    <PrideSelector class="px-6" />
     <tpu-switch
       :model-value="!disableProfileColors"
       :label="$t('settings.home.preferences.disableProfileColors')"
@@ -332,12 +302,17 @@ import {
   DeleteGalleryMutation
 } from "@/graphql/user/deleteAccount.graphql";
 import DeleteAccount from "@/components/Users/Dialogs/DeleteAccount.vue";
-import { PrideVariant } from "@/types/pride";
-import { isNumeric } from "@/plugins/isNumeric";
+import PrideSelector from "@/components/Settings/PrideSelector.vue";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { DeleteAccount, DangerZoneDialog, DangerZoneInput, TwoFactor },
+  components: {
+    PrideSelector,
+    DeleteAccount,
+    DangerZoneDialog,
+    DangerZoneInput,
+    TwoFactor
+  },
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -429,19 +404,6 @@ export default defineComponent({
     };
   },
   computed: {
-    prideVariants() {
-      const result = [];
-      for (const variant of Object.keys(PrideVariant)) {
-        if (isNumeric(variant))
-          result.push({
-            title: this.$t(
-              `settings.home.preferences.prideVariants.${variant}`
-            ),
-            key: Number(variant)
-          });
-      }
-      return result;
-    },
     disableProfileColors: {
       get() {
         try {
