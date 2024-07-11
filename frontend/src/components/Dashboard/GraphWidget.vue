@@ -129,7 +129,8 @@ export default defineComponent({
   computed: {
     primaryColorResult() {
       return this.$user.primaryColorResult(
-        this.primaryColor || this.$user.theme.colors.primary
+        this.primaryColor || this.$user.theme.colors.primary,
+        this.gold
       );
     }
   }

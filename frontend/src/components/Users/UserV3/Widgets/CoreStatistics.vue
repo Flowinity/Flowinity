@@ -66,7 +66,7 @@ export default defineComponent({
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary).primary;
+      return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },
     hoursMost() {
       if (this.user?.stats?.hours) {
