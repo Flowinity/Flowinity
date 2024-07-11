@@ -29,6 +29,12 @@ export default {
         white: "#ffffff",
         indigo: "#3f51b5"
       },
+      backgroundImage: () => ({
+        "pride-gradient": "var(--pride-gradient)"
+      }),
+      borderImage: () => ({
+        "pride-gradient": "var(--pride-gradient)"
+      }),
       fontFamily: {
         sans: ["Inter", "sans-serif"]
       },
