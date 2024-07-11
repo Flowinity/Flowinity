@@ -179,11 +179,14 @@
       item-value="key"
       @update:model-value="$emit('update')"
     />
-    <tpu-switch
-      :model-value="!!$experiments.experiments.PRIDE"
+    <v-select
+      v-model="$experiments.experiments.PRIDE"
       :label="$t('settings.home.preferences.pride')"
       class="px-6"
-      @update:model-value="$experiments.setExperiment('PRIDE', $event ? 1 : 0)"
+      item-title="title"
+      item-value="key"
+      :items="prideVariants"
+      @update:model-value="$experiments.setExperiment('PRIDE', $event)"
     />
     <tpu-switch
       :model-value="!disableProfileColors"
@@ -254,8 +257,8 @@
             volume > 70
               ? "mdi-volume-high"
               : volume > 0
-                ? "mdi-volume-medium"
-                : "mdi-volume-off"
+              ? "mdi-volume-medium"
+              : "mdi-volume-off"
           }}
         </v-icon>
       </template>
@@ -307,6 +310,8 @@ import {
   DeleteGalleryMutation
 } from "@/graphql/user/deleteAccount.graphql";
 import DeleteAccount from "@/components/Users/Dialogs/DeleteAccount.vue";
+import { PrideVariant } from "@/types/pride";
+import { isNumeric } from "@/plugins/isNumeric";
 
 export default defineComponent({
   name: "SettingsHome",
@@ -402,6 +407,19 @@ export default defineComponent({
     };
   },
   computed: {
+    prideVariants() {
+      const result = [];
+      for (const variant of Object.keys(PrideVariant)) {
+        if (isNumeric(variant))
+          result.push({
+            title: this.$t(
+              `settings.home.preferences.prideVariants.${variant}`
+            ),
+            key: Number(variant)
+          });
+      }
+      return result;
+    },
     disableProfileColors: {
       get() {
         try {

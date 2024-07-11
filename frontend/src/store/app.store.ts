@@ -131,7 +131,8 @@ export const useAppStore = defineStore("app", {
       socketProfiler: false,
       actionDialog: false,
       networkInspector: false,
-      createChat: false
+      createChat: false,
+      brandingDebug: false
     },
     platform: getPlatform(),
     desktop: {

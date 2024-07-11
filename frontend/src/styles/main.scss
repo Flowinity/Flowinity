@@ -571,6 +571,7 @@ p:has(.emoji-large) img {
   flex-direction: column;
   overflow: scroll;
   background-color: rgba(0, 0, 0, 0.9);
+  color: white
 }
 
 .dev-header {
@@ -732,20 +733,6 @@ p:has(.emoji-large) img {
 .hover-shade {
   filter: brightness(100%);
   transition: 0.3s;
-}
-
-.rainbow .text-gradient {
-  background: linear-gradient(to right, #ff4e50, #ffd700, #0190ea);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.rainbow .user-avatar-parent:not(:has(.v-img)) {
-  background: linear-gradient(to bottom right, #ff4e50, #ffd700, #0190ea);
-}
-
-.rainbow .v-ripple__animation {
-  background: linear-gradient(to right, #ff4e50, #fc913a, #f9d423, #eae374, #e2f7ce, #9ed9e1, #5e6472);
 }
 
 .invite {

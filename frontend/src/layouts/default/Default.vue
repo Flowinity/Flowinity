@@ -60,18 +60,28 @@
         $experiments.experiments.PROGRESSIVE_UI
       "
     />
-    <progressive-super-bar
-      v-if="
-        $app.site.finishedSetup !== false &&
-        $experiments.experiments.PROGRESSIVE_UI
-      "
-    />
-    <progressive-side-bar
-      v-if="
-        $app.site.finishedSetup !== false &&
-        $experiments.experiments.PROGRESSIVE_UI
-      "
-    />
+    <template v-if="!$vuetify.display.mobile">
+      <progressive-super-bar
+        v-if="
+          $app.site.finishedSetup !== false &&
+          $experiments.experiments.PROGRESSIVE_UI
+        "
+      />
+      <progressive-side-bar
+        v-if="
+          $app.site.finishedSetup !== false &&
+          $experiments.experiments.PROGRESSIVE_UI
+        "
+      />
+    </template>
+    <template v-else>
+      <progressive-side-bar-mobile
+        v-if="
+          $app.site.finishedSetup !== false &&
+          $experiments.experiments.PROGRESSIVE_UI
+        "
+      />
+    </template>
     <rail-bar
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
@@ -158,10 +168,12 @@ import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import UploadFileV2 from "@/components/Gallery/Dialogs/UploadFileV2.vue";
+import ProgressiveSideBarMobile from "@/layouts/progressive/ProgressiveSideBarMobile.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    ProgressiveSideBarMobile,
     UploadFileV2,
     FlowinityLogoAnimated,
     GroupSettingsDialog,

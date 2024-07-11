@@ -34,19 +34,7 @@
     />
 
     <defs>
-      <linearGradient
-        id="paint0_linear_370_5"
-        x1="371"
-        y1="0"
-        x2="371"
-        y2="741"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop
-          offset="1"
-          :stop-color="$vuetify.theme.current.dark ? 'white' : 'black'"
-        />
-      </linearGradient>
+      <PridePattern :id="`${id}_pride_gradient`" />
     </defs>
   </svg>
   <svg
@@ -59,8 +47,8 @@
     <path
       :id="`${id}-path-0`"
       d="M202.542 235.958L235.549 202.95L268.609 236.01L235.601 269.018L202.542 235.958Z"
-      :fill="$vuetify.theme.current.dark ? 'white' : 'black'"
-      :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+      :fill="fillColor"
+      :stroke="fillColor"
       stroke-width="20"
     />
     <g id="outer-paths" style="transform-origin: 50% 50%">
@@ -68,18 +56,18 @@
         :id="`${id}-path-1`"
         d="M380.043 236.015L380.043 236.008V236.001C380.038 228.808 377.185 221.894 372.085 216.794L202.49 47.1989L235.547 14.1421L416.383 194.978C439.044 217.639 439.044 254.381 416.383 277.041L329.951 363.473L296.892 330.414L372.085 255.22C377.176 250.129 380.037 243.218 380.043 236.015Z"
         fill="transparent"
-        :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+        :stroke="fillColor"
         stroke-width="20"
       />
       <path
         :id="`${id}-path-2`"
         d="M91.5139 235.78L91.5139 235.788V235.795C91.5185 242.987 94.3719 249.902 99.4717 255.002L269.067 424.597L236.01 457.653L55.1735 276.817C32.5124 254.156 32.5131 217.415 55.1737 194.754L141.605 108.322L174.665 141.382L99.4718 216.575C94.3806 221.666 91.5197 228.577 91.5139 235.78Z"
         fill="transparent"
-        :stroke="$vuetify.theme.current.dark ? 'white' : 'black'"
+        :stroke="fillColor"
         stroke-width="20"
       />
     </g>
-    <defs v-html="pride" />
+    <PridePattern :id="`${id}_pride_gradient`" />
   </svg>
 </template>
 
@@ -88,7 +76,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useTheme } from "vuetify";
 import anime from "animejs";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { usePride } from "@/plugins/pride";
+import PridePattern from "@/components/Brand/PridePattern.vue";
 
 const theme = useTheme();
 
@@ -103,7 +91,6 @@ const props = defineProps({
     default: false
   }
 });
-const pride = usePride();
 
 // random id
 const id = `flowinity-logo-animated-${Math.random().toString(36).substring(7)}`;
@@ -116,11 +103,12 @@ const internalColor = computed(() => {
 });
 
 const fillColor = computed(() => {
+  // /* is not a typo
   return experimentsStore.experiments.PRIDE
-    ? "url(#pride_gradient)/* "
-    : useTheme().current.value.dark
+    ? `url(#${id}_pride_gradient)/*`
+    : theme.current.value.dark
     ? "white/*"
-    : "dark/*";
+    : "black/*";
 });
 
 const hasPlayedInit = ref(false);
@@ -129,6 +117,7 @@ const tlLoading = anime.timeline({
   duration: 250,
   loop: true,
   autoplay: false,
+  easing: "easeInOutQuad",
   loopComplete(anim) {
     if (!props.animate) {
       anim.pause();
@@ -157,7 +146,42 @@ onMounted(() => {
   // animate each path separately to animate up and down, one by one
   // play tlInit, all paths will start at the bottom and animate up
   if (props.skipInit) {
-    hasPlayedInit.value = true;
+    if (experimentsStore.experiments.NEW_BRANDING) {
+      tlInit.add({
+        targets: `#${id} path`,
+        // gradient
+        fill: fillColor.value,
+        stroke: fillColor.value,
+        duration: 0,
+        easing: "easeInOutQuad"
+      }).complete = () => {
+        hasPlayedInit.value = true;
+      };
+    } else {
+      tlInit
+        .add({
+          targets: `#${id}-path-0`,
+          translateY: [1000, 0],
+          duration: 0
+        })
+        .add({
+          targets: `#${id}-path-1`,
+          translateY: [1000, 0],
+          duration: 0
+        })
+        .add({
+          targets: `#${id}-path-2`,
+          translateY: [1000, 0],
+          duration: 0
+        })
+        .add({
+          targets: `#${id}-path-3`,
+          translateY: [1000, 0],
+          duration: 0
+        }).complete = () => {
+        hasPlayedInit.value = true;
+      };
+    }
   } else {
     if (experimentsStore.experiments.NEW_BRANDING) {
       setTimeout(() => {
@@ -218,7 +242,7 @@ onMounted(() => {
     if (experimentsStore.experiments.NEW_BRANDING) {
       tlLoading
         .add({
-          targets: "#outer-paths",
+          targets: `#${id} #outer-paths`,
           rotate: [0, 180],
           duration: 1500,
           loop: true,
@@ -228,7 +252,7 @@ onMounted(() => {
           duration: 200
         })
         .add({
-          targets: "#outer-paths",
+          targets: `#${id} #outer-paths`,
           rotate: [180, 360],
           duration: 1500,
           loop: true,
@@ -306,5 +330,3 @@ watch(
   }
 );
 </script>
-
-<style scoped></style>

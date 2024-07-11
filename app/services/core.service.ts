@@ -902,6 +902,7 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
+      experiments.NEW_BRANDING = true
       experiments.CHAT_CACHING = 10
       // experiments.PROGRESSIVE_UI = true
       experiments.CHAT_GUIDED_WIZARD = true

@@ -203,7 +203,22 @@
         "disableBatteryPreservation": "Disable battery preservation",
         "pride": "Pride Theme",
         "weather": "Weather Widget",
-        "animations": "Animations"
+        "animations": "Animations",
+        "prideVariants": {
+          "0": "Off",
+          "1": "Gay (Subtle)",
+          "2": "Gay",
+          "3": "Lesbian (Subtle)",
+          "4": "Lesbian",
+          "5": "Bisexual (Subtle)",
+          "6": "Bisexual",
+          "7": "Transgender (Subtle)",
+          "8": "Transgender",
+          "9": "Non-Binary (Subtle)",
+          "10": "Non-Binary",
+          "11": "Asexual (Subtle)",
+          "12": "Asexual"
+        }
       },
       "deleteAccount": {
         "title": "Delete Account",
