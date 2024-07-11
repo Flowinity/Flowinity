@@ -27,6 +27,7 @@ import { Experiment } from "@app/models/experiment.model"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { GqlError } from "@app/lib/gqlErrors"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
+import { Experiments } from "@app/lib/experiments"
 
 @Resolver(CoreState)
 @Service()
@@ -257,15 +258,14 @@ export class CoreResolver {
     @Arg("input") input: SetExperimentInput
   ) {
     const validExperiments = [
-      "WEATHER",
-      "DISABLE_ANIMATIONS",
-      "PROGRESSIVE_UI",
-      "NOTIFICATION_SOUND",
-      "THEME",
-      "PRIDE",
-      "DOWNLOAD_THE_APP_NAG",
-      "ENABLE_AUTOSTART_APP_NAG",
-      "IAF_NAG"
+      Experiments.WEATHER,
+      Experiments.DISABLE_ANIMATIONS,
+      Experiments.NOTIFICATION_SOUND,
+      Experiments.THEME,
+      Experiments.PRIDE,
+      Experiments.DOWNLOAD_THE_APP_NAG,
+      Experiments.ENABLE_AUTOSTART_APP_NAG,
+      Experiments.IAF_NAG
     ]
     if (input.userId && !ctx.user?.administrator)
       throw new GqlError("NOT_ADMIN")

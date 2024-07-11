@@ -819,12 +819,92 @@ export type ExperimentType = {
   createdAt?: Maybe<Scalars['Date']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   force: Scalars['Boolean']['output'];
-  id: Scalars['String']['output'];
+  id: Experiments;
   override: Scalars['Boolean']['output'];
   refresh?: Maybe<Scalars['Boolean']['output']>;
   value: Scalars['Int']['output'];
   versions: Array<Scalars['Int']['output']>;
 };
+
+/** Available experiments */
+export enum Experiments {
+  ACCOUNT_DEV_ELIGIBLE = 'ACCOUNT_DEV_ELIGIBLE',
+  ANDROID_CONFIG = 'ANDROID_CONFIG',
+  API_FALLBACK_ON_ERROR = 'API_FALLBACK_ON_ERROR',
+  API_VERSION = 'API_VERSION',
+  API_VERSION_V2 = 'API_VERSION_V2',
+  BADGES = 'BADGES',
+  BREADCRUMB_SHOW_PARENT = 'BREADCRUMB_SHOW_PARENT',
+  CAN_ENABLE_PROGRESSIVE_UI = 'CAN_ENABLE_PROGRESSIVE_UI',
+  CHAT_CACHING = 'CHAT_CACHING',
+  CHAT_GUIDED_WIZARD = 'CHAT_GUIDED_WIZARD',
+  CLASSIC_MIGRATE = 'CLASSIC_MIGRATE',
+  COMMS_SUPERBAR = 'COMMS_SUPERBAR',
+  COMMUNICATIONS = 'COMMUNICATIONS',
+  COMMUNICATIONS_INLINE_SIDEBAR_HIRES = 'COMMUNICATIONS_INLINE_SIDEBAR_HIRES',
+  COMMUNICATIONS_KEEP_LOADED = 'COMMUNICATIONS_KEEP_LOADED',
+  COMMUNICATIONS_QUAD_SIDEBAR_LOWRES = 'COMMUNICATIONS_QUAD_SIDEBAR_LOWRES',
+  COPY_MSG_ID = 'COPY_MSG_ID',
+  CREEPY_SFX_BUTTON = 'CREEPY_SFX_BUTTON',
+  DEBUG_FAVICON = 'DEBUG_FAVICON',
+  DESIGN_V2 = 'DESIGN_V2',
+  DISABLE_ANIMATIONS = 'DISABLE_ANIMATIONS',
+  DOWNLOAD_THE_APP_NAG = 'DOWNLOAD_THE_APP_NAG',
+  EARLY_ACCESS = 'EARLY_ACCESS',
+  EDITOR_V2 = 'EDITOR_V2',
+  ENABLE_AUTOSTART_APP_NAG = 'ENABLE_AUTOSTART_APP_NAG',
+  ENABLE_PULSE_TAB = 'ENABLE_PULSE_TAB',
+  EXPAND_APP_BAR_IMAGE = 'EXPAND_APP_BAR_IMAGE',
+  EXPERIENCE_FLUID = 'EXPERIENCE_FLUID',
+  EXPERIENCE_GALLERY_ITEM_WIDTH = 'EXPERIENCE_GALLERY_ITEM_WIDTH',
+  EXPERIENCE_ITEMS_PER_PAGE = 'EXPERIENCE_ITEMS_PER_PAGE',
+  FAB = 'FAB',
+  FLOWINITY = 'FLOWINITY',
+  GALLERY_INFINITE_SCROLL = 'GALLERY_INFINITE_SCROLL',
+  HOVER_CHIP_CLOSE_DELAY = 'HOVER_CHIP_CLOSE_DELAY',
+  HOVER_CHIP_HOVER = 'HOVER_CHIP_HOVER',
+  HOVER_CHIP_OPEN_DELAY = 'HOVER_CHIP_OPEN_DELAY',
+  IAF_NAG = 'IAF_NAG',
+  INSTANT_UPLOAD = 'INSTANT_UPLOAD',
+  INTERACTIVE_NOTES = 'INTERACTIVE_NOTES',
+  LEGACY_ATTRIBUTES_UI = 'LEGACY_ATTRIBUTES_UI',
+  LEGACY_CUSTOMIZATION = 'LEGACY_CUSTOMIZATION',
+  LEGACY_FLOWINITY_SSO = 'LEGACY_FLOWINITY_SSO',
+  LEGACY_MOBILE_NAV = 'LEGACY_MOBILE_NAV',
+  MEET = 'MEET',
+  MEME_GEN = 'MEME_GEN',
+  NATIVE_BADGES = 'NATIVE_BADGES',
+  NEW_BRANDING = 'NEW_BRANDING',
+  NOTE_AI_ASSIST = 'NOTE_AI_ASSIST',
+  NOTE_COLLAB = 'NOTE_COLLAB',
+  NOTIFICATION_SOUND = 'NOTIFICATION_SOUND',
+  OFFICIAL_INSTANCE = 'OFFICIAL_INSTANCE',
+  PINNED_MESSAGES = 'PINNED_MESSAGES',
+  PRIDE = 'PRIDE',
+  PROFILE_BANNER = 'PROFILE_BANNER',
+  PROGRESSIVE_HOME = 'PROGRESSIVE_HOME',
+  PROGRESSIVE_UI = 'PROGRESSIVE_UI',
+  PROJECT_CENTRAL = 'PROJECT_CENTRAL',
+  PROJECT_MERGE = 'PROJECT_MERGE',
+  QUICK_NOTES = 'QUICK_NOTES',
+  RAIL_SIDEBAR = 'RAIL_SIDEBAR',
+  REMOVE_LEGACY_SOCKET = 'REMOVE_LEGACY_SOCKET',
+  RESIZABLE_SIDEBARS = 'RESIZABLE_SIDEBARS',
+  SFX_KFX = 'SFX_KFX',
+  SFX_KOLF = 'SFX_KOLF',
+  SURVEYS = 'SURVEYS',
+  THEME = 'THEME',
+  USER_V2 = 'USER_V2',
+  USER_V3 = 'USER_V3',
+  USER_V3_EDITOR = 'USER_V3_EDITOR',
+  USER_V3_MODIFY = 'USER_V3_MODIFY',
+  V5_FLOAT = 'V5_FLOAT',
+  WEATHER = 'WEATHER',
+  WEBMAIL = 'WEBMAIL',
+  WIDGETS = 'WIDGETS',
+  WORKSPACES_SIDEBAR = 'WORKSPACES_SIDEBAR',
+  meta = 'meta'
+}
 
 export type Features = {
   __typename?: 'Features';
@@ -2255,7 +2335,7 @@ export enum SessionType {
 }
 
 export type SetExperimentInput = {
-  key: Scalars['String']['input'];
+  key: Experiments;
   /** Admin only. */
   userId?: InputMaybe<Scalars['Int']['input']>;
   value: Scalars['Int']['input'];
@@ -2357,58 +2437,58 @@ export type Subscription = {
 };
 
 
-export type SubscriptionOnCollectionRemovedArgs = {
+export type SubscriptiononCollectionRemovedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptionOnCollectionUpdatedArgs = {
+export type SubscriptiononCollectionUpdatedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptionOnCollectionUserAddedArgs = {
+export type SubscriptiononCollectionUserAddedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptionOnCollectionUserRemovedArgs = {
+export type SubscriptiononCollectionUserRemovedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptionOnCollectionUserUpdatedArgs = {
+export type SubscriptiononCollectionUserUpdatedArgs = {
   input?: InputMaybe<FilterCollectionInput>;
 };
 
 
-export type SubscriptionOnCreateUploadArgs = {
+export type SubscriptiononCreateUploadArgs = {
   input?: InputMaybe<GalleryInput>;
 };
 
 
-export type SubscriptionOnDeleteMessageArgs = {
+export type SubscriptiononDeleteMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptionOnEditMessageArgs = {
+export type SubscriptiononEditMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptionOnMessageArgs = {
+export type SubscriptiononMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
 };
 
 
-export type SubscriptionOnNoteCollabPositionArgs = {
+export type SubscriptiononNoteCollabPositionArgs = {
   noteId?: InputMaybe<Scalars['Int']['input']>;
   shareLink?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-export type SubscriptionOnUpdateNoteArgs = {
+export type SubscriptiononUpdateNoteArgs = {
   id?: InputMaybe<Scalars['Int']['input']>;
   shareLink?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2423,7 +2503,7 @@ export type SubscriptionMetadata = {
   hours: Scalars['Float']['output'];
 };
 
-export type TpuSubscription = {
+export type TPUSubscription = {
   __typename?: 'TPUSubscription';
   cancelled: Scalars['Boolean']['output'];
   cancelledAt?: Maybe<Scalars['DateTimeISO']['output']>;
@@ -2440,8 +2520,8 @@ export type TpuSubscription = {
 
 /** Whether the user should be added, or removed from the group. */
 export enum ToggleUser {
-  Add = 'ADD',
-  Remove = 'REMOVE'
+  ADD = 'ADD',
+  REMOVE = 'REMOVE'
 }
 
 export type TransferCollectionOwnershipInput = {
@@ -2527,9 +2607,9 @@ export type UpdateNoteEventInput = {
 };
 
 export enum UpdateNoteEventType {
-  Delete = 'DELETE',
-  Insert = 'INSERT',
-  Update = 'UPDATE'
+  DELETE = 'DELETE',
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE'
 }
 
 export type UpdateRank = {
@@ -2684,7 +2764,7 @@ export type User = {
   storedStatus: UserStoredStatus;
   /** @deprecated Subdomains are no longer available as of TPUv2/NEXT. */
   subdomainId?: Maybe<Scalars['Float']['output']>;
-  subscription?: Maybe<TpuSubscription>;
+  subscription?: Maybe<TPUSubscription>;
   /** Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions. */
   subscriptionId?: Maybe<Scalars['Float']['output']>;
   themeEngine?: Maybe<Scalars['JSON']['output']>;
@@ -2701,7 +2781,7 @@ export type User = {
 };
 
 
-export type UserSessionsArgs = {
+export type UsersessionsArgs = {
   input?: InputMaybe<SessionInput>;
 };
 
@@ -2715,21 +2795,21 @@ export type UserCollectionsInput = {
 
 /** Preference of who can send them friend requests. */
 export enum UserFriendRequestPrivacy {
-  Everyone = 'EVERYONE',
-  Nobody = 'NOBODY'
+  EVERYONE = 'EVERYONE',
+  NOBODY = 'NOBODY'
 }
 
 /** Preference of who can add them directly into groups. */
 export enum UserGroupPrivacy {
-  Friends = 'FRIENDS',
-  Nobody = 'NOBODY'
+  FRIENDS = 'FRIENDS',
+  NOBODY = 'NOBODY'
 }
 
 /** Insights privacy preference. */
 export enum UserInsights {
-  Everyone = 'EVERYONE',
-  Friends = 'FRIENDS',
-  Nobody = 'NOBODY'
+  EVERYONE = 'EVERYONE',
+  FRIENDS = 'FRIENDS',
+  NOBODY = 'NOBODY'
 }
 
 export type UserProfileInput = {
@@ -2739,18 +2819,18 @@ export type UserProfileInput = {
 
 /** User status/presence shown to other users. */
 export enum UserStatus {
-  Busy = 'BUSY',
-  Idle = 'IDLE',
-  Offline = 'OFFLINE',
-  Online = 'ONLINE'
+  BUSY = 'BUSY',
+  IDLE = 'IDLE',
+  OFFLINE = 'OFFLINE',
+  ONLINE = 'ONLINE'
 }
 
 /** User status/presence that has `invisible` and is shown to the current user. */
 export enum UserStoredStatus {
-  Busy = 'BUSY',
-  Idle = 'IDLE',
-  Invisible = 'INVISIBLE',
-  Online = 'ONLINE'
+  BUSY = 'BUSY',
+  IDLE = 'IDLE',
+  INVISIBLE = 'INVISIBLE',
+  ONLINE = 'ONLINE'
 }
 
 export type Weather = {
@@ -2805,9 +2885,9 @@ export type WorkspaceFolder = {
 
 /** The type of workspace item */
 export enum WorkspaceItemType {
-  Folder = 'FOLDER',
-  Note = 'NOTE',
-  Workspace = 'WORKSPACE'
+  FOLDER = 'FOLDER',
+  NOTE = 'NOTE',
+  WORKSPACE = 'WORKSPACE'
 }
 
 export type WorkspaceNote = {
@@ -3307,7 +3387,7 @@ export type GetExperimentsQueryVariables = Exact<{
 }>;
 
 
-export type GetExperimentsQuery = { __typename?: 'Query', experiments: Array<{ __typename?: 'ExperimentType', id: string, value: number, description?: string | null, createdAt?: any | null, versions: Array<number> }> };
+export type GetExperimentsQuery = { __typename?: 'Query', experiments: Array<{ __typename?: 'ExperimentType', id: Experiments, value: number, description?: string | null, createdAt?: any | null, versions: Array<number> }> };
 
 export type SetExperimentMutationVariables = Exact<{
   input: SetExperimentInput;
@@ -3319,12 +3399,12 @@ export type SetExperimentMutation = { __typename?: 'Mutation', setExperiment: { 
 export type ExtraStateQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ExtraStateQueryQuery = { __typename?: 'Query', friends: Array<{ __typename?: 'Friend', id: number, status: FriendStatus, userId?: number | null, friendId: number, user: { __typename?: 'PartialUserFriend', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null, status: UserStatus } }>, experiments: Array<{ __typename?: 'ExperimentType', id: string, value: number, description?: string | null, createdAt?: any | null }>, workspaces: Array<{ __typename?: 'Workspace', id: number, name: string, userId?: number | null, createdAt: any, updatedAt: any, icon?: string | null, folders: Array<{ __typename?: 'WorkspaceFolder', id: number, createdAt: any, updatedAt: any, name: string, workspaceId: number, folderId?: number | null, children: Array<{ __typename?: 'Note', id: number, createdAt: any, updatedAt: any, name: string, workspaceFolderId: number, shareLink?: string | null }> }> }>, chats: Array<{ __typename?: 'Chat', id: number, description?: string | null, type: string, background?: string | null, unread?: number | null, name: string, userId?: number | null, icon?: string | null, createdAt: any, updatedAt: any, _redisSortDate?: string | null, invites: Array<{ __typename?: 'ChatInvite', id: string, userId?: number | null, createdAt: any, rankId?: string | null, updatedAt: any, expiredAt?: any | null, invalidated: boolean }>, association?: { __typename?: 'ChatAssociation', id: number, hidden?: boolean | null, chatId: number, permissions: Array<string>, userId?: number | null, rank: string, createdAt: any, lastRead?: number | null, notifications: string } | null, users: Array<{ __typename?: 'ChatAssociation', id: number, chatId: number, userId?: number | null, rank: string, createdAt: any, lastRead?: number | null, ranksMap: Array<string> }>, recipient?: { __typename?: 'PartialUserBase', id: number } | null, ranks: Array<{ __typename?: 'ChatRank', id: string, color?: string | null, name: string, userId?: number | null, createdAt?: any | null, chatId: number, updatedAt?: any | null, managed: boolean, index: number, permissionsMap: Array<string> }> }>, coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, connection: { __typename?: 'Connection', ip: string }, announcements: Array<{ __typename?: 'Announcement', userId?: number | null, content: string, type?: string | null, id: number, createdAt?: any | null, updatedAt?: any | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, stats: { __typename?: 'CoreStats', users: number, announcements: number, usage?: any | null, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: any | null, uploadGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, messageGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, pulseGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } }, collections: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', id: number, name: string, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }> }, currentUser?: { __typename?: 'User', username: string, email: string, pulse: boolean, groupPrivacy: UserGroupPrivacy, friendRequests: UserFriendRequestPrivacy, profileLayout?: any | null, description?: string | null, administrator: boolean, darkTheme: boolean, emailVerified: boolean, banned: boolean, createdAt: any, inviteId?: number | null, discordPrecache: boolean, avatar?: string | null, domainId: number, totpEnable: boolean, quota: number, moderator: boolean, subscriptionId?: number | null, itemsPerPage: number, banner?: string | null, pendingAutoCollects?: number | null, scopes?: string | null, status: UserStatus, storedStatus: UserStoredStatus, weatherUnit: string, themeEngine?: any | null, xp: number, publicProfile: boolean, privacyPolicyAccepted?: boolean | null, excludedCollections?: Array<number> | null, id: number, language: string, nameColor?: string | null, insights: UserInsights, alternatePasswords?: Array<{ __typename?: 'AlternatePassword', scopes: string, totp: boolean, name: string }> | null, plan?: { __typename?: 'Plan', quotaMax: number, color?: string | null, internalName: string, name: string, icon: string, id: number } | null, domain?: { __typename?: 'Domain', active: boolean, domain: string, id: number } | null, badges: Array<{ __typename?: 'Badge', color?: string | null, icon?: string | null, id: number, image?: string | null, name: string, priority?: number | null, tooltip?: string | null }>, subscription?: { __typename?: 'TPUSubscription', cancelled: boolean, metadata?: { __typename?: 'SubscriptionMetadata', hours: number } | null } | null, notifications: Array<{ __typename?: 'Notification', id: number, dismissed: boolean, message: string, route?: string | null, createdAt: any }>, integrations: Array<{ __typename?: 'Integration', type: string, providerUsername?: string | null, providerUserId?: number | null, id: number, error?: string | null, expiresAt?: any | null }> } | null, trackedUsers: Array<{ __typename?: 'PartialUserFriend', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null, blocked?: boolean | null, status: UserStatus, nameColor?: string | null, bot: boolean, nickname?: { __typename?: 'FriendNickname', nickname: string } | null }>, blockedUsers: Array<{ __typename?: 'BlockedUser', id: string, userId?: number | null, createdAt: any, updatedAt: any, blockedUserId: number, silent: boolean }>, userEmoji: Array<{ __typename?: 'ChatEmoji', id: string, userId?: number | null, chatId: number, icon?: string | null, name?: string | null, createdAt: any, updatedAt: any }> };
+export type ExtraStateQueryQuery = { __typename?: 'Query', friends: Array<{ __typename?: 'Friend', id: number, status: FriendStatus, userId?: number | null, friendId: number, user: { __typename?: 'PartialUserFriend', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null, status: UserStatus } }>, experiments: Array<{ __typename?: 'ExperimentType', id: Experiments, value: number, description?: string | null, createdAt?: any | null }>, workspaces: Array<{ __typename?: 'Workspace', id: number, name: string, userId?: number | null, createdAt: any, updatedAt: any, icon?: string | null, folders: Array<{ __typename?: 'WorkspaceFolder', id: number, createdAt: any, updatedAt: any, name: string, workspaceId: number, folderId?: number | null, children: Array<{ __typename?: 'Note', id: number, createdAt: any, updatedAt: any, name: string, workspaceFolderId: number, shareLink?: string | null }> }> }>, chats: Array<{ __typename?: 'Chat', id: number, description?: string | null, type: string, background?: string | null, unread?: number | null, name: string, userId?: number | null, icon?: string | null, createdAt: any, updatedAt: any, _redisSortDate?: string | null, invites: Array<{ __typename?: 'ChatInvite', id: string, userId?: number | null, createdAt: any, rankId?: string | null, updatedAt: any, expiredAt?: any | null, invalidated: boolean }>, association?: { __typename?: 'ChatAssociation', id: number, hidden?: boolean | null, chatId: number, permissions: Array<string>, userId?: number | null, rank: string, createdAt: any, lastRead?: number | null, notifications: string } | null, users: Array<{ __typename?: 'ChatAssociation', id: number, chatId: number, userId?: number | null, rank: string, createdAt: any, lastRead?: number | null, ranksMap: Array<string> }>, recipient?: { __typename?: 'PartialUserBase', id: number } | null, ranks: Array<{ __typename?: 'ChatRank', id: string, color?: string | null, name: string, userId?: number | null, createdAt?: any | null, chatId: number, updatedAt?: any | null, managed: boolean, index: number, permissionsMap: Array<string> }> }>, coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, connection: { __typename?: 'Connection', ip: string }, announcements: Array<{ __typename?: 'Announcement', userId?: number | null, content: string, type?: string | null, id: number, createdAt?: any | null, updatedAt?: any | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, stats: { __typename?: 'CoreStats', users: number, announcements: number, usage?: any | null, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: any | null, uploadGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, messageGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, pulseGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } }, collections: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', id: number, name: string, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }> }, currentUser?: { __typename?: 'User', username: string, email: string, pulse: boolean, groupPrivacy: UserGroupPrivacy, friendRequests: UserFriendRequestPrivacy, profileLayout?: any | null, description?: string | null, administrator: boolean, darkTheme: boolean, emailVerified: boolean, banned: boolean, createdAt: any, inviteId?: number | null, discordPrecache: boolean, avatar?: string | null, domainId: number, totpEnable: boolean, quota: number, moderator: boolean, subscriptionId?: number | null, itemsPerPage: number, banner?: string | null, pendingAutoCollects?: number | null, scopes?: string | null, status: UserStatus, storedStatus: UserStoredStatus, weatherUnit: string, themeEngine?: any | null, xp: number, publicProfile: boolean, privacyPolicyAccepted?: boolean | null, excludedCollections?: Array<number> | null, id: number, language: string, nameColor?: string | null, insights: UserInsights, alternatePasswords?: Array<{ __typename?: 'AlternatePassword', scopes: string, totp: boolean, name: string }> | null, plan?: { __typename?: 'Plan', quotaMax: number, color?: string | null, internalName: string, name: string, icon: string, id: number } | null, domain?: { __typename?: 'Domain', active: boolean, domain: string, id: number } | null, badges: Array<{ __typename?: 'Badge', color?: string | null, icon?: string | null, id: number, image?: string | null, name: string, priority?: number | null, tooltip?: string | null }>, subscription?: { __typename?: 'TPUSubscription', cancelled: boolean, metadata?: { __typename?: 'SubscriptionMetadata', hours: number } | null } | null, notifications: Array<{ __typename?: 'Notification', id: number, dismissed: boolean, message: string, route?: string | null, createdAt: any }>, integrations: Array<{ __typename?: 'Integration', type: string, providerUsername?: string | null, providerUserId?: number | null, id: number, error?: string | null, expiresAt?: any | null }> } | null, trackedUsers: Array<{ __typename?: 'PartialUserFriend', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null, blocked?: boolean | null, status: UserStatus, nameColor?: string | null, bot: boolean, nickname?: { __typename?: 'FriendNickname', nickname: string } | null }>, blockedUsers: Array<{ __typename?: 'BlockedUser', id: string, userId?: number | null, createdAt: any, updatedAt: any, blockedUserId: number, silent: boolean }>, userEmoji: Array<{ __typename?: 'ChatEmoji', id: string, userId?: number | null, chatId: number, icon?: string | null, name?: string | null, createdAt: any, updatedAt: any }> };
 
 export type CoreStateQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CoreStateQueryQuery = { __typename?: 'Query', experiments: Array<{ __typename?: 'ExperimentType', id: string, value: number, description?: string | null, createdAt?: any | null, versions: Array<number> }>, coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, connection: { __typename?: 'Connection', ip: string }, announcements: Array<{ __typename?: 'Announcement', userId?: number | null, content: string, type?: string | null, id: number, createdAt?: any | null, updatedAt?: any | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, stats: { __typename?: 'CoreStats', users: number, announcements: number, usage?: any | null, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: any | null, uploadGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, messageGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, pulseGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } } };
+export type CoreStateQueryQuery = { __typename?: 'Query', experiments: Array<{ __typename?: 'ExperimentType', id: Experiments, value: number, description?: string | null, createdAt?: any | null, versions: Array<number> }>, coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, connection: { __typename?: 'Connection', ip: string }, announcements: Array<{ __typename?: 'Announcement', userId?: number | null, content: string, type?: string | null, id: number, createdAt?: any | null, updatedAt?: any | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, stats: { __typename?: 'CoreStats', users: number, announcements: number, usage?: any | null, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: any | null, uploadGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, messageGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null, pulseGraph?: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } | null }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } } };
 
 export type WeatherQueryVariables = Exact<{ [key: string]: never; }>;
 

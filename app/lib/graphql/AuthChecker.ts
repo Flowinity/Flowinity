@@ -8,6 +8,7 @@ import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { Session } from "@app/models/session.model"
 import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
 import { CoreService } from "@app/services/core.service"
+import { Experiments } from "@app/lib/experiments"
 
 export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
@@ -18,7 +19,7 @@ export interface AuthCheckerOptions {
   /**
    * Only supports truthy experiments, it will pass if it's true, or 1 or more for example.
    */
-  requiredExperiments?: string[]
+  requiredExperiments?: Experiments[]
 }
 
 export const Authorization = (options: AuthCheckerOptions) =>

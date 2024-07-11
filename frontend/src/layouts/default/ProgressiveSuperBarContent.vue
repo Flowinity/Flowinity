@@ -243,7 +243,7 @@ import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { onMounted, ref, watch } from "vue";
-import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
+import SuperBarItem from "@/layouts/default/SuperBarItem.vue";
 import {
   RiFeedbackLine,
   RiLogoutCircleLine,
@@ -259,7 +259,7 @@ import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import Notifications from "@/components/Core/Notifications.vue";
-import SuperBarItemTemplate from "@/layouts/progressive/SuperBarItemTemplate.vue";
+import SuperBarItemTemplate from "@/layouts/default/SuperBarItemTemplate.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();

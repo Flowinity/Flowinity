@@ -7,10 +7,7 @@
       :chat-id="parseInt(<string>$route.params.chatId)"
     />
   </keep-alive>
-  <teleport
-    v-if="$experiments.experiments.PROGRESSIVE_UI && $chat.isReady && $ui.ready"
-    to="#appbar-options"
-  >
+  <teleport v-if="$chat.isReady && $ui.ready" to="#appbar-options">
     <accessible-transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
         <v-btn

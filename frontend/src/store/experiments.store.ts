@@ -7,19 +7,88 @@ import {
 import { useApolloClient } from "@vue/apollo-composable";
 import { ref, watch } from "vue";
 import { gql } from "@apollo/client";
-import { ExperimentOverrideInput } from "@/gql/graphql";
-
-export interface ExperimentsState {
-  experiments: Record<string, string | number | boolean | object>;
-  experimentsInherit: Record<string, string | number | boolean | object>;
-}
+import { ExperimentOverrideInput, Experiments } from "@/gql/graphql";
 
 export const useExperimentsStore = defineStore("experiments", () => {
-  const experiments = ref<Record<string, number | boolean | object>>({
+  const experiments = ref<Record<Experiments, number>>({
+    ACCOUNT_DEV_ELIGIBLE: 0,
+    ANDROID_CONFIG: 0,
+    API_FALLBACK_ON_ERROR: 0,
+    API_VERSION_V2: 0,
+    BADGES: 0,
+    BREADCRUMB_SHOW_PARENT: 0,
+    CAN_ENABLE_PROGRESSIVE_UI: 0,
+    CHAT_CACHING: 0,
+    CHAT_GUIDED_WIZARD: 0,
+    CLASSIC_MIGRATE: 0,
+    COMMS_SUPERBAR: 0,
+    COMMUNICATIONS: 0,
+    COMMUNICATIONS_INLINE_SIDEBAR_HIRES: 0,
+    COMMUNICATIONS_KEEP_LOADED: 0,
+    COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: 0,
+    COPY_MSG_ID: 0,
+    CREEPY_SFX_BUTTON: 0,
+    DEBUG_FAVICON: 0,
+    DESIGN_V2: 0,
+    DOWNLOAD_THE_APP_NAG: 0,
+    EARLY_ACCESS: 0,
+    EDITOR_V2: 0,
+    ENABLE_AUTOSTART_APP_NAG: 0,
+    ENABLE_PULSE_TAB: 0,
+    EXPAND_APP_BAR_IMAGE: 0,
+    EXPERIENCE_FLUID: 0,
+    EXPERIENCE_GALLERY_ITEM_WIDTH: 0,
+    EXPERIENCE_ITEMS_PER_PAGE: 0,
+    FAB: 0,
+    GALLERY_INFINITE_SCROLL: 0,
+    HOVER_CHIP_CLOSE_DELAY: 0,
+    HOVER_CHIP_HOVER: 0,
+    HOVER_CHIP_OPEN_DELAY: 0,
+    IAF_NAG: 0,
+    INSTANT_UPLOAD: 0,
+    INTERACTIVE_NOTES: 0,
+    LEGACY_ATTRIBUTES_UI: 0,
+    LEGACY_CUSTOMIZATION: 0,
+    LEGACY_FLOWINITY_SSO: 0,
+    LEGACY_MOBILE_NAV: 0,
+    MEET: 0,
+    MEME_GEN: 0,
+    NATIVE_BADGES: 0,
+    NEW_BRANDING: 0,
+    NOTE_AI_ASSIST: 0,
+    NOTE_COLLAB: 0,
+    NOTIFICATION_SOUND: 0,
+    OFFICIAL_INSTANCE: 0,
+    PINNED_MESSAGES: 0,
+    PRIDE: 0,
+    PROFILE_BANNER: 0,
+    PROGRESSIVE_HOME: 0,
+    PROGRESSIVE_UI: 0,
+    PROJECT_CENTRAL: 0,
+    PROJECT_MERGE: 0,
+    QUICK_NOTES: 0,
+    RAIL_SIDEBAR: 0,
+    REMOVE_LEGACY_SOCKET: 0,
+    RESIZABLE_SIDEBARS: 0,
+    SFX_KFX: 0,
+    SFX_KOLF: 0,
+    SURVEYS: 0,
+    THEME: 0,
+    USER_V2: 0,
+    USER_V3: 0,
+    USER_V3_EDITOR: 0,
+    USER_V3_MODIFY: 0,
+    V5_FLOAT: 0,
+    WEATHER: 0,
+    WEBMAIL: 0,
+    WIDGETS: 0,
+    WORKSPACES_SIDEBAR: 0,
+    meta: 0,
     API_VERSION: 3,
     FLOWINITY: 1,
     DISABLE_ANIMATIONS: 0
   });
+  console.log(experiments.value.PROGRESSIVE_UI);
   const experimentsInherit = ref<Record<string, number | boolean | object>>({});
 
   async function setExperiment(key: string, value: number, userId?: number) {
