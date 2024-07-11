@@ -40,14 +40,14 @@ const gradientValues = computed(() => {
 });
 
 const gradientCSS = computed(() => {
-  return `linear-gradient(to bottom right, ${gradientValues.value
+  return `linear-gradient(120deg, ${gradientValues.value
     .map((gradient) => gradient.stopColor)
     .join(", ")})`;
 });
 
 const gradientCSSOpaque = computed(() => {
-  return `linear-gradient(to bottom right, ${gradientValues.value
-    .map((gradient) => `${gradient.stopColor}30`)
+  return `linear-gradient(120deg, ${gradientValues.value
+    .map((gradient) => `${gradient.stopColor}28`)
     .join(", ")})`;
 });
 

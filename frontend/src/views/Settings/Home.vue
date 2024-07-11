@@ -187,7 +187,27 @@
       item-value="key"
       :items="prideVariants"
       @update:model-value="$experiments.setExperiment('PRIDE', $event)"
-    />
+    >
+      <template #label>
+        {{ $t("settings.home.preferences.pride") }}
+        <v-chip
+          size="x-small"
+          variant="tonal"
+          style="
+            background: linear-gradient(
+              to bottom right,
+              #f293ab60,
+              #f293ab60,
+              #88a4f560,
+              #88a4f560
+            );
+            color: white;
+          "
+        >
+          {{ $t("generic.new") }}
+        </v-chip>
+      </template>
+    </v-select>
     <tpu-switch
       :model-value="!disableProfileColors"
       :label="$t('settings.home.preferences.disableProfileColors')"
