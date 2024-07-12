@@ -92,19 +92,6 @@
       </v-btn>
       <overline>UI Options</overline>
       <v-btn
-        :color="$experiments.experiments.PROGRESSIVE_UI ? 'red' : 'blue'"
-        variant="tonal"
-        @click="
-          $experiments.setExperiment(
-            'PROGRESSIVE_UI',
-            $experiments.experiments.PROGRESSIVE_UI ? 0 : 1
-          )
-        "
-      >
-        {{ $experiments.experiments.PROGRESSIVE_UI ? "Disable" : "Enable" }}
-        New UI (v5in4)
-      </v-btn>
-      <v-btn
         @click="
           $experiments.setExperiment(
             'DISABLE_ANIMATIONS',

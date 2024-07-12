@@ -818,3 +818,7 @@ h6 {
     padding-inline-start: 40px;
   }
 }
+
+.v-icon.mdi::before {
+  content: "\f000";
+}

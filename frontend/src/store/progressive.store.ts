@@ -55,6 +55,8 @@ import {
   RiMailLine,
   RiMicrosoftFill,
   RiMicrosoftLine,
+  RiNewsFill,
+  RiNewsLine,
   RiNotificationLine,
   RiPieChartLine,
   RiRefreshFill,
@@ -269,6 +271,12 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               path: `/u/${userStore.user?.username}`,
               selectedIcon: markRaw(RiUserFill),
               allowOverride: true
+            },
+            {
+              icon: markRaw(RiNewsLine),
+              name: "Blog",
+              path: "/blog",
+              selectedIcon: markRaw(RiNewsFill)
             }
           ],
           [RailMode.GALLERY]: [
