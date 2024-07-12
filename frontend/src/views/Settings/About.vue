@@ -3,7 +3,6 @@
     <FlowinityBannerHandler
       style="max-height: 120px; max-width: 100%"
       class="mb-4"
-      @click="rainbowMode(true)"
     />
     <v-divider />
     <p class="mt-5">
@@ -83,20 +82,6 @@
 
       Flowinity, formerly known as PrivateUploader.
     </p>
-    <v-btn
-      v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
-      class="mt-2"
-      @click="expTrue"
-    >
-      {{ $t("settings.about.expEnable") }}
-    </v-btn>
-    <v-btn
-      v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
-      class="mt-2"
-      @click="expFalse"
-    >
-      {{ $t("settings.about.expDisable") }}
-    </v-btn>
   </v-container>
 </template>
 
@@ -108,7 +93,7 @@ import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vu
 
 export default defineComponent({
   name: "About",
-  components: { FlowinityBannerHandler, FlowinityBannerRainbow },
+  components: { FlowinityBannerHandler },
   computed: {
     Platform() {
       return Platform;
@@ -118,39 +103,6 @@ export default defineComponent({
     return {
       clickCount: 0
     };
-  },
-  methods: {
-    rainbowMode(val: boolean) {
-      this.clickCount++;
-      if (val && this.clickCount > 4) {
-        this.$experiments.setExperiment("PRIDE", 1);
-        this.clickCount = 0;
-        this.$toast.info("Enabled rainbow mode.");
-        document.body.classList.add("rainbow");
-      } else if (!val) {
-        this.$experiments.setExperiment("PRIDE", 0);
-        this.$toast.info("Disabled rainbow mode.");
-        document.body.classList.remove("rainbow");
-      }
-    },
-    rainbow() {
-      return this.$experiments.experiments["PRIDE"];
-    },
-    crash() {
-      throw new Error("Intentional error thrown");
-    },
-    expTrue() {
-      for (const key in this.$experiments.experiments) {
-        if (key === "meta") return;
-        this.$experiments.experiments[key] = true;
-      }
-    },
-    expFalse() {
-      for (const key in this.$experiments.experiments) {
-        if (key === "meta") return;
-        this.$experiments.experiments[key] = false;
-      }
-    }
   }
 });
 </script>

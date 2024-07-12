@@ -43,6 +43,7 @@
     viewBox="0 0 472 472"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    class="glow-on-hover"
   >
     <path
       :id="`${id}-path-0`"
@@ -77,6 +78,7 @@ import { useTheme } from "vuetify";
 import anime from "animejs";
 import { useExperimentsStore } from "@/store/experiments.store";
 import PridePattern from "@/components/Brand/PridePattern.vue";
+import { PrideVariant } from "@/types/pride";
 
 const theme = useTheme();
 
@@ -235,6 +237,7 @@ onMounted(() => {
         };
       }, 0);
     }
+    tlInit.play();
   }
   if (experimentsStore.experiments.NEW_BRANDING) {
     tlLoading
@@ -325,4 +328,21 @@ watch(
     }, 0);
   }
 );
+
+// only new branding has glowing effect
+const glowFilter = computed(() => {
+  const pride = useExperimentsStore().experiments.PRIDE as PrideVariant;
+  const gradient = PrideVariant.gradient(pride);
+  return `drop-shadow(0 0 12px ${gradient?.[0]?.stopColor || fillColor.value})`;
+});
 </script>
+
+<style scoped>
+.glow-on-hover {
+  transition: filter 0.3s ease;
+}
+
+.glow-on-hover:hover {
+  filter: v-bind(glowFilter);
+}
+</style>
