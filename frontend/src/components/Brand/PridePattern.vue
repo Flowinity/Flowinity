@@ -45,6 +45,12 @@ const gradientCSS = computed(() => {
     .join(", ")})`;
 });
 
+const gradientCSSText = computed(() => {
+  return `linear-gradient(100deg, ${gradientValues.value
+    .map((gradient) => gradient.stopColor)
+    .join(", ")})`;
+});
+
 const gradientCSSOpaque = computed(() => {
   return `linear-gradient(120deg, ${gradientValues.value
     .map((gradient) => `${gradient.stopColor}28`)
@@ -53,7 +59,7 @@ const gradientCSSOpaque = computed(() => {
 
 watch(
   () => gradientValues.value,
-  (gradient) => {
+  () => {
     setTheme();
   }
 );
@@ -65,6 +71,7 @@ function setTheme() {
   ) {
     document.documentElement.style.removeProperty("--pride-gradient");
     document.documentElement.style.removeProperty("--pride-gradient-opaque");
+    document.documentElement.style.removeProperty("--pride-gradient-text");
     document.head.removeChild(
       document.getElementById("pride-gradient-styling")
     );
@@ -82,6 +89,11 @@ function setTheme() {
     gradientCSSOpaque.value
   );
 
+  document.documentElement.style.setProperty(
+    "--pride-gradient-text",
+    gradientCSSText.value
+  );
+
   // add the CSS
   if (document.getElementById("pride-gradient-styling")) {
     return;
@@ -90,7 +102,7 @@ function setTheme() {
   style.id = "pride-gradient-styling";
   style.innerHTML = `
   .rainbow .text-gradient {
-  background: var(--pride-gradient);
+  background: var(--pride-gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

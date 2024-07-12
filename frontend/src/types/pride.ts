@@ -126,10 +126,7 @@ export namespace PrideVariant {
         //#ff4e50, #ffd700, #0190ea
         return [
           { stopColor: "#ff4e50" },
-          { stopColor: "#ff4e50" },
           { offset: 0.5, stopColor: "#ffd700" },
-          { offset: 0.5, stopColor: "#ffd700" },
-          { offset: 1, stopColor: "#0190ea" },
           { offset: 1, stopColor: "#0190ea" }
         ];
       case PrideVariant.LESBIAN_SUBTLE:
