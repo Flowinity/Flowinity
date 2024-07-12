@@ -12,6 +12,7 @@ import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import { SecurityService } from "@app/services/security.service"
+import Errors from "@app/lib/errors"
 
 @Service()
 @JsonController("/security")
@@ -23,7 +24,8 @@ export class SecurityControllerV3 {
     @Auth("*") user: User,
     @QueryParam("page") page: number = 1
   ) {
-    return await this.securityService.getAuditLog(user.id, page)
+    throw Errors.API_REMOVED_V2
+    // return await this.securityService.getAuditLog(user.id, page)
   }
 
   @Get("/keys")

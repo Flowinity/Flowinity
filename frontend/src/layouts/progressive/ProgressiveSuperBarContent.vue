@@ -133,17 +133,6 @@
           :key="item.id"
           :item="item"
         />
-        <super-bar-item-template
-          v-if="$experiments.experiments.WIDGETS"
-          :item="{
-            id: RailMode.HOME,
-            name: 'Add Widget',
-            icon: RiAddLine,
-            selectedIcon: RiAddLine
-          }"
-          :highlighted="true"
-          id="superbar-widgets"
-        />
       </div>
       <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
         <div class="divide-outline-dark border flowinity-border w-full" />
@@ -164,6 +153,17 @@
               :dot-status="true"
             />
           </super-bar-item>
+          <super-bar-item-template
+            v-if="$experiments.experiments.WIDGETS"
+            :item="{
+              id: RailMode.HOME,
+              name: 'Create a shortcut',
+              icon: RiAddLine,
+              selectedIcon: RiAddLine
+            }"
+            :highlighted="true"
+            id="superbar-widgets"
+          />
         </div>
       </template>
     </div>
