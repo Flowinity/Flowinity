@@ -124,7 +124,7 @@
         <v-spacer />
       </v-card-actions>
     </div>
-    <div v-if="!$chat.search.value" class="mt-n2">
+    <div v-show="!$chat.search.value" class="mt-n2">
       <v-list v-for="group in ranks" :key="group.name" class="mb-n4" nav>
         <template v-if="group.users.length">
           <overline position="start">
@@ -173,7 +173,7 @@
         </template>
       </v-list>
     </div>
-    <template v-else>
+    <div v-show="$chat.search.value">
       <overline position="start" class="ml-3 mb-n1">
         {{ $t("generic.search") }}
         <v-progress-circular
@@ -191,6 +191,7 @@
       </overline>
       <v-container class="mb-8">
         <GalleryTextField
+          ref="searchInput"
           v-model="$chat.search.query"
           :autofocus="true"
           @submit="$chat.doSearch(sort)"
@@ -230,7 +231,7 @@
         class="mb-2"
         @update:model-value="$chat.doSearch(sort)"
       />
-    </template>
+    </div>
   </template>
   <template v-else>
     <MessageSkeleton
