@@ -209,6 +209,16 @@ onMounted(() => {
             stroke: fillColor.value,
             duration: 500,
             easing: "easeInOutQuad"
+          })
+          .add({
+            targets: `#${id}`,
+            duration: 1000,
+            begin() {
+              document.getElementById(id)?.classList.add("force-glow");
+            },
+            complete() {
+              document.getElementById(id)?.classList.remove("force-glow");
+            }
           }).complete = () => {
           hasPlayedInit.value = true;
         };
@@ -342,7 +352,8 @@ const glowFilter = computed(() => {
   transition: filter 0.3s ease;
 }
 
-.glow-on-hover:hover {
+.glow-on-hover:hover,
+.force-glow {
   filter: v-bind(glowFilter);
 }
 </style>
