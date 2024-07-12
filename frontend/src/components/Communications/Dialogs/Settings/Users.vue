@@ -13,7 +13,7 @@
     class="mx-2"
     autofocus
   />
-  <v-data-table :items="users" :headers="headers">
+  <v-data-table :items="userSearch" :headers="headers">
     <template #[`item.user.username`]="{ item }: any">
       <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
@@ -169,6 +169,16 @@ export default defineComponent({
             });
           })
         };
+      });
+    },
+    userSearch() {
+      return this.users.filter((user) => {
+        return (
+          user.user?.username
+            .toLowerCase()
+            .includes(this.search.toLowerCase()) ||
+          user.user?.id.toString().includes(this.search)
+        );
       });
     }
   }
