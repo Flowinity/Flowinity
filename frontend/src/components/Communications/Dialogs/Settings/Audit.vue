@@ -115,6 +115,7 @@ export default defineComponent({
       return res;
     },
     async getAudit() {
+      this.log = null;
       const {
         data: { chatAuditLog }
       } = await this.$apollo.query({
@@ -131,6 +132,11 @@ export default defineComponent({
         }
       });
       this.log = chatAuditLog;
+    }
+  },
+  watch: {
+    page() {
+      this.getAudit();
     }
   }
 });
