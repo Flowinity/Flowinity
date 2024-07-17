@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql"
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql"
 import { Container, Service } from "typedi"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
@@ -15,10 +15,9 @@ import { AdminService } from "@app/services/admin.service"
 import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { PulseService } from "@app/services/pulse.service"
 import { Plan } from "@app/models/plan.model"
-import {
-  ExperimentOverride,
-  ExperimentType
-} from "@app/classes/graphql/core/experiments"
+import { ExperimentOverride } from "@app/classes/graphql/core/experiments"
+import { Experiment } from "@app/models/experiment.model"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver()
 @Service()
@@ -165,7 +164,29 @@ export class AdminResolver {
     scopes: "*"
   })
   @Query(() => [ExperimentOverride])
-  async adminGetExperimentOverrides(@Ctx() ctx: Context) {
+  async adminGetExperimentOverrides(
+    @Ctx() ctx: Context,
+    @Arg("userId", () => Int, {
+      nullable: true,
+      description: "If null or 0, will get the system global overrides"
+    })
+    userId?: number
+  ) {
+    if (userId) {
+      const overrides = await Experiment.findAll({
+        where: {
+          userId
+        }
+      })
+      return overrides.map((o) => {
+        return {
+          id: o.key,
+          value: o.value === "true" ? 1 : o.value === "false" ? 0 : o.value,
+          force: false,
+          userId: 0
+        }
+      })
+    }
     return (await redis.json.get("experimentOverridesGlobal")) || []
   }
 
@@ -179,6 +200,42 @@ export class AdminResolver {
     @Arg("input", () => ExperimentOverride) override: ExperimentOverride
   ) {
     try {
+      if (override.userId) {
+        const user = await User.findByPk(override.userId)
+        if (!user) throw new GqlError("USER_NOT_FOUND")
+        if (user.administrator && ctx.role !== AccessLevel.ADMIN)
+          throw new GqlError("NOT_ADMIN")
+        const existing = await Experiment.findOne({
+          where: {
+            key: override.id,
+            userId: override.userId
+          }
+        })
+        if (existing) {
+          await existing.update({
+            value: override.value
+          })
+          return {
+            id: existing.id,
+            value: existing.value,
+            force: false,
+            userId: -1
+          }
+        } else {
+          const created = await Experiment.create({
+            key: override.id,
+            value: override.value,
+            userId: override.userId
+          })
+          return {
+            id: created.key,
+            value: created.value,
+            force: false,
+            userId: -1
+          }
+        }
+      }
+      if (ctx.role !== AccessLevel.ADMIN) throw new GqlError("NOT_ADMIN")
       const overrides =
         (await redis.json.get("experimentOverridesGlobal")) || []
       const existing = overrides.find(

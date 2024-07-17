@@ -91,13 +91,13 @@ export const useExperimentsStore = defineStore("experiments", () => {
     localStorage.setItem("experimentsStore", JSON.stringify(experiments.value));
   }
 
-  async function getEmergencyOverrides() {
+  async function getEmergencyOverrides(userId?: number) {
     const {
       data: { adminGetExperimentOverrides }
     } = await useApolloClient().client.query({
       query: gql`
-        query AdminGetExperimentOverrides {
-          adminGetExperimentOverrides {
+        query AdminGetExperimentOverrides($userId: Int!) {
+          adminGetExperimentOverrides(userId: $userId) {
             id
             value
             force
@@ -105,6 +105,7 @@ export const useExperimentsStore = defineStore("experiments", () => {
           }
         }
       `,
+      variables: { userId },
       fetchPolicy: "network-only"
     });
     return adminGetExperimentOverrides;
