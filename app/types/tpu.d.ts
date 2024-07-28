@@ -13,6 +13,7 @@ declare type TpuConfig = {
   registrations: boolean
   mediaProxySecret: string
   weatherApiKey: string | undefined | null
+  disableStats: boolean
   providers: {
     tenor: string | undefined | null
     lastfm: {

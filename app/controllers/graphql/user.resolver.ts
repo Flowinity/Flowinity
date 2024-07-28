@@ -675,7 +675,10 @@ function createBaseResolver<T extends ClassType>(
     }
 
     @FieldResolver(() => Stats || null)
-    async stats(@Root() user: User, @Ctx() ctx: Context) {
+    async stats(
+      @Root() user: User,
+      @Ctx() ctx: Context
+    ): Promise<Stats | null> {
       if (!user) return null
       const data = (await redis.json.get(`userStats:${user.id}`)) as Stats
       if (
@@ -687,7 +690,33 @@ function createBaseResolver<T extends ClassType>(
         data.messageGraph = null
         data.pulseGraph = null
       }
-      return data
+      return (
+        data || {
+          uploads: 0,
+          messages: 0,
+          pulse: 0,
+          hours: 0,
+          collectionItems: 0,
+          users: 0,
+          announcements: 0,
+          usage: 0,
+          pulses: 0,
+          docs: 0,
+          collections: 0,
+          uploadGraph: {
+            data: [],
+            labels: []
+          },
+          messageGraph: {
+            data: [],
+            labels: []
+          },
+          pulseGraph: {
+            data: [],
+            labels: []
+          }
+        }
+      )
     }
 
     @FieldResolver(() => [Friend])
@@ -733,7 +762,10 @@ function createBaseResolver<T extends ClassType>(
 
     async findByToken(token: string | null) {
       if (!token) return null
-      if (token?.startsWith("TPU-OAUTH-") || token?.startsWith("FLOWINITY-OAUTH-")) {
+      if (
+        token?.startsWith("TPU-OAUTH-") ||
+        token?.startsWith("FLOWINITY-OAUTH-")
+      ) {
         const app = await OauthApp.findOne({
           where: {
             secret: token

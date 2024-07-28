@@ -19,6 +19,7 @@ export class DefaultTpuConfig {
     officialInstance: false,
     finishedSetup: false,
     weatherApiKey: null,
+    disableStats: false,
     discord: {
       webhook: null,
       token: null
