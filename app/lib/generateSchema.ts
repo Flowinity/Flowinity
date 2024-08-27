@@ -46,9 +46,10 @@ import {
   EmbedMediaResolver
 } from "@app/controllers/graphql/messageEmbed.resolver"
 import { WorkspaceUserResolver } from "@app/controllers/graphql/workspaceUser.resolver"
+import { stitchSchemas } from "@graphql-tools/stitch"
 
 export const generateSchema = () => {
-  return buildSchema({
+  const centralSchema = buildSchema({
     resolvers: [
       UserResolver,
       AuthResolver,
@@ -92,4 +93,6 @@ export const generateSchema = () => {
     validate: true,
     pubSub: pubSub
   })
+
+  return centralSchema
 }

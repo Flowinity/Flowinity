@@ -21,6 +21,8 @@ import { useMessagesStore } from "@/store/message.store";
 import { ElectronAPI } from "@electron-toolkit/preload";
 import EditorJS, { BlockAPI, EditorConfig } from "@flowinity/editorjs";
 import { useProgressiveUIStore } from "@/store/progressive.store";
+import { useModulesStore } from "@/store/modules.store";
+import Vuetify from "@/plugins/vuetify";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -82,8 +84,13 @@ declare global {
       push: (args: any[]) => void;
     };
     central: {
-      user: any;
+      userStore: ReturnType<typeof useUserStore>;
       emit: (platform: string, event: string, data: any) => void;
+      modulesStore: ReturnType<typeof useModulesStore>;
+      vuetify: typeof Vuetify;
+      router: Router;
+      token: string | null;
+      toast: ToastInterface;
     };
     __TROPLO_INTERNALS_EDITOR_SAVE: (args: any) => any;
     __TROPLO_INTERNALS_UPDATE_COUNT: (args: any) => any;

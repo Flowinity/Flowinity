@@ -2,6 +2,7 @@
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import graphql from "@rollup/plugin-graphql";
+import vitePluginSingleSpa from "vite-plugin-single-spa";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -29,6 +30,10 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
+    vitePluginSingleSpa({
+      serverPort: 3000,
+      spaEntryPoints: "src/spa.tsx"
+    }),
     graphql(),
     //@ts-ignore
     ViteVersion.default(),
@@ -130,7 +135,13 @@ const config = {
   ],
   define: { "process.env": {} },
   resolve: {
-    alias: [{ find: /^@\/(.*)/, replacement: resolve("./src/$1") }],
+    alias: [
+      {
+        find: /^@flowforms-frontend\/(.*)/,
+        replacement: resolve("../modules/FlowForms/frontend/src/$1")
+      },
+      { find: /^@\/(.*)/, replacement: resolve("./src/$1") }
+    ],
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]
   },
   server: {

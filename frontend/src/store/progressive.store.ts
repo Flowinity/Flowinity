@@ -71,6 +71,8 @@ import {
   RiSparkling2Line,
   RiStarFill,
   RiStarLine,
+  RiSurveyFill,
+  RiSurveyLine,
   RiToolsFill,
   RiToolsLine,
   RiUserFill,
@@ -100,6 +102,7 @@ import { VIcon } from "vuetify/components";
 import functions from "@/plugins/functions";
 import { useTheme } from "vuetify";
 import { useCollectionsStore } from "@/store/collections.store";
+import { useModulesStore } from "@/store/modules.store";
 
 export enum RailMode {
   HOME,
@@ -107,6 +110,7 @@ export enum RailMode {
   CHAT,
   WORKSPACES,
   MEET,
+  FORMS,
   MAIL,
   ADMIN,
   DEBUG,
@@ -214,6 +218,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     parseInt(localStorage.getItem("railMode") || "0") ||
       (RailMode.HOME as RailMode as RailMode)
   );
+  const modulesStore = useModulesStore();
   const navigation = computed({
     get() {
       return {
@@ -782,7 +787,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             badge: mailbox.unread ? mailbox.unread.toLocaleString() : undefined
           })),
           [RailMode.DEBUG]: [],
-          [RailMode.MEET]: []
+          [RailMode.MEET]: [],
+          [RailMode.FORMS]: modulesStore.modules["FlowForms"].navigationOptions
         } as Record<RailMode, NavigationOption[]>,
         miscOptions: {
           [RailMode.HOME]: [
@@ -855,6 +861,15 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             selectedIcon: markRaw(RiVideoChatFill),
             experimentsRequired: ["MEET"],
             scopesRequired: ["meet.view"]
+          },
+          {
+            icon: markRaw(RiSurveyLine),
+            name: "Forms",
+            id: RailMode.FORMS,
+            path: "/forms",
+            selectedIcon: markRaw(RiSurveyFill),
+            experimentsRequired: ["SURVEYS"],
+            scopesRequired: ["forms.view"]
           },
           {
             icon: markRaw(RiMailLine),
