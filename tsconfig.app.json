@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "include": ["app/**/*.ts", "../common/**/*.ts", "app/**/*.d.ts", "app/lib/dataloader/index.js"],
   "filesGlob": ["app/lib/*.mmdb"],
-  "exclude": ["**/*.spec.ts", "test/*"],
+  "exclude": ["**/*.spec.ts", "test/*", "app/storage", "storage"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "allowJs": true
