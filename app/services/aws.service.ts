@@ -48,14 +48,15 @@ export class AwsService {
       Bucket: string
     }[] = []
     for (const file of files) {
-      const fileObject = await fs.promises.readFile(
-        `${global.storageRoot}/${file.attachment}`
-      )
+      const path = `${global.storageRoot}/${file.attachment}`
+
+      let fileObject: Buffer | null = await fs.promises.readFile(path)
       if (!fileObject) {
         continue
       }
       const hash = crypto.createHash("sha256")
       hash.update(fileObject)
+      fileObject = null
       const key = hash.digest("hex")
       // Check if it's already uploaded onto AWS
       let exists = false
@@ -69,10 +70,61 @@ export class AwsService {
       console.log(`Checking if ${key} exists, ${exists}`)
       const params = {
         Bucket: config.aws!.bucket!,
-        Key: key,
-        Body: fileObject
+        Key: key
       }
-      if (!exists) await this.s3.putObject(params).promise()
+      if (!exists) {
+        const upload = await this.s3.createMultipartUpload(params).promise()
+        const uploadId = upload.UploadId
+        const partSize = 20 * 1024 * 1024
+        const fileStream = fs.createReadStream(path, {
+          highWaterMark: partSize
+        })
+
+        //100MB
+        let partNumber = 1
+        let parts = []
+        for await (const chunk of fileStream) {
+          const params = {
+            Body: chunk,
+            Bucket: config.aws!.bucket!,
+            Key: key,
+            PartNumber: partNumber,
+            UploadId: uploadId!
+          }
+
+          const uploadPartResponse = await this.s3.uploadPart(params).promise()
+          console.log(
+            `Part ${partNumber} uploaded. ETag:`,
+            uploadPartResponse.ETag,
+            `Max part size: ${chunk.length}`
+          )
+
+          parts.push({
+            ETag: uploadPartResponse.ETag,
+            PartNumber: partNumber
+          })
+
+          partNumber++
+        }
+
+        // Complete the multipart upload
+        const completeParams = {
+          Bucket: config.aws!.bucket!,
+          Key: key,
+          MultipartUpload: {
+            Parts: parts
+          },
+          UploadId: uploadId!
+        }
+
+        const completeMultipartUploadResponse = await this.s3
+          .completeMultipartUpload(completeParams)
+          .promise()
+        console.log(
+          "Multipart upload completed:",
+          completeMultipartUploadResponse.Location
+        )
+      }
       uploads.push({
         Location: `${config.aws!.bucketUrl}/${key}`,
         Key: key,
