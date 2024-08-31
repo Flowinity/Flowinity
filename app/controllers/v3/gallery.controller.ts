@@ -33,17 +33,16 @@ async function checkUserQuota(
   res: Response,
   next: NextFunction
 ) {
-  if (config.maintenance.enabled)
-    throw {
-      name: "MAINTENANCE",
-      message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
-      status: 400
-    }
-  function e(error: keyof typeof Errors = "QUOTA_EXCEEDED") {
+  function e(error: keyof typeof Errors = "QUOTA_EXCEEDED", custom?: any) {
     return res.status(400).json({
-      errors: [{ name: error, ...Errors[error] }]
+      errors: [custom ? custom : { name: error, ...Errors[error] }]
     })
   }
+  if (config.maintenance.enabled)
+    e("UNKNOWN", {
+      name: "MAINTENANCE",
+      message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`
+    })
   await authSystem("uploads.create", true, req, res, () => {})
   if (!req.user) {
     return e("UNAUTHORIZED")
