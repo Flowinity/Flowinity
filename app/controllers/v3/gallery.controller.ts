@@ -26,12 +26,19 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { Upload } from "@app/models/upload.model"
 import { NextFunction, Response } from "express"
+import { AwsService } from "@app/services/aws.service"
 
 async function checkUserQuota(
   req: RequestAuthSystem,
   res: Response,
   next: NextFunction
 ) {
+  if (config.maintenance.enabled)
+    throw {
+      name: "MAINTENANCE",
+      message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
+      status: 400
+    }
   function e(error: keyof typeof Errors = "QUOTA_EXCEEDED") {
     return res.status(400).json({
       errors: [{ name: error, ...Errors[error] }]

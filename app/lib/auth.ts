@@ -355,11 +355,15 @@ const auth = (scope: Scope | Scope[], passthrough: boolean = false) => {
   }
 }
 
-export function Auth(scope: Scope | Scope[], required: boolean = true) {
+export function Auth(
+  scope: Scope | Scope[],
+  required: boolean = true,
+  allowMaintenance: boolean = false
+) {
   return createParamDecorator({
     required,
     value: async (action) => {
-      if (config.maintenance.enabled)
+      if (config.maintenance.enabled && !allowMaintenance)
         throw {
           name: "MAINTENANCE",
           message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,

@@ -30,10 +30,17 @@ import { pubSub } from "@app/lib/graphql/pubsub"
 import { Response } from "express"
 import JSZip from "jszip"
 import redisClient from "@app/redis"
+import { AwsService } from "@app/services/aws.service"
+import crypto from "crypto"
+import cryptoRandomString from "crypto-random-string"
+import path from "path"
 
 @Service()
 export class GalleryService {
-  constructor(private readonly cacheService: CacheService) {}
+  constructor(
+    private readonly cacheService: CacheService,
+    private readonly awsService: AwsService
+  ) {}
   async getRandomAttachment(
     id: number,
     type: "user" | "collection" | "starred" = "user"
@@ -171,8 +178,16 @@ export class GalleryService {
     precache: boolean = false,
     deletable: boolean = true
   ) {
+    /// read the file
+    const attachment =
+      file.filename ||
+      cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
+    const fileObject = await fs.promises.readFile(
+      `${global.storageRoot}/${attachment}`
+    )
+    const hash = crypto.createHash("sha256").update(fileObject).digest("hex")
     const upload = await Upload.create({
-      attachment: file.filename, // Attachment hash
+      attachment, // Attachment hash
       userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
@@ -181,7 +196,8 @@ export class GalleryService {
         file.originalname?.split(".")[1] || ".bin"
       ),
       fileSize: file.size,
-      deletable
+      deletable,
+      sha256sum: hash
     })
     await User.update(
       {

@@ -23,6 +23,7 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import os from "os"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { AutoCollectApprovalType } from "@app/classes/graphql/autoCollects/subscriptions/autoCollectApprovalEvent"
+import { AwsService } from "@app/services/aws.service"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc" | "bot-email"
@@ -383,8 +384,22 @@ async function processFile(
         })
       }
     }
+
+    // Upload to AWS and delete local copy
+    const awsService = Container.get(AwsService)
+    await awsService.uploadFile([
+      {
+        attachment: upload.attachment
+      }
+    ])
   } catch (err) {
     console.log("Error processing file", err)
+    const awsService = Container.get(AwsService)
+    await awsService.uploadFile([
+      {
+        attachment: upload.attachment
+      }
+    ])
   }
 }
 

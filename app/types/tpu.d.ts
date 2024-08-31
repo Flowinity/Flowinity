@@ -145,4 +145,14 @@ declare type TpuConfig = {
         dsn: string | null
       }
     | undefined
+  aws?: {
+    enabled: boolean
+    accessKeyId: string | null
+    region: string | null
+    secretAccessKey: string | null
+    bucket: string | null
+    bucketUrl: string | null
+    profile: string | null
+    endpoint: string | null
+  }
 }

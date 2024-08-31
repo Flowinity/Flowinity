@@ -8,6 +8,7 @@ import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { Session } from "@app/models/session.model"
 import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
 import { CoreService } from "@app/services/core.service"
+import { GqlError } from "@app/lib/gqlErrors"
 
 export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
@@ -19,6 +20,7 @@ export interface AuthCheckerOptions {
    * Only supports truthy experiments, it will pass if it's true, or 1 or more for example.
    */
   requiredExperiments?: string[]
+  allowMaintenance?: boolean
 }
 
 export const Authorization = (options: AuthCheckerOptions) =>
@@ -42,6 +44,16 @@ export const authChecker: AuthChecker<Context> = async (
   { context }: ResolverData<Context>,
   options: any[]
 ) => {
+  if (config.maintenance.enabled && !options[0]?.allowMaintenance)
+    throw new GraphQLError(
+      `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
+      {
+        extensions: {
+          code: "MAINTENANCE"
+        }
+      }
+    )
+
   const start = new Date()
   const token = context.token
   let cache

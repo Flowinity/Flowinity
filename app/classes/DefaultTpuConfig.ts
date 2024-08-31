@@ -150,6 +150,16 @@ export class DefaultTpuConfig {
     isV5: false,
     sentry: {
       dsn: null
+    },
+    aws: {
+      accessKeyId: null,
+      secretAccessKey: null,
+      region: null,
+      bucket: null,
+      enabled: false,
+      profile: null,
+      endpoint: null,
+      bucketUrl: null
     }
   }
 }

@@ -7,10 +7,12 @@
   >
     <div class="crash-parent">
       <div class="crashed">
-        <FlowinityBannerHandler
-          style="max-width: 100%; max-height: 80px; margin-left: 0 !important"
-          class="mb-2"
-        />
+        <div class="d-flex justify-center">
+          <FlowinityBannerHandler
+            style="max-width: 100%; max-height: 80px; margin-left: 0 !important"
+            class="mb-2"
+          />
+        </div>
         <div class="title">Maintenance...</div>
         <div class="crashed subtitle">
           {{ $app.site.maintenance.message }}
