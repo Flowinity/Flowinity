@@ -44,15 +44,15 @@ export const authChecker: AuthChecker<Context> = async (
   { context }: ResolverData<Context>,
   options: any[]
 ) => {
-  // if (config.maintenance.enabled && !options[0]?.allowMaintenance)
-  //   throw new GraphQLError(
-  //     `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
-  //     {
-  //       extensions: {
-  //         code: "MAINTENANCE"
-  //       }
-  //     }
-  //   )
+  if (config.maintenance.enabled && !options[0]?.allowMaintenance)
+    throw new GraphQLError(
+      `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
+      {
+        extensions: {
+          code: "MAINTENANCE"
+        }
+      }
+    )
 
   const start = new Date()
   const token = context.token

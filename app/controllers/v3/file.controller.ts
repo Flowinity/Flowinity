@@ -33,6 +33,16 @@ export class FileControllerV3 {
       where: {
         attachment
       },
+      attributes: [
+        "attachment",
+        "originalFilename",
+        "name",
+        "type",
+        "location",
+        "sha256sum",
+        "mimeType",
+        "userId"
+      ],
       include: [
         {
           model: User,
@@ -45,7 +55,7 @@ export class FileControllerV3 {
       "Content-Security-Policy",
       "default-src 'none'; media-src *; img-src *; style-src 'unsafe-inline';"
     )
-    if (config.release === "dev" && (!upload || upload.location !== "s3")) {
+    if (config.release === "dev" && (!upload || upload.location === "local")) {
       try {
         await fs.accessSync(
           global.storageRoot + "/" + attachment,
@@ -87,7 +97,8 @@ export class FileControllerV3 {
       const link = await this.awsService.getSignedUrl(
         upload.sha256sum,
         upload.name,
-        force || !media ? "attachment" : "inline"
+        force || !media ? "attachment" : "inline",
+        upload.mimeType
       )
       res.redirect(link)
       return res

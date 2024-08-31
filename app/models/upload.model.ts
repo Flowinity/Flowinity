@@ -115,6 +115,13 @@ export class Upload extends Model {
   })
   location: string
 
+  @Field(() => String)
+  @Column({
+    type: DataType.STRING,
+    defaultValue: "application/octet-stream"
+  })
+  mimeType: string
+
   @Field(() => PartialUserBase, {
     nullable: true
   })

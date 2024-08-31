@@ -98,11 +98,6 @@ export class GalleryService {
       }
     })
     if (upload) {
-      try {
-        await fs.unlinkSync(global.storageRoot + upload.attachment)
-      } catch (e) {
-        console.log(e)
-      }
       await User.update(
         {
           quota: sequelize.literal("quota -" + upload.fileSize)
@@ -129,6 +124,16 @@ export class GalleryService {
         }
       })
       await upload.destroy()
+      try {
+        if (upload.location === "local") {
+          if (!upload.attachment) return
+          await fs.unlinkSync(global.storageRoot + upload.attachment)
+        } else {
+          await this.awsService.deleteFile(upload.sha256sum!)
+        }
+      } catch (e) {
+        console.log(e)
+      }
       pubSub.publish(`DELETE_UPLOAD:${userId}`, id)
       socket.of(SocketNamespaces.GALLERY).to(userId).emit("delete", id)
 
@@ -195,6 +200,7 @@ export class GalleryService {
         file.mimetype,
         file.originalname?.split(".")[1] || ".bin"
       ),
+      mimeType: file.mimetype,
       fileSize: file.size,
       deletable,
       sha256sum: hash
@@ -320,7 +326,8 @@ export class GalleryService {
         {
           name: { [Op.like]: "%" + input.search + "%" }
         },
-        { attachment: { [Op.like]: "%" + input.search + "%" } }
+        { attachment: { [Op.like]: "%" + input.search + "%" } },
+        { sha256sum: { [Op.eq]: input.search } }
       ]
     }
     let include: Includeable[] = []

@@ -160,6 +160,11 @@ export class DefaultTpuConfig {
       profile: null,
       endpoint: null,
       bucketUrl: null
+    },
+    cloudflare: {
+      enabled: false,
+      key: null,
+      zone: null
     }
   }
 }

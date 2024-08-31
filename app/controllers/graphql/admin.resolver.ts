@@ -18,13 +18,18 @@ import { Plan } from "@app/models/plan.model"
 import { ExperimentOverride } from "@app/classes/graphql/core/experiments"
 import { Experiment } from "@app/models/experiment.model"
 import { GqlError } from "@app/lib/gqlErrors"
+import { Upload } from "@app/models/upload.model"
+import fs from "fs"
+import { AwsService } from "@app/services/aws.service"
+import mime from "mime"
 
 @Resolver()
 @Service()
 export class AdminResolver {
   constructor(
     private userUtilsService: UserUtilsService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private awsService: AwsService
   ) {}
 
   @Authorization({
@@ -274,6 +279,68 @@ export class AdminResolver {
       overrides.splice(overrides.indexOf(existing), 1)
     }
     await redis.json.set("experimentOverridesGlobal", "$", overrides)
+    return { success: true }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminMigrateToS3(@Ctx() ctx: Context) {
+    const uploads = await Upload.findAll({
+      where: {
+        location: "local"
+      },
+      attributes: ["attachment", "location"],
+      order: [["createdAt", "DESC"]]
+    })
+    const total = uploads.length
+
+    for (const upload of uploads) {
+      try {
+        console.log(
+          `Uploading ${upload.attachment}, ${upload.id}, ${total}\nWe are ${
+            (uploads.indexOf(upload) / total) * 100
+          }% done`
+        )
+        if (!upload.attachment) continue
+        await this.awsService.uploadFile(
+          [
+            {
+              attachment: upload.attachment
+            }
+          ],
+          "rename"
+        )
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return { success: true }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminGenerateMimeTypeMap(@Ctx() ctx: Context) {
+    const uploads = await Upload.findAll({
+      where: {
+        mimeType: null
+      },
+      attributes: ["attachment"]
+    })
+
+    for (const upload of uploads) {
+      const mimeType =
+        mime.getType(upload.attachment) || "application/octet-stream"
+      await Upload.update(
+        { mimeType },
+        { where: { attachment: upload.attachment } }
+      )
+    }
     return { success: true }
   }
 }

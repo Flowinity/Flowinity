@@ -155,4 +155,9 @@ declare type TpuConfig = {
     profile: string | null
     endpoint: string | null
   }
+  cloudflare?: {
+    enabled: boolean
+    key: string | null
+    zone: string | null
+  }
 }

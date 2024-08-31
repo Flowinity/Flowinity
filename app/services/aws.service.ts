@@ -1,9 +1,13 @@
 import { Service } from "typedi"
-import { AWSError, S3 } from "aws-sdk"
+// TODO: I can't get the custom fqdn for signed URLs to work on new AWS API, for now we'll use the old one.
+// Disable deprecation warning
+process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1"
+import { S3 } from "aws-sdk"
 import crypto from "crypto"
 import { Upload } from "@app/models/upload.model"
 import fs from "fs"
 import redisClient from "@app/redis"
+import axios from "axios"
 
 @Service()
 export class AwsService {
@@ -18,8 +22,7 @@ export class AwsService {
         secretAccessKey: config.aws.secretAccessKey!
       },
       s3ForcePathStyle: true,
-      endpoint: config.aws.endpoint!,
-      region: config.aws.region!
+      endpoint: config.aws.endpoint!
     })
   }
 
@@ -55,51 +58,44 @@ export class AwsService {
       hash.update(fileObject)
       const key = hash.digest("hex")
       // Check if it's already uploaded onto AWS
+      let exists = false
+      console.log(`Checking if ${key} exists`)
       try {
         await this.s3
           .headObject({ Bucket: config.aws!.bucket!, Key: key })
           .promise()
-        uploads.push({
-          Location: `${config.aws!.bucketUrl}/${key}`,
-          Key: key,
-          Bucket: config.aws!.bucket!
-        })
-        continue
-      } catch (e: any) {
-        if (e.code !== "NotFound") {
-          throw e
-        }
-        const params = {
-          Bucket: config.aws!.bucket!,
-          Key: key,
-          Body: fileObject
-        }
-        await this.s3.upload(params).promise()
-        uploads.push({
-          Location: `${config.aws!.bucketUrl}/${key}`,
-          Key: key,
-          Bucket: config.aws!.bucket!
-        })
-
-        await Upload.update(
-          { location: config.aws!.bucket! },
-          { where: { attachment: file.attachment } }
+        exists = true
+      } catch {}
+      console.log(`Checking if ${key} exists, ${exists}`)
+      const params = {
+        Bucket: config.aws!.bucket!,
+        Key: key,
+        Body: fileObject
+      }
+      if (!exists) await this.s3.putObject(params).promise()
+      uploads.push({
+        Location: `${config.aws!.bucketUrl}/${key}`,
+        Key: key,
+        Bucket: config.aws!.bucket!
+      })
+      await Upload.update(
+        { location: config.aws!.bucket!, sha256sum: key },
+        { where: { attachment: file.attachment } }
+      )
+      // delete file since it's now on AWS
+      if (localFileMode === "delete") {
+        await fs.promises.unlink(`${global.storageRoot}/${file.attachment}`)
+      } else if (localFileMode === "rename") {
+        await fs.promises.rename(
+          `${global.storageRoot}/${file.attachment}`,
+          `${global.storageRoot}/${file.attachment}.toDeleteUploadedS3TPU`
         )
-        // delete file since it's now on AWS
-        if (localFileMode === "delete") {
-          await fs.promises.unlink(`${global.storageRoot}/${file.attachment}`)
-        } else if (localFileMode === "rename") {
-          await fs.promises.rename(
-            `${global.storageRoot}/${file.attachment}`,
-            `${global.storageRoot}/${file.attachment}.toDeleteUploadedS3TPU`
-          )
-        }
       }
     }
     return uploads
   }
 
-  async retrieveFile(key: string): Promise<Buffer> {
+  async retrieveFile(key: string) {
     if (!this.s3) {
       throw new Error("AWS is not enabled")
     }
@@ -131,15 +127,15 @@ export class AwsService {
     //     delay: 1000 * 60 * 60
     //   }
     // )
-    return data.Body as Buffer
+    return data.Body
   }
 
   async getSignedUrl(
     key: string,
     filename: string,
-    type: "attachment" | "inline" = "attachment"
+    type: "attachment" | "inline" = "attachment",
+    mimeType = "application/octet-stream"
   ): Promise<string> {
-    console.log(type)
     if (!this.s3) {
       throw new Error("AWS is not enabled")
     }
@@ -147,22 +143,23 @@ export class AwsService {
       `s3SignedUrl:${key}:${filename}:${type}`
     )
     if (cached) {
-      return cached
+      // return cached
     }
     const params = {
       Bucket: config.aws!.bucket!,
       Key: key,
       Expires: null,
       ResponseContentDisposition: `${type}; filename="${filename}"`,
-      ResponseContentType: "image/png"
+      ResponseContentType: mimeType
     }
-    const signed = await this.s3.getSignedUrlPromise("getObject", params)
-    const signedFixed = signed.replace(
-      `${config.aws!.bucket}/${config.aws!.bucket!}/${key}`,
-      `${config.aws!.bucket}/${key}`
-    )
-    await redisClient.set(`s3SignedUrl:${key}:${filename}:${type}`, signedFixed)
-    return signedFixed
+    let signed = await this.s3.getSignedUrlPromise("getObject", params)
+    if (config.aws!.bucketUrl)
+      signed = signed.replace(
+        `${config.aws!.endpoint}/${config.aws!.bucket}`,
+        config.aws!.bucketUrl
+      )
+    await redisClient.set(`s3SignedUrl:${key}:${filename}:${type}`, signed)
+    return signed
   }
 
   async deleteFile(key: string): Promise<void> {
@@ -172,11 +169,48 @@ export class AwsService {
     if (!key) {
       return
     }
-    await this.s3
-      .deleteObject({
-        Bucket: config.aws!.bucket!,
-        Key: key
-      })
-      .promise()
+    const uploads = await Upload.findAll({
+      where: {
+        sha256sum: key
+      }
+    })
+    console.log(uploads.length)
+    if (uploads.length === 0) {
+      await this.s3
+        .deleteObject({
+          Bucket: config.aws!.bucket!,
+          Key: key
+        })
+        .promise()
+      if (config.cloudflare?.enabled) {
+        // get the cached cdn links to clear from the Cloudflare cache
+        const signedUrls = await redisClient
+          .keys(`s3SignedUrl:${key}:*`)
+          .then((keys) =>
+            Promise.all(
+              keys.map(async (key) => {
+                return redisClient.get(key)
+              })
+            )
+          )
+        await axios
+          .post(
+            `https://api.cloudflare.com/client/v4/zones/${config.cloudflare.zone}/purge_cache`,
+            {
+              files: signedUrls
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${config.cloudflare.key}`,
+                "Content-Type": "application/json"
+              }
+            }
+          )
+          .catch((e) => {
+            console.error(e?.response?.data)
+          })
+      }
+      await redisClient.del(`s3SignedUrl:${key}:*`)
+    }
   }
 }

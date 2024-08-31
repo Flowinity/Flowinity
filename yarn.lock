@@ -730,6 +730,20 @@
     "@smithy/util-middleware" "^3.0.3"
     tslib "^2.6.2"
 
+"@aws-sdk/s3-request-presigner@^3.637.0":
+  version "3.637.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.637.0.tgz#7dda8becd71413601c408ae7f06cb71c35a539a9"
+  integrity sha512-URRiEDZEICyfAXmXcXREQCsvZrapITAymvg46p1Xjnuv7PTnUB0SF18B2omPL0E5d/X+T3O9NKdtot+BqJbIWw==
+  dependencies:
+    "@aws-sdk/signature-v4-multi-region" "3.635.0"
+    "@aws-sdk/types" "3.609.0"
+    "@aws-sdk/util-format-url" "3.609.0"
+    "@smithy/middleware-endpoint" "^3.1.0"
+    "@smithy/protocol-http" "^4.1.0"
+    "@smithy/smithy-client" "^3.2.0"
+    "@smithy/types" "^3.3.0"
+    tslib "^2.6.2"
+
 "@aws-sdk/signature-v4-multi-region@3.635.0":
   version "3.635.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.635.0.tgz#76e8eb66bfd9b661b4f9768b18aca2e04dd781a2"
@@ -776,6 +790,16 @@
     "@aws-sdk/types" "3.609.0"
     "@smithy/types" "^3.3.0"
     "@smithy/util-endpoints" "^2.0.5"
+    tslib "^2.6.2"
+
+"@aws-sdk/util-format-url@3.609.0":
+  version "3.609.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-format-url/-/util-format-url-3.609.0.tgz#f53907193bb636b52b61c81bbe6d7bd5ddc76c68"
+  integrity sha512-fuk29BI/oLQlJ7pfm6iJ4gkEpHdavffAALZwXh9eaY1vQ0ip0aKfRTiNudPoJjyyahnz5yJ1HkmlcDitlzsOrQ==
+  dependencies:
+    "@aws-sdk/types" "3.609.0"
+    "@smithy/querystring-builder" "^3.0.3"
+    "@smithy/types" "^3.3.0"
     tslib "^2.6.2"
 
 "@aws-sdk/util-locate-window@^3.0.0":
@@ -3779,6 +3803,11 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.5.tgz#1ef302e01cf7d2b5a0fa526790c9123bf1d06690"
   integrity sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==
 
+"@types/mime@^3":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@types/mime/-/mime-3.0.4.tgz#2198ac274de6017b44d941e00261d5bc6a0e0a45"
+  integrity sha512-iJt33IQnVRkqeqC7PzBHPTC6fDlRNRW8vjrgqtScAhrmMwe8c4Eo7+fUGTa+XdWrpEgpyKWMYmi2dIwMAYRzPw==
+
 "@types/mocha@9.1.1":
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-9.1.1.tgz#e7c4f1001eefa4b8afbd1eee27a237fee3bf29c4"
@@ -4667,10 +4696,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-sdk@^2.1683.0:
-  version "2.1683.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1683.0.tgz#c97bf0de12a9a1c9b7413e482b72d76d81b58a5b"
-  integrity sha512-uy53mN2oHU0Jx5tkH7qG6h/42DeMAQD5jMi/6294hVgGCa29MK/ZiFIOdkEJNS9tbB03RTabg+5i4c6DxBpG8g==
+aws-sdk@^2.1687.0:
+  version "2.1687.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1687.0.tgz#dd1d7e78b252842ea292a2d28d22c720b97a824b"
+  integrity sha512-Pk7RbIxJ8yDmFJRKzaapiUsAvz5cTPKCz7soomU+lASx1jvO29Z9KAPB6KJR22m7rDDMO/HNNN9OJRzfdvh7xQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -9646,6 +9675,11 @@ mime@2.6.0, mime@^2.4.6:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/mime/-/mime-2.6.0.tgz#a2a682a95cd4d0cb1d6257e28f83da7e35800367"
   integrity sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==
+
+mime@^3:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-3.0.0.tgz#b374550dca3a0c18443b0c950a6a58f1931cf7a7"
+  integrity sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==
 
 mimic-fn@^2.1.0:
   version "2.1.0"
