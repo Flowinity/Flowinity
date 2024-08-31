@@ -118,7 +118,7 @@ export class FileControllerV3 {
       }"`
     )
     res.setHeader("Content-Length", file.length)
-    res.setHeader("Content-Type", upload.type)
+    res.setHeader("Content-Type", upload.mimeType)
     res.send(file)
     return res
   }
