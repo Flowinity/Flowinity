@@ -34,7 +34,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminMigrateLegacyRanksForChat(@Ctx() ctx: Context): Promise<Success> {
@@ -66,7 +67,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminSendEmailForUnverifiedUsers(
@@ -87,7 +89,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminClearCache(
@@ -113,7 +116,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminDebugBatch(@Ctx() ctx: Context) {
@@ -141,7 +145,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminGenerateInsights(
@@ -166,7 +171,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.MODERATOR,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Query(() => [ExperimentOverride])
   async adminGetExperimentOverrides(
@@ -197,7 +203,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.MODERATOR,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => ExperimentOverride)
   async adminSetExperimentOverride(
@@ -266,7 +273,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.MODERATOR,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminDeleteExperimentOverride(
@@ -284,7 +292,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminMigrateToS3(@Ctx() ctx: Context) {
@@ -322,7 +331,8 @@ export class AdminResolver {
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
-    scopes: "*"
+    scopes: "*",
+    allowMaintenance: true
   })
   @Mutation(() => Success)
   async adminGenerateMimeTypeMap(@Ctx() ctx: Context) {
