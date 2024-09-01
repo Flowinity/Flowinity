@@ -308,13 +308,19 @@ export class AdminResolver {
     for (const upload of uploads) {
       try {
         if (!upload.attachment) continue
-        await queue.awsQueue.add(upload.attachment, undefined, {
-          attempts: 5,
-          backoff: {
-            type: "exponential",
-            delay: 1000
+        await queue.awsQueue.add(
+          upload.attachment,
+          {
+            localFileMode: "rename"
+          },
+          {
+            attempts: 5,
+            backoff: {
+              type: "exponential",
+              delay: 1000
+            }
           }
-        })
+        )
       } catch (e) {
         console.error(e)
       }

@@ -105,11 +105,14 @@ if (mainWorker) {
       if (mainWorker) {
         if (!mainWorker) return
         if (!job.name) return
-        await awsService.uploadFile([
-          {
-            attachment: job.name
-          }
-        ])
+        await awsService.uploadFile(
+          [
+            {
+              attachment: job.name
+            }
+          ],
+          job.data?.localFileMode || "delete"
+        )
       }
     },
     {
