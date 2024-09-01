@@ -386,12 +386,14 @@ async function processFile(
     }
 
     // Upload to AWS and delete local copy
-    const awsService = Container.get(AwsService)
-    await awsService.uploadFile([
-      {
-        attachment: upload.attachment
-      }
-    ])
+    if (config.aws?.enabled)
+      await queue.awsQueue.add(upload.attachment, undefined, {
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 1000
+        }
+      })
   } catch (err) {
     console.log("Error processing file", err)
     const awsService = Container.get(AwsService)

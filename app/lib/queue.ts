@@ -10,13 +10,15 @@ import utils from "@app/lib/utils"
 import { CacheService } from "@app/services/cache.service"
 import { ChatService } from "@app/services/chat.service"
 import fs from "fs"
+import { AwsService } from "@app/services/aws.service"
 
 const config = JSON.parse(process.env.CONFIG || "{}")
 const cpuCount: number = os.cpus().length
 const mainWorker: boolean =
   !cluster.worker || cluster.worker?.id % cpuCount === 1
 
-const cacheService: CacheService = Container.get(CacheService)
+const cacheService = Container.get(CacheService)
+const awsService = Container.get(AwsService)
 const connection: {
   port: number
   host: string
@@ -55,7 +57,7 @@ const cacheQueue: Queue = new Queue("queue:cache", {
   }
 })
 
-const awsCacheQueue: Queue = new Queue("queue:aws", {
+const awsQueue: Queue = new Queue("queue:aws", {
   connection,
   defaultJobOptions: {
     attempts: 3,
@@ -70,74 +72,81 @@ const awsCacheQueue: Queue = new Queue("queue:aws", {
 
 let worker, cacheWorker, awsWorker
 // Register the worker for only the main thread to avoid the function running multiple times
-worker = new Worker(
-  "queue:uploads",
-  async (job): Promise<void> => {
-    if (mainWorker) await utils.postUpload(job.data)
-  },
-  {
-    // Maximum number of jobs that can run concurrently.
-    // Another way is removing this option and making multiple workers like worker1, worker2, etc
-    concurrency: 3,
-    connection
-  }
-)
-
-cacheWorker = new Worker(
-  "queue:cache",
-  async (job): Promise<void> => {
-    if (mainWorker) await cacheService.resetCollectionCache(job.data)
-  },
-  {
-    // Maximum number of jobs that can run concurrently.
-    // Another way is removing this option and making multiple workers like worker1, worker2, etc.
-    concurrency: 3,
-    connection
-  }
-)
-
-awsWorker = new Worker(
-  "queue:aws",
-  async (job): Promise<void> => {
-    if (mainWorker) {
-      // delete the file
-      if (!mainWorker) return
-      if (!job.data.key) return
-      await fs.promises.unlink(`${global.storageRoot}/${job.data.key}`)
+if (mainWorker) {
+  worker = new Worker(
+    "queue:uploads",
+    async (job): Promise<void> => {
+      if (mainWorker) await utils.postUpload(job.data)
+    },
+    {
+      // Maximum number of jobs that can run concurrently.
+      // Another way is removing this option and making multiple workers like worker1, worker2, etc
+      concurrency: 3,
+      connection
     }
-  },
-  {
-    // Maximum number of jobs that can run concurrently.
-    // Another way is removing this option and making multiple workers like worker1, worker2, etc.
-    concurrency: 3,
-    connection
-  }
-)
+  )
 
-worker.on("completed", (job): void => {
-  console.log(`[Queue/Upload] Job ${job.id} completed!`)
-})
-worker.on("failed", (job, err: Error): void => {
-  console.log(`[Queue/Upload] Job ${job?.id} failed with error ${err}`)
-})
-cacheWorker.on("completed", (job): void => {
-  console.log(`[Queue/Cache] Job ${job.id} completed!`)
-})
-cacheWorker.on("failed", (job, err: Error): void => {
-  console.log(`[Queue/Cache] Job ${job?.id} failed with error ${err}`)
-})
-awsWorker.on("completed", (job): void => {
-  console.log(`[Queue/S3] Job ${job.id} completed!`)
-})
-awsWorker.on("failed", (job, err: Error): void => {
-  console.log(`[Queue/S3] Job ${job?.id} failed with error ${err}`)
-})
+  cacheWorker = new Worker(
+    "queue:cache",
+    async (job): Promise<void> => {
+      if (mainWorker) await cacheService.resetCollectionCache(job.data)
+    },
+    {
+      // Maximum number of jobs that can run concurrently.
+      // Another way is removing this option and making multiple workers like worker1, worker2, etc.
+      concurrency: 3,
+      connection
+    }
+  )
+
+  awsWorker = new Worker(
+    "queue:aws",
+    async (job): Promise<void> => {
+      if (mainWorker) {
+        if (!mainWorker) return
+        if (!job.name) return
+        await awsService.uploadFile([
+          {
+            attachment: job.name
+          }
+        ])
+      }
+    },
+    {
+      // Maximum number of jobs that can run concurrently.
+      // Another way is removing this option and making multiple workers like worker1, worker2, etc.
+      concurrency: 10,
+      connection
+    }
+  )
+
+  worker.on("completed", (job): void => {
+    console.log(`[Queue/Upload] Job ${job.id} completed!`)
+  })
+  worker.on("failed", (job, err: Error): void => {
+    console.log(`[Queue/Upload] Job ${job?.id} failed with error ${err}`)
+  })
+  cacheWorker.on("completed", (job): void => {
+    console.log(`[Queue/Cache] Job ${job.id} completed!`)
+  })
+  cacheWorker.on("failed", (job, err: Error): void => {
+    console.log(`[Queue/Cache] Job ${job?.id} failed with error ${err}`)
+  })
+  awsWorker.on("completed", (job): void => {
+    console.log(`[Queue/S3] Job ${job.id} completed!`)
+  })
+  awsWorker.on("failed", (job, err: Error): void => {
+    console.log(
+      `[Queue/S3] Job ${job?.id} failed with error ${err}. Attachment ${job?.name} needs investigating`
+    )
+  })
+}
 
 export default {
   queue,
   worker,
   cacheWorker,
   cacheQueue,
-  awsCacheQueue,
+  awsQueue,
   awsWorker
 }

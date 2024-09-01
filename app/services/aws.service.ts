@@ -186,21 +186,23 @@ export class AwsService {
     key: string,
     filename: string,
     type: "attachment" | "inline" = "attachment",
-    mimeType = "application/octet-stream"
+    mimeType = "application/octet-stream",
+    // 7 days
+    expiry = 60 * 60 * 24 * 7
   ): Promise<string> {
     if (!this.s3) {
       throw new Error("AWS is not enabled")
     }
-    const cached = await redisClient.get(
-      `s3SignedUrl:${key}:${filename}:${type}`
-    )
-    if (cached) {
-      // return cached
+    const cacheKey = `s3SignedUrl:${key}:${filename}:${type}:${mimeType}:${expiry}`
+    const cached = await redisClient.get(cacheKey)
+    // if cached version is 4d old, refresh it
+    if (cached && (await redisClient.ttl(cacheKey)) > 60 * 60 * 24 * 4) {
+      return cached
     }
     const params = {
       Bucket: config.aws!.bucket!,
       Key: key,
-      Expires: null,
+      Expires: expiry,
       ResponseContentDisposition: `${type}; filename="${filename}"`,
       ResponseContentType: mimeType
     }
@@ -210,7 +212,9 @@ export class AwsService {
         `${config.aws!.endpoint}/${config.aws!.bucket}`,
         config.aws!.bucketUrl
       )
-    await redisClient.set(`s3SignedUrl:${key}:${filename}:${type}`, signed)
+    await redisClient.set(cacheKey, signed, {
+      EX: expiry
+    })
     return signed
   }
 

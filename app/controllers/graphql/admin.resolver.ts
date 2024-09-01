@@ -304,24 +304,17 @@ export class AdminResolver {
       attributes: ["attachment", "location"],
       order: [["createdAt", "DESC"]]
     })
-    const total = uploads.length
 
     for (const upload of uploads) {
       try {
-        console.log(
-          `Uploading ${upload.attachment}, ${upload.id}, ${total}\nWe are ${
-            (uploads.indexOf(upload) / total) * 100
-          }% done`
-        )
         if (!upload.attachment) continue
-        await this.awsService.uploadFile(
-          [
-            {
-              attachment: upload.attachment
-            }
-          ],
-          "rename"
-        )
+        await queue.awsQueue.add(upload.attachment, undefined, {
+          attempts: 5,
+          backoff: {
+            type: "exponential",
+            delay: 1000
+          }
+        })
       } catch (e) {
         console.error(e)
       }
