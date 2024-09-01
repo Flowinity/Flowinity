@@ -9,6 +9,8 @@ import fs from "fs"
 import redisClient from "@app/redis"
 import axios from "axios"
 
+const PART_SIZE = 20 * 1024 * 1024
+
 @Service()
 export class AwsService {
   s3: S3 | null = null
@@ -49,18 +51,33 @@ export class AwsService {
     }[] = []
     for (const file of files) {
       const path = `${global.storageRoot}/${file.attachment}`
-
-      let fileObject: Buffer | null = await fs.promises.readFile(path)
-      if (!fileObject) {
-        continue
+      const fileStream = fs.createReadStream(path, {
+        highWaterMark: PART_SIZE
+      })
+      const upload = await Upload.findOne({
+        where: {
+          attachment: file.attachment
+        }
+      })
+      let key = upload?.sha256sum
+      if (!key) {
+        const hash = crypto.createHash("sha256")
+        key = await new Promise(function (resolve, reject) {
+          fileStream.on("data", (data) => {
+            hash.update(data)
+          })
+          fileStream.on("end", () => {
+            resolve(hash.digest("hex"))
+          })
+          fileStream.on("error", (err) => {
+            reject(err)
+          })
+        })
+        if (!key) throw new Error("Failed to hash file")
       }
-      const hash = crypto.createHash("sha256")
-      hash.update(fileObject)
-      fileObject = null
-      const key = hash.digest("hex")
-      // Check if it's already uploaded onto AWS
-      let exists = false
+
       console.log(`Checking if ${key} exists`)
+      let exists = false
       try {
         await this.s3
           .headObject({ Bucket: config.aws!.bucket!, Key: key })
@@ -75,9 +92,8 @@ export class AwsService {
       if (!exists) {
         const upload = await this.s3.createMultipartUpload(params).promise()
         const uploadId = upload.UploadId
-        const partSize = 20 * 1024 * 1024
         const fileStream = fs.createReadStream(path, {
-          highWaterMark: partSize
+          highWaterMark: PART_SIZE
         })
 
         //100MB
@@ -146,7 +162,6 @@ export class AwsService {
     }
     return uploads
   }
-
   async retrieveFile(key: string) {
     if (!this.s3) {
       throw new Error("AWS is not enabled")

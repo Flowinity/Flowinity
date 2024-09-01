@@ -35,6 +35,8 @@ import crypto from "crypto"
 import cryptoRandomString from "crypto-random-string"
 import path from "path"
 
+const PART_SIZE = 20 * 1024 * 1024
+
 @Service()
 export class GalleryService {
   constructor(
@@ -187,10 +189,26 @@ export class GalleryService {
     const attachment =
       file.filename ||
       cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
-    const fileObject = await fs.promises.readFile(
-      `${global.storageRoot}/${attachment}`
+
+    const fileStream = fs.createReadStream(
+      `${global.storageRoot}/${attachment}`,
+      { highWaterMark: PART_SIZE }
     )
-    const hash = crypto.createHash("sha256").update(fileObject).digest("hex")
+
+    const hash = crypto.createHash("sha256")
+    const hashKey = await new Promise(function (resolve, reject) {
+      fileStream.on("data", (data) => {
+        hash.update(data)
+      })
+      fileStream.on("end", () => {
+        resolve(hash.digest("hex"))
+      })
+      fileStream.on("error", (err) => {
+        reject(err)
+      })
+    })
+
+
     const upload = await Upload.create({
       attachment, // Attachment hash
       userId: userId,
@@ -203,7 +221,7 @@ export class GalleryService {
       mimeType: file.mimetype,
       fileSize: file.size,
       deletable,
-      sha256sum: hash
+      sha256sum: hashKey
     })
     await User.update(
       {
