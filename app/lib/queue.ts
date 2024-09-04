@@ -8,8 +8,6 @@ import utils from "@app/lib/utils"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
-import { ChatService } from "@app/services/chat.service"
-import fs from "fs"
 import { AwsService } from "@app/services/aws.service"
 
 const config = JSON.parse(process.env.CONFIG || "{}")

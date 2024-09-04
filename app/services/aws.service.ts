@@ -41,7 +41,7 @@ export class AwsService {
     }[]
   > {
     if (!this.s3) {
-      throw new Error("AWS is not enabled")
+      return []
     }
 
     const uploads: {
@@ -164,7 +164,7 @@ export class AwsService {
   }
   async retrieveFile(key: string) {
     if (!this.s3) {
-      throw new Error("AWS is not enabled")
+      return null
     }
     if (fs.existsSync(`${global.storageRoot}/${key}.awscache`)) {
       return fs.promises.readFile(`${global.storageRoot}/${key}.awscache`)
@@ -206,7 +206,7 @@ export class AwsService {
     expiry = 60 * 60 * 24 * 7
   ): Promise<string> {
     if (!this.s3) {
-      throw new Error("AWS is not enabled")
+      return ""
     }
     const cacheKey = `s3SignedUrl:${key}:${filename}:${type}:${mimeType}:${expiry}`
     const cached = await redisClient.get(cacheKey)
@@ -234,10 +234,7 @@ export class AwsService {
   }
 
   async deleteFile(key: string): Promise<void> {
-    if (!this.s3) {
-      throw new Error("AWS is not enabled")
-    }
-    if (!key) {
+    if (!key || !this.s3) {
       return
     }
     const uploads = await Upload.findAll({

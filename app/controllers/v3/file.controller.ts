@@ -10,7 +10,6 @@ import fs from "fs"
 import { Response } from "express"
 import { promisify } from "util"
 import path from "path"
-import { Domain } from "@app/models/domain.model"
 import { AwsService } from "@app/services/aws.service"
 
 @Service()
@@ -83,7 +82,6 @@ export class FileControllerV3 {
       return res
     }
 
-    let file: Buffer
     const media =
       upload.type === "image" ||
       upload.type === "video" ||
@@ -102,14 +100,8 @@ export class FileControllerV3 {
       )
       res.redirect(link)
       return res
-    } else {
-      file = await fs.promises.readFile(
-        global.storageRoot + "/" + upload.attachment
-      )
     }
-    if (!file) {
-      throw Errors.NOT_FOUND
-    }
+
     // We will render in the browser if it's an image, video, or audio
     res.setHeader(
       "Content-Disposition",
@@ -117,9 +109,16 @@ export class FileControllerV3 {
         upload.originalFilename
       }"`
     )
-    res.setHeader("Content-Length", file.length)
+    // Stream instead due to large files (2GiB+) breaking. More efficient
+    const filePath = `${global.storageRoot}/${attachment}`
+    const stat = await fs.promises.stat(filePath)
+    res.setHeader("Content-Length", stat.size)
     res.setHeader("Content-Type", upload.mimeType)
-    res.send(file)
-    return res
+    return new Promise<Response>((resolve, reject) => {
+      const stream = fs.createReadStream(filePath)
+      stream.pipe(res)
+      stream.on("end", () => resolve(res))
+      stream.on("error", (error) => reject(error))
+    })
   }
 }
