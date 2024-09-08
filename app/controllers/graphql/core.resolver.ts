@@ -174,7 +174,8 @@ export class CoreResolver {
   @Authorization({
     scopes: [],
     userOptional: true,
-    emailOptional: true
+    emailOptional: true,
+    allowMaintenance: true
   })
   @Query(() => [ExperimentType])
   async experiments(

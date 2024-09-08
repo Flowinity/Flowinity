@@ -97,6 +97,31 @@ export class Upload extends Model {
   })
   textMetadata: string
 
+  @Field(() => String, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  sha256sum: string | null
+
+  @Field(() => String, {
+    description:
+      "The location of the file on a server. 's3' defines AWS S3, 'local' defines the local 'storage' folder, and any other string assumes a hostname of a server within the Flowinity network."
+  })
+  @Column({
+    type: DataType.STRING
+  })
+  location: string
+
+  @Field(() => String)
+  @Column({
+    type: DataType.STRING,
+    defaultValue: "application/octet-stream"
+  })
+  mimeType: string
+
   @Field(() => PartialUserBase, {
     nullable: true
   })

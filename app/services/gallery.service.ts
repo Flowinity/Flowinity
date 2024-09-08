@@ -30,10 +30,19 @@ import { pubSub } from "@app/lib/graphql/pubsub"
 import { Response } from "express"
 import JSZip from "jszip"
 import redisClient from "@app/redis"
+import { AwsService } from "@app/services/aws.service"
+import crypto from "crypto"
+import cryptoRandomString from "crypto-random-string"
+import path from "path"
+
+const PART_SIZE = 20 * 1024 * 1024
 
 @Service()
 export class GalleryService {
-  constructor(private readonly cacheService: CacheService) {}
+  constructor(
+    private readonly cacheService: CacheService,
+    private readonly awsService: AwsService
+  ) {}
   async getRandomAttachment(
     id: number,
     type: "user" | "collection" | "starred" = "user"
@@ -91,11 +100,6 @@ export class GalleryService {
       }
     })
     if (upload) {
-      try {
-        await fs.unlinkSync(global.storageRoot + upload.attachment)
-      } catch (e) {
-        console.log(e)
-      }
       await User.update(
         {
           quota: sequelize.literal("quota -" + upload.fileSize)
@@ -122,6 +126,16 @@ export class GalleryService {
         }
       })
       await upload.destroy()
+      try {
+        if (upload.location === "local") {
+          if (!upload.attachment) return
+          await fs.unlinkSync(global.storageRoot + upload.attachment)
+        } else {
+          await this.awsService.deleteFile(upload.sha256sum!)
+        }
+      } catch (e) {
+        console.log(e)
+      }
       pubSub.publish(`DELETE_UPLOAD:${userId}`, id)
       socket.of(SocketNamespaces.GALLERY).to(userId).emit("delete", id)
 
@@ -171,8 +185,32 @@ export class GalleryService {
     precache: boolean = false,
     deletable: boolean = true
   ) {
+    /// read the file
+    const attachment =
+      file.filename ||
+      cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
+
+    const fileStream = fs.createReadStream(
+      `${global.storageRoot}/${attachment}`,
+      { highWaterMark: PART_SIZE }
+    )
+
+    const hash = crypto.createHash("sha256")
+    const hashKey = await new Promise(function (resolve, reject) {
+      fileStream.on("data", (data) => {
+        hash.update(data)
+      })
+      fileStream.on("end", () => {
+        resolve(hash.digest("hex"))
+      })
+      fileStream.on("error", (err) => {
+        reject(err)
+      })
+    })
+
+
     const upload = await Upload.create({
-      attachment: file.filename, // Attachment hash
+      attachment, // Attachment hash
       userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
@@ -180,8 +218,10 @@ export class GalleryService {
         file.mimetype,
         file.originalname?.split(".")[1] || ".bin"
       ),
+      mimeType: file.mimetype,
       fileSize: file.size,
-      deletable
+      deletable,
+      sha256sum: hashKey
     })
     await User.update(
       {
@@ -304,7 +344,8 @@ export class GalleryService {
         {
           name: { [Op.like]: "%" + input.search + "%" }
         },
-        { attachment: { [Op.like]: "%" + input.search + "%" } }
+        { attachment: { [Op.like]: "%" + input.search + "%" } },
+        { sha256sum: { [Op.eq]: input.search } }
       ]
     }
     let include: Includeable[] = []

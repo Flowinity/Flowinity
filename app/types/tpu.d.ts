@@ -13,6 +13,7 @@ declare type TpuConfig = {
   registrations: boolean
   mediaProxySecret: string
   weatherApiKey: string | undefined | null
+  disableStats: boolean
   providers: {
     tenor: string | undefined | null
     lastfm: {
@@ -144,4 +145,19 @@ declare type TpuConfig = {
         dsn: string | null
       }
     | undefined
+  aws?: {
+    enabled: boolean
+    accessKeyId: string | null
+    region: string | null
+    secretAccessKey: string | null
+    bucket: string | null
+    bucketUrl: string | null
+    profile: string | null
+    endpoint: string | null
+  }
+  cloudflare?: {
+    enabled: boolean
+    key: string | null
+    zone: string | null
+  }
 }

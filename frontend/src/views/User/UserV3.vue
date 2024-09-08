@@ -813,7 +813,7 @@ export default defineComponent({
         return false;
       }
       const theme = reset
-        ? this.$user.user.themeEngine?.theme || new DefaultThemes(false).themes
+        ? this.$user.user?.themeEngine?.theme || new DefaultThemes(false).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {

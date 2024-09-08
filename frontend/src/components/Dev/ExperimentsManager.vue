@@ -7,6 +7,21 @@
     >
       <template #header>Emergency Override</template>
       <v-container>
+        <v-alert
+          v-if="$user.user?.moderator && !$user.user?.administrator"
+          type="warning"
+          variant="tonal"
+          class="mb-2"
+        >
+          You can only create overrides for other users.
+        </v-alert>
+        <v-autocomplete
+          v-model="selected"
+          :items="users"
+          item-title="username"
+          item-value="id"
+          label="User"
+        />
         <v-autocomplete
           v-model="emergency.experiment.id"
           :items="relevantExperiments"
@@ -16,6 +31,7 @@
         />
         <v-text-field v-model="emergency.experiment.value" label="Value" />
         <v-checkbox
+          :disabled="selected !== 0"
           v-model="emergency.experiment.force"
           label="Force for everyone (even when overridden in ExpMan)"
         />
@@ -23,17 +39,35 @@
         <v-btn @click="createEmergencyOverride" color="red">Create</v-btn>
       </v-container>
       <v-card-title>Active</v-card-title>
-      <v-list>
+      <v-list class="mx-4">
+        <v-alert
+          v-if="
+            emergency.active.some(
+              (override, i) =>
+                emergency.active.findIndex((o) => o.id === override.id) !== i
+            )
+          "
+          type="warning"
+          variant="tonal"
+        >
+          Experiments configuration contains duplicates!
+          <br />
+          {{ duplicates.join(", ") }}
+        </v-alert>
         <v-card
           v-for="override in emergency.active"
           :key="override.id"
           class="my-2"
           rounded="0"
+          :color="duplicates.includes(override.id) ? 'red' : 'card'"
+          :variant="duplicates.includes(override.id) ? 'tonal' : undefined"
         >
           <v-card-title>ID: {{ override.id }}</v-card-title>
           <v-card-subtitle>Value: {{ override.value }}</v-card-subtitle>
           <v-card-subtitle>Forced: {{ override.force }}</v-card-subtitle>
-          <v-card-subtitle>User ID: {{ override.userId }}</v-card-subtitle>
+          <v-card-subtitle v-if="override.userId">
+            User ID: {{ override.userId }}
+          </v-card-subtitle>
           <v-btn @click="deleteEmergencyOverride(override.id)" color="red">
             Delete
           </v-btn>
@@ -44,13 +78,6 @@
   <v-btn color="red" variant="tonal" @click="emergency.value = true">
     !! Create global emergency override !!
   </v-btn>
-  <v-autocomplete
-    v-model="selected"
-    :items="users"
-    item-title="username"
-    item-value="id"
-    label="User"
-  />
   <v-text-field v-model="search" label="Search" />
   <v-select
     v-model="version"
@@ -143,7 +170,7 @@ export default defineComponent({
       users: [
         {
           id: 0,
-          username: "LocalState"
+          username: "Global"
         }
       ],
       emergency: {
@@ -158,6 +185,11 @@ export default defineComponent({
     };
   },
   computed: {
+    duplicates() {
+      return this.emergency.active
+        .map((e) => e.id)
+        .filter((e, i, a) => a.indexOf(e) !== i);
+    },
     relevantExperiments() {
       const experiments = this.experiments.length
         ? this.experiments
@@ -201,7 +233,8 @@ export default defineComponent({
       await this.$experiments.createEmergencyOverride({
         id: this.emergency.experiment.id,
         value: parseInt(this.emergency.experiment.value),
-        force: this.emergency.experiment.force
+        force: this.emergency.experiment.force,
+        userId: this.selected
       });
       this.emergency.experiment = {
         value: 0,
@@ -215,12 +248,14 @@ export default defineComponent({
       this.getEmergencyOverrides();
     },
     async getEmergencyOverrides() {
-      this.emergency.active = await this.$experiments.getEmergencyOverrides();
+      this.emergency.active = await this.$experiments.getEmergencyOverrides(
+        this.selected
+      );
     }
   },
   watch: {
     async selected() {
-      this.experiments = await this.$admin.getExperimentValues(this.selected);
+      this.getEmergencyOverrides();
     },
     "emergency.experiment.id": {
       handler() {

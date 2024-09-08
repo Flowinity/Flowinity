@@ -106,7 +106,8 @@ export default function setup(app: App) {
           }
         } else if (
           error.extensions?.code === "WEATHER_NOT_RESPONDING" ||
-          error.extensions?.code === "EXPERIMENT_NOT_ALLOWED"
+          error.extensions?.code === "EXPERIMENT_NOT_ALLOWED" ||
+          error.extensions?.code === "MAINTENANCE"
         ) {
           continue;
         } else if (

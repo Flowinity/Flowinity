@@ -23,6 +23,7 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import os from "os"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { AutoCollectApprovalType } from "@app/classes/graphql/autoCollects/subscriptions/autoCollectApprovalEvent"
+import { AwsService } from "@app/services/aws.service"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc" | "bot-email"
@@ -386,6 +387,20 @@ async function processFile(
   } catch (err) {
     console.log("Error processing file", err)
   }
+  if (config.aws?.enabled)
+    await queue.awsQueue.add(
+      upload.attachment,
+      {
+        localFileMode: "delete"
+      },
+      {
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 1000
+        }
+      }
+    )
 }
 
 async function postUpload(upload: Upload): Promise<void> {

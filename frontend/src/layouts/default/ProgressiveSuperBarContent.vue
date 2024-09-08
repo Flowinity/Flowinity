@@ -249,7 +249,7 @@
 
 <script setup lang="ts">
 import { Platform, useAppStore } from "@/store/app.store";
-import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
+import { useProgressiveUIStore, RailMode } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
 import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
@@ -257,14 +257,14 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import { ref, watch } from "vue";
 import SuperBarItem from "@/layouts/default/SuperBarItem.vue";
 import {
-  RiAddLine,
   RiFeedbackLine,
-  RiLogoutBoxLine,
   RiLogoutCircleLine,
   RiNotificationFill,
   RiNotificationLine,
   RiSearchLine,
   RiUserLine,
+  RiLogoutBoxLine,
+  RiAddLine,
   RiDownloadCloud2Fill
 } from "@remixicon/vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";

@@ -19,6 +19,7 @@ export class DefaultTpuConfig {
     officialInstance: false,
     finishedSetup: false,
     weatherApiKey: null,
+    disableStats: false,
     discord: {
       webhook: null,
       token: null
@@ -149,6 +150,21 @@ export class DefaultTpuConfig {
     isV5: false,
     sentry: {
       dsn: null
+    },
+    aws: {
+      accessKeyId: null,
+      secretAccessKey: null,
+      region: null,
+      bucket: null,
+      enabled: false,
+      profile: null,
+      endpoint: null,
+      bucketUrl: null
+    },
+    cloudflare: {
+      enabled: false,
+      key: null,
+      zone: null
     }
   }
 }

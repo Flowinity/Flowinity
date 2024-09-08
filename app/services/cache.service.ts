@@ -465,6 +465,11 @@ export class CacheService {
   }
 
   cacheInit() {
+    if (config.disableStats) {
+      return console.warn(
+        "[REDIS] Stats are disabled, skipping cache initialization. Ensure you know what you're doing. You can re-enable stats by setting `disableStats` to `false` in your tpu.json and restarting the server."
+      )
+    }
     if (!config.finishedSetup) return
     try {
       // 10 minutes

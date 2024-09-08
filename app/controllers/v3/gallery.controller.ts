@@ -26,17 +26,23 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { Upload } from "@app/models/upload.model"
 import { NextFunction, Response } from "express"
+import { AwsService } from "@app/services/aws.service"
 
 async function checkUserQuota(
   req: RequestAuthSystem,
   res: Response,
   next: NextFunction
 ) {
-  function e(error: keyof typeof Errors = "QUOTA_EXCEEDED") {
+  function e(error: keyof typeof Errors = "QUOTA_EXCEEDED", custom?: any) {
     return res.status(400).json({
-      errors: [{ name: error, ...Errors[error] }]
+      errors: [custom ? custom : { name: error, ...Errors[error] }]
     })
   }
+  if (config.maintenance.enabled)
+    e("UNKNOWN", {
+      name: "MAINTENANCE",
+      message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`
+    })
   await authSystem("uploads.create", true, req, res, () => {})
   if (!req.user) {
     return e("UNAUTHORIZED")
