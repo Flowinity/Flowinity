@@ -158,3 +158,5 @@ if (!isSlideshow) {
 app.component("TpuSwitch", TpuSwitch);
 
 app.mount("#tpu-app");
+
+export default app;

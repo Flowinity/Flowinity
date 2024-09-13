@@ -174,6 +174,15 @@ const config = {
     warmup: {
       clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
     }
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    server: {
+      deps: {
+        inline: ["vuetify"]
+      }
+    }
   }
 };
 

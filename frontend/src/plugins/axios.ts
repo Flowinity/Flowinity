@@ -22,6 +22,22 @@ const ax = axios.create({
   }
 }) as AxiosStaticWithAvoidance;
 
+ax.interceptors.response.use((response) => {
+  const toast = useToast();
+  toast.warning(
+    `[APIv3] Legacy endpoint ${response.config.url} is being deprecated.`,
+    {
+      //textcolor
+      toastClassName: "text-black"
+    }
+  );
+  console.warn(
+    `[TPU/APIv3] Legacy endpoint ${response.config.url} is being deprecated.`,
+    response.data
+  );
+  return response;
+});
+
 // if error is thrown
 ax.interceptors.response.use(
   (response) => response,
