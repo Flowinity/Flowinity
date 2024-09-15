@@ -473,9 +473,11 @@ export class CacheService {
     if (!config.finishedSetup) return
     try {
       // 10 minutes
-      setInterval(this.refreshState, 1000 * 60 * 10)
+      // TEMP: 1 hour
+      setInterval(this.refreshState, 3600000)
       // 30 minutes
-      setInterval(this.generateUserStatsCache, 1000 * 60 * 30)
+      // TEMP: 12 hours
+      setInterval(this.generateUserStatsCache, 43200000)
       // 1 hour
       setInterval(this.generateCollectionCache, 3600000)
       setInterval(this.generateShareLinkCache, 3600000)

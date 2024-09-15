@@ -10,6 +10,7 @@ import {
   RiAddLine,
   RiAppleFill,
   RiAppleLine,
+  RiArticleLine,
   RiAuctionFill,
   RiAuctionLine,
   RiBarChartFill,
@@ -129,6 +130,7 @@ export interface NavigationOption {
   menu?: ContextMenuItem[];
   options?: NavigationOption[];
   parentPath?: string;
+  externalPath?: string;
 }
 
 export interface ContextMenuItem {
@@ -269,6 +271,12 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               path: `/u/${userStore.user?.username}`,
               selectedIcon: markRaw(RiUserFill),
               allowOverride: true
+            },
+            {
+              icon: markRaw(RiArticleLine),
+              name: "Blog",
+              externalPath: "https://troplo.com/news",
+              selectedIcon: markRaw(RiArticleLine)
             }
           ],
           [RailMode.GALLERY]: [

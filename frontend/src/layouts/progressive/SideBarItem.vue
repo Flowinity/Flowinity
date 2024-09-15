@@ -47,7 +47,9 @@ function handleClick() {
     }
 
     if (!props.selected) {
-      if (props.item?.click) {
+      if (props.item?.externalPath) {
+        window.open(props.item?.externalPath!, "_blank");
+      } else if (props.item?.click) {
         props.item?.click();
       } else {
         router.push(props.item?.path || props.to || "");
@@ -75,7 +77,7 @@ function openContextMenu(event: MouseEvent) {
 <template>
   <component
     :is="disabled ? 'div' : 'a'"
-    :href="item?.path || to"
+    :href="item?.path || item?.externalPath || to"
     class="w-full text-inherit"
     @click.prevent.stop
     tabindex="-1"
