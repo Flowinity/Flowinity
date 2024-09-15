@@ -167,6 +167,7 @@
     "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/introspection": "4.0.0",
     "@parcel/watcher": "^2.2.0",
+    "@playwright/test": "^1.47.0",
     "@vite-pwa/assets-generator": "^0.2.3",
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^25.0.0",
