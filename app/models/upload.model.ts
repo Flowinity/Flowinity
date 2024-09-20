@@ -14,7 +14,7 @@ import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import { Field, Int, ObjectType } from "type-graphql"
+import { Field, Float, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { DateType } from "@app/classes/graphql/serializers/date"
 
@@ -72,7 +72,7 @@ export class Upload extends Model {
   @Column
   urlRedirect: string
 
-  @Field()
+  @Field(() => Float)
   @Column
   fileSize: number
 
