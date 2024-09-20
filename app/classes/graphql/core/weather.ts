@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, Float, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class Weather {
@@ -6,43 +6,43 @@ export class Weather {
     nullable: true
   })
   icon: string
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   temp: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   feels_like: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   temp_min: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   temp_max: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   pressure: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   humidity: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   wind_speed: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   wind_deg: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   clouds: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   visibility: number
@@ -66,23 +66,23 @@ export class Weather {
     nullable: true
   })
   location: string
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   wind_gust: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   sunrise: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   sunset: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   rain_1h: number
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   rain_3h: number

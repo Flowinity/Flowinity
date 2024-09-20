@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql"
+import { Field, Float, InputType, ObjectType } from "type-graphql"
 import { GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()
@@ -37,7 +37,7 @@ export class Pulse {
 @InputType("SinglePulseInput")
 @ObjectType()
 export class SinglePulse extends Pulse {
-  @Field()
+  @Field(() => Float)
   timeSpent: number
 }
 
@@ -46,6 +46,6 @@ export class SinglePulse extends Pulse {
 export class PulseUpdate {
   @Field()
   id: string
-  @Field()
+  @Field(() => Float)
   timeSpent: number
 }

@@ -92,7 +92,9 @@ export const generateSchema = () => {
     container: Container,
     authChecker: authChecker,
     validate: true,
-    pubSub: pubSub
+    pubSub: pubSub,
+    // set default number to int
+    scalarsMap: [{ type: Number, scalar: Int }]
   })
 
   return centralSchema

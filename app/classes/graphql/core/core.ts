@@ -1,10 +1,10 @@
-import { Field, Int, ObjectType } from "type-graphql"
+import { Field, Float, Int, ObjectType } from "type-graphql"
 import { Announcement } from "@app/models/announcement.model"
 import { GraphQLBigInt, GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()
 export class DataLabelsGraph {
-  @Field(() => [Number || String])
+  @Field(() => [Float || String])
   data: number[] | string[]
   @Field(() => [String])
   labels: string[]

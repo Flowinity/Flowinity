@@ -1,7 +1,5 @@
-import { Field, ObjectType } from "type-graphql"
-import {
-  PartialUserFriend
-} from "@app/classes/graphql/user/partialUser"
+import { Field, Float, ObjectType } from "type-graphql"
+import { PartialUserFriend } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 export class ChatTypingEvent {
@@ -9,7 +7,7 @@ export class ChatTypingEvent {
   chatId: number
   @Field(() => PartialUserFriend)
   user: PartialUserFriend
-  @Field({
+  @Field(() => Float, {
     nullable: true
   })
   expires: number
