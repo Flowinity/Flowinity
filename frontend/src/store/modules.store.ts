@@ -1,9 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
-import { nextTick, ref, watch } from "vue";
 import { NavigationOption } from "@/store/progressive.store";
-import { mountRootParcel, Parcel, ParcelProps } from "single-spa";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 
 export const useModulesStore = defineStore("modules", () => {
   const modules = ref({
@@ -15,32 +13,32 @@ export const useModulesStore = defineStore("modules", () => {
         }
       ] as NavigationOption[],
       id: "#flowforms-app",
-      parcelProps: {} as ParcelProps,
-      parcel: null as null | Parcel
+      parcelProps: {} as any,
+      parcel: null as any
     }
   });
 
   async function mount(module: keyof typeof modules.value) {
     // create new Parcel
-    const moduleData = modules.value[module];
-    if (moduleData.parcel && moduleData.parcel.getStatus() !== "MOUNTED") {
-      return moduleData.parcel.mount();
-    } else if (moduleData.parcel) {
-      return;
-    }
-    moduleData.parcel = mountRootParcel(
-      () => import("https://flowforms.dev.assets.troplo.com/src/main.ts"),
-      {
-        domElement: document.querySelector(moduleData.id)
-      }
-    );
+    // const moduleData = modules.value[module];
+    // if (moduleData.parcel && moduleData.parcel.getStatus() !== "MOUNTED") {
+    //   return moduleData.parcel.mount();
+    // } else if (moduleData.parcel) {
+    //   return;
+    // }
+    // moduleData.parcel = mountRootParcel(
+    //   () => import("https://flowforms.dev.assets.troplo.com/src/main.ts"),
+    //   {
+    //     domElement: document.querySelector(moduleData.id)
+    //   }
+    // );
   }
 
   async function unmount(module: keyof typeof modules.value) {
-    const moduleData = modules.value[module];
-    if (moduleData.parcel) {
-      moduleData.parcel.unmount();
-    }
+    // const moduleData = modules.value[module];
+    // if (moduleData.parcel) {
+    //   moduleData.parcel.unmount();
+    // }
   }
 
   // const route = useRoute();

@@ -101,6 +101,7 @@ export class CoreResolver {
     return {
       ...((await redis.json.get("core:state")) ||
         (await this.cacheService.refreshState())),
+      announcements: [],
       server: cluster.worker?.id
         ? `${os.hostname()?.toUpperCase()}#${cluster.worker?.id}`
         : os.hostname()?.toUpperCase(),

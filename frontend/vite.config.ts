@@ -2,7 +2,6 @@
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import graphql from "@rollup/plugin-graphql";
-import vitePluginSingleSpa from "vite-plugin-single-spa";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -30,10 +29,6 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
-    vitePluginSingleSpa({
-      serverPort: 3000,
-      spaEntryPoints: "src/spa.tsx"
-    }),
     graphql(),
     //@ts-ignore
     ViteVersion.default(),

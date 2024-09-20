@@ -5,15 +5,12 @@
       class="d-flex justify-center flex-column align-center w-full position-absolute h-full"
       v-if="!rendered"
     >
-      <FlowinityLogoAnimated
-        style="width: 96px"
-        :skip-init="true"
-        :animate="true"
+      <iframe
+        src="https://flowforms.troplo.com"
+        class="w-full h-full"
+        ref="module"
       />
-      <p class="text-center text-medium-emphasis text-h4 mt-4">Flowinity</p>
-      <p class="text-center text-medium-emphasis text-h6">{{ id }}</p>
     </div>
-    <div :id="id" ref="module" style="z-index: 2"></div>
   </div>
 </template>
 
@@ -31,16 +28,16 @@ const props = defineProps({
   id: String
 });
 
-onMounted(() => {
-  modulesStore.mount("FlowForms");
-  // check every 50ms
-  // TODO: find a better way to detect if the module is rendered
-  const interval = setInterval(() => {
-    if (module.value?.children.length) {
-      clearInterval(interval);
-      rendered.value = true;
-    }
-  }, 50);
-});
+// onMounted(() => {
+//   modulesStore.mount("FlowForms");
+//   // check every 50ms
+//   // TODO: find a better way to detect if the module is rendered
+//   const interval = setInterval(() => {
+//     if (module.value?.children.length) {
+//       clearInterval(interval);
+//       rendered.value = true;
+//     }
+//   }, 50);
+// });
 </script>
 <style scoped></style>

@@ -7718,16 +7718,6 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-single-spa-vue@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/single-spa-vue/-/single-spa-vue-3.0.0.tgz#4547355e8178d36ea5c7809fcdd45f5846d019a7"
-  integrity sha512-aw4KzaELuWo5pev117C0kSPtcj96vVbml+VssIKKs1aSGv2zA1nBK/mW/jlU8J1jEHlvxadBrDNDANVpqPrHxQ==
-
-single-spa@^6.0.1:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-6.0.2.tgz#c3709248d303897cc26fba253eaf2555c5c17122"
-  integrity sha512-xCq58THg6Y3mJ94xgZhi6AtqN9IUfU/Pxb7ii9Qv8wiINlvtlXrTTMcTZ4zpr+M/CdpUbp5KmsqGmDVPwht50g==
-
 slash@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-2.0.0.tgz#de552851a1759df3a8f206535442f5ec4ddeab44"
@@ -8583,11 +8573,6 @@ vite-plugin-pwa@^0.17.4:
     pretty-bytes "^6.1.1"
     workbox-build "^7.0.0"
     workbox-window "^7.0.0"
-
-vite-plugin-single-spa@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-single-spa/-/vite-plugin-single-spa-0.7.0.tgz#25b473b09fdac45e47f219baceec8815d2d23eb4"
-  integrity sha512-oM0J396iFfFx/PNwqEcvJUfGRORvVOsi21zOkSifMyMtLNfbeT8z5ZLkwkkCRdyUsXreHSmAu7JtRIYWlznyIQ==
 
 vite-plugin-vuetify@^2.0.1:
   version "2.0.4"
