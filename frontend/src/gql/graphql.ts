@@ -30,7 +30,7 @@ export type AcceptCollectionInviteInput = {
 
 export type AccessedFrom = {
   __typename?: 'AccessedFrom';
-  asn?: Maybe<Scalars['Float']['output']>;
+  asn?: Maybe<Scalars['Int']['output']>;
   date: Scalars['String']['output'];
   ip: Scalars['String']['output'];
   isp?: Maybe<Scalars['String']['output']>;
@@ -58,7 +58,7 @@ export type AddBotToChatInput = {
 export type AddChatUser = {
   action: ToggleUser;
   chatAssociationId: Scalars['Int']['input'];
-  users: Array<Scalars['Float']['input']>;
+  users: Array<Scalars['Int']['input']>;
 };
 
 export type AddFriendInput = {
@@ -77,8 +77,8 @@ export type AddRank = {
 };
 
 export type AddToCollectionInput = {
-  collectionId: Scalars['Float']['input'];
-  items: Array<Scalars['Float']['input']>;
+  collectionId: Scalars['Int']['input'];
+  items: Array<Scalars['Int']['input']>;
 };
 
 /** The type of cache to clear */
@@ -114,7 +114,7 @@ export type Announcement = {
   type?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['Date']['output']>;
   user?: Maybe<PartialUserBase>;
-  userId?: Maybe<Scalars['Float']['output']>;
+  userId?: Maybe<Scalars['Int']['output']>;
 };
 
 /** Used for chat audit log to determine what type of action was performed. */
@@ -138,8 +138,8 @@ export enum AuditLogCategory {
 
 export type AuditLogInput = {
   associationId: Scalars['Int']['input'];
-  limit?: Scalars['Float']['input'];
-  page?: Scalars['Float']['input'];
+  limit?: Scalars['Int']['input'];
+  page?: Scalars['Int']['input'];
 };
 
 export type AuthorizeAppInput = {
@@ -168,7 +168,7 @@ export type AutoCollectApproval = {
   collection?: Maybe<Collection>;
   collectionId: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
-  uploadId: Scalars['Float']['output'];
+  uploadId: Scalars['Int']['output'];
   user?: Maybe<PartialUserBase>;
   userId?: Maybe<Scalars['Int']['output']>;
 };
@@ -187,13 +187,13 @@ export enum AutoCollectApprovalType {
 
 export type AutoCollectParentRule = {
   __typename?: 'AutoCollectParentRule';
-  id: Scalars['Float']['output'];
+  id: Scalars['Int']['output'];
   rules: Array<SubRule>;
 };
 
 export type AutoCollectRule = {
   __typename?: 'AutoCollectRule';
-  collectionId: Scalars['Float']['output'];
+  collectionId: Scalars['Int']['output'];
   enabled: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
@@ -214,7 +214,7 @@ export type Badge = {
   image?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   plan: Plan;
-  priority?: Maybe<Scalars['Float']['output']>;
+  priority?: Maybe<Scalars['Int']['output']>;
   tooltip?: Maybe<Scalars['String']['output']>;
   unlocked: Scalars['Boolean']['output'];
   users: Array<PartialUserBase>;
@@ -300,7 +300,7 @@ export type Chat = {
   /** Null if the chat is owned by a Colubrina legacy user, or the account was deleted. */
   user?: Maybe<PartialUserBase>;
   /** Null if the chat is owned by a Colubrina legacy user, or the account was deleted. */
-  userId?: Maybe<Scalars['Float']['output']>;
+  userId?: Maybe<Scalars['Int']['output']>;
   users: Array<ChatAssociation>;
   usersCount: Scalars['Int']['output'];
 };
@@ -403,7 +403,7 @@ export enum ChatType {
 
 export type ChatTypingEvent = {
   __typename?: 'ChatTypingEvent';
-  chatId: Scalars['Float']['output'];
+  chatId: Scalars['Int']['output'];
   expires?: Maybe<Scalars['Float']['output']>;
   user: PartialUserFriend;
 };
@@ -445,7 +445,7 @@ export type Collection = {
   shared?: Maybe<Scalars['Boolean']['output']>;
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
   users: Array<CollectionUser>;
 };
 
@@ -467,9 +467,9 @@ export type CollectionInput = {
 export type CollectionItem = {
   __typename?: 'CollectionItem';
   attachment: Upload;
-  attachmentId: Scalars['Float']['output'];
+  attachmentId: Scalars['Int']['output'];
   collection: Collection;
-  collectionId: Scalars['Float']['output'];
+  collectionId: Scalars['Int']['output'];
   createdAt: Scalars['Date']['output'];
   id: Scalars['Int']['output'];
   /** Used to prevent duplicates by forming `uploadId-collectionId`. Can be null for items created before October 2022. */
@@ -477,22 +477,22 @@ export type CollectionItem = {
   pinned: Scalars['Boolean']['output'];
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type CollectionUser = {
   __typename?: 'CollectionUser';
   accepted: Scalars['Boolean']['output'];
   collection?: Maybe<Collection>;
-  collectionId: Scalars['Float']['output'];
+  collectionId: Scalars['Int']['output'];
   configure: Scalars['Boolean']['output'];
   createdAt: Scalars['Date']['output'];
   id: Scalars['Int']['output'];
   identifier?: Maybe<Scalars['String']['output']>;
   read: Scalars['Boolean']['output'];
-  recipientId?: Maybe<Scalars['Float']['output']>;
+  recipientId?: Maybe<Scalars['Int']['output']>;
   sender?: Maybe<PartialUserBase>;
-  senderId?: Maybe<Scalars['Float']['output']>;
+  senderId?: Maybe<Scalars['Int']['output']>;
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
   write: Scalars['Boolean']['output'];
@@ -538,9 +538,9 @@ export type CoreState = {
   /** Workspaces Note ID for the Terms of Service. */
   termsNoteId?: Maybe<Scalars['String']['output']>;
   /** Uptime of the TPU Server in seconds. */
-  uptime: Scalars['Float']['output'];
+  uptime: Scalars['Int']['output'];
   /** Uptime of the system in seconds. */
-  uptimeSys: Scalars['Float']['output'];
+  uptimeSys: Scalars['Int']['output'];
   weather: Weather;
 };
 
@@ -581,7 +581,7 @@ export type CreateBotInput = {
 export type CreateChatInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<ChatType>;
-  users: Array<Scalars['Float']['input']>;
+  users: Array<Scalars['Int']['input']>;
 };
 
 export type CreateCollectionInput = {
@@ -598,7 +598,7 @@ export type CreateInviteInput = {
 
 export type CreateNoteInput = {
   name: Scalars['String']['input'];
-  workspaceFolderId: Scalars['Float']['input'];
+  workspaceFolderId: Scalars['Int']['input'];
 };
 
 export type CreateRank = {
@@ -615,7 +615,7 @@ export type CreateUploadEvent = {
 
 export type CreateWorkspaceFolderInput = {
   name: Scalars['String']['input'];
-  workspaceId: Scalars['Float']['input'];
+  workspaceId: Scalars['Int']['input'];
 };
 
 /** Used for deleting chats and transferring ownership. */
@@ -664,11 +664,11 @@ export type DeleteRank = {
 };
 
 export type DeleteUploadInput = {
-  items: Array<Scalars['Float']['input']>;
+  items: Array<Scalars['Int']['input']>;
 };
 
 export type DeleteWorkspaceItemInput = {
-  id: Scalars['Float']['input'];
+  id: Scalars['Int']['input'];
   type: WorkspaceItemType;
 };
 
@@ -678,7 +678,7 @@ export type Domain = {
   DNSProvisioned: Scalars['Boolean']['output'];
   active: Scalars['Boolean']['output'];
   /** @deprecated Cloudflare integration was removed in TPUv2. */
-  advanced?: Maybe<Scalars['Float']['output']>;
+  advanced?: Maybe<Scalars['Int']['output']>;
   /** @deprecated Granular user control was removed in TPUv2. */
   customUserEligibility?: Maybe<Array<Scalars['Int']['output']>>;
   domain: Scalars['String']['output'];
@@ -734,7 +734,7 @@ export type EmbedInput = {
 export type EmbedMedia = {
   __typename?: 'EmbedMedia';
   attachment?: Maybe<Scalars['String']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
   isInternal: Scalars['Boolean']['output'];
   mimeType?: Maybe<Scalars['String']['output']>;
   proxyUrl?: Maybe<Scalars['String']['output']>;
@@ -743,7 +743,7 @@ export type EmbedMedia = {
   url?: Maybe<Scalars['String']['output']>;
   /** Used for trusted video embed sources, such as YouTube. */
   videoEmbedUrl?: Maybe<Scalars['String']['output']>;
-  width?: Maybe<Scalars['Float']['output']>;
+  width?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum EmbedMediaType {
@@ -795,7 +795,7 @@ export type Experiment = {
   __typename?: 'Experiment';
   key: Scalars['String']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -861,12 +861,12 @@ export type FriendNickname = {
   __typename?: 'FriendNickname';
   createdAt: Scalars['Date']['output'];
   friend?: Maybe<PartialUserBase>;
-  friendId: Scalars['Float']['output'];
+  friendId: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   nickname: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 /** Friend request status. */
@@ -959,8 +959,8 @@ export type GenericSuccessObject = {
 
 export type GetMailInput = {
   mailbox: Scalars['String']['input'];
-  page?: InputMaybe<Scalars['Float']['input']>;
-  userId: Scalars['Float']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  userId: Scalars['Int']['input'];
 };
 
 export type HomeRow = {
@@ -1018,7 +1018,7 @@ export type Integration = {
   type: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type InteractiveGraphInput = {
@@ -1076,13 +1076,13 @@ export type LoginUser = {
   __typename?: 'LoginUser';
   banned: Scalars['Boolean']['output'];
   email: Scalars['String']['output'];
-  id: Scalars['Float']['output'];
+  id: Scalars['Int']['output'];
   username: Scalars['String']['output'];
 };
 
 export type LookupPrefix = {
   __typename?: 'LookupPrefix';
-  botId: Scalars['Float']['output'];
+  botId: Scalars['Int']['output'];
   command: Scalars['String']['output'];
   description: Scalars['String']['output'];
 };
@@ -1165,7 +1165,9 @@ export type Mutation = {
   adminDebugBatch: GenericSuccessObject;
   adminDeleteExperimentOverride: GenericSuccessObject;
   adminGenerateInsights: GenericSuccessObject;
+  adminGenerateMimeTypeMap: GenericSuccessObject;
   adminMigrateLegacyRanksForChat: GenericSuccessObject;
+  adminMigrateToS3: GenericSuccessObject;
   adminSendEmailForUnverifiedUsers: GenericSuccessObject;
   adminSetExperimentOverride: ExperimentOverride;
   applyDomain: Domain;
@@ -1206,6 +1208,7 @@ export type Mutation = {
   leaveCollection: GenericSuccessObject;
   login: LoginResponse;
   logout: Scalars['Boolean']['output'];
+  markNotificationsAsRead: Array<Notification>;
   oauthAppAuthorize: AuthorizeAppResponse;
   oauthAppDeauthorize: GenericSuccessObject;
   reactivateAccount: Scalars['Boolean']['output'];
@@ -1304,7 +1307,7 @@ export type MutationAdminDeleteExperimentOverrideArgs = {
 export type MutationAdminGenerateInsightsArgs = {
   customGte?: InputMaybe<Scalars['String']['input']>;
   type: Scalars['String']['input'];
-  userId: Scalars['Float']['input'];
+  userId: Scalars['Int']['input'];
 };
 
 
@@ -1324,7 +1327,7 @@ export type MutationBlockUserArgs = {
 
 
 export type MutationCancelTypingArgs = {
-  input: Scalars['Float']['input'];
+  input: Scalars['Int']['input'];
 };
 
 
@@ -1579,7 +1582,7 @@ export type MutationTransferGroupOwnershipArgs = {
 
 
 export type MutationTypingArgs = {
-  input: Scalars['Float']['input'];
+  input: Scalars['Int']['input'];
 };
 
 
@@ -1662,7 +1665,7 @@ export type Note = {
   shareLink?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
   versions: Array<NoteVersion>;
-  workspaceFolderId: Scalars['Float']['output'];
+  workspaceFolderId: Scalars['Int']['output'];
 };
 
 export type NoteCollabPosition = {
@@ -1682,7 +1685,7 @@ export type NoteCollabPositionInput = {
 };
 
 export type NoteInput = {
-  id?: InputMaybe<Scalars['Float']['input']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
   shareLink?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1712,13 +1715,13 @@ export type Notification = {
   route?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type OauthApp = {
   __typename?: 'OauthApp';
   bot?: Maybe<PartialUserBase>;
-  botId?: Maybe<Scalars['Float']['output']>;
+  botId?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -1732,14 +1735,14 @@ export type OauthApp = {
   shortCode?: Maybe<Scalars['String']['output']>;
   token?: Maybe<Scalars['String']['output']>;
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
   verified: Scalars['Boolean']['output'];
 };
 
 export type OauthConsentApp = {
   __typename?: 'OauthConsentApp';
   bot?: Maybe<PartialUserBase>;
-  botId?: Maybe<Scalars['Float']['output']>;
+  botId?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -1750,7 +1753,7 @@ export type OauthConsentApp = {
   shortCode?: Maybe<Scalars['String']['output']>;
   token?: Maybe<Scalars['String']['output']>;
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
   verified: Scalars['Boolean']['output'];
 };
 
@@ -1763,7 +1766,7 @@ export type OauthUser = {
   oauthAppId: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type PagedMessagesInput = {
@@ -1780,7 +1783,7 @@ export type Pager = {
   endIndex: Scalars['Int']['output'];
   endPage: Scalars['Int']['output'];
   pageSize: Scalars['Int']['output'];
-  pages: Array<Scalars['Float']['output']>;
+  pages: Array<Scalars['Int']['output']>;
   startIndex: Scalars['Int']['output'];
   startPage: Scalars['Int']['output'];
   totalItems: Scalars['Int']['output'];
@@ -1891,7 +1894,7 @@ export type PartialUserPublic = {
   subscription: Array<TpuSubscription>;
   themeEngine?: Maybe<Scalars['JSON']['output']>;
   username: Scalars['String']['output'];
-  xp?: Maybe<Scalars['Float']['output']>;
+  xp?: Maybe<Scalars['Int']['output']>;
 };
 
 export type PermissionsMetadata = {
@@ -1944,7 +1947,7 @@ export type ProfileLayout = {
   __typename?: 'ProfileLayout';
   config: ProfileLayoutConfig;
   layout: ProfileLayoutObject;
-  version: Scalars['Float']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type ProfileLayoutColumn = {
@@ -1961,7 +1964,7 @@ export type ProfileLayoutComponent = {
 
 export type ProfileLayoutConfig = {
   __typename?: 'ProfileLayoutConfig';
-  containerMargin?: Maybe<Scalars['Float']['output']>;
+  containerMargin?: Maybe<Scalars['Int']['output']>;
   showStatsSidebar: Scalars['Boolean']['output'];
 };
 
@@ -1980,9 +1983,9 @@ export type ProfileLayoutPropLink = {
 export type ProfileLayoutProps = {
   __typename?: 'ProfileLayoutProps';
   children?: Maybe<Array<ProfileLayoutComponent>>;
-  display?: Maybe<Scalars['Float']['output']>;
+  display?: Maybe<Scalars['Int']['output']>;
   friendsOnly?: Maybe<Scalars['Boolean']['output']>;
-  height?: Maybe<Scalars['Float']['output']>;
+  height?: Maybe<Scalars['Int']['output']>;
   links?: Maybe<Array<ProfileLayoutPropLink>>;
   type?: Maybe<Scalars['String']['output']>;
 };
@@ -2048,13 +2051,18 @@ export type Query = {
   oauthAppConsent: OauthConsentApp;
   oauthApps: Array<OauthApp>;
   setupStep: Scalars['Int']['output'];
-  trackedUserIds: Array<Scalars['Float']['output']>;
+  trackedUserIds: Array<Scalars['Int']['output']>;
   trackedUsers: Array<PartialUserFriend>;
   unreadMail: Scalars['Int']['output'];
   user?: Maybe<PartialUserPublic>;
   userEmoji: Array<ChatEmoji>;
   weather: Weather;
   workspaces: Array<Workspace>;
+};
+
+
+export type QueryAdminGetExperimentOverridesArgs = {
+  userId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -2199,7 +2207,7 @@ export type RemoveCollectionUserInput = {
 
 export type SaveNoteInput = {
   data: WorkspaceNoteInput;
-  id: Scalars['Float']['input'];
+  id: Scalars['Int']['input'];
   manualSave?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2236,7 +2244,7 @@ export type Session = {
   token?: Maybe<Scalars['String']['output']>;
   type: SessionType;
   updatedAt?: Maybe<Scalars['Date']['output']>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type SessionInfo = {
@@ -2276,12 +2284,12 @@ export type SinglePulseInput = {
 export type Star = {
   __typename?: 'Star';
   attachment: Upload;
-  attachmentId: Scalars['Float']['output'];
+  attachmentId: Scalars['Int']['output'];
   createdAt: Scalars['Date']['output'];
   id: Scalars['Int']['output'];
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type StarUploadInput = {
@@ -2322,7 +2330,7 @@ export type StatusEvent = {
 
 export type SubRule = {
   __typename?: 'SubRule';
-  id: Scalars['Float']['output'];
+  id: Scalars['Int']['output'];
   operator: Scalars['String']['output'];
   type: Scalars['String']['output'];
   value: Scalars['String']['output'];
@@ -2420,7 +2428,7 @@ export type SubscriptionMessageInput = {
 
 export type SubscriptionMetadata = {
   __typename?: 'SubscriptionMetadata';
-  hours: Scalars['Float']['output'];
+  hours: Scalars['Int']['output'];
 };
 
 export type TpuSubscription = {
@@ -2556,11 +2564,11 @@ export type UpdateUserInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   discordPrecache?: InputMaybe<Scalars['Boolean']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
-  excludedCollections?: InputMaybe<Array<Scalars['Float']['input']>>;
+  excludedCollections?: InputMaybe<Array<Scalars['Int']['input']>>;
   friendRequests?: InputMaybe<UserFriendRequestPrivacy>;
   groupPrivacy?: InputMaybe<UserGroupPrivacy>;
   insights?: InputMaybe<Scalars['String']['input']>;
-  itemsPerPage?: InputMaybe<Scalars['Float']['input']>;
+  itemsPerPage?: InputMaybe<Scalars['Int']['input']>;
   language?: InputMaybe<Scalars['String']['input']>;
   nameColor?: InputMaybe<Scalars['String']['input']>;
   privacyPolicyAccepted?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2592,8 +2600,12 @@ export type Upload = {
   id: Scalars['Int']['output'];
   item?: Maybe<CollectionItem>;
   items: Array<CollectionItem>;
+  /** The location of the file on a server. 's3' defines AWS S3, 'local' defines the local 'storage' folder, and any other string assumes a hostname of a server within the Flowinity network. */
+  location: Scalars['String']['output'];
+  mimeType: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   originalFilename?: Maybe<Scalars['String']['output']>;
+  sha256sum?: Maybe<Scalars['String']['output']>;
   starred?: Maybe<Star>;
   /** This is used for OCR scanned text from images. */
   textMetadata?: Maybe<Scalars['String']['output']>;
@@ -2602,7 +2614,7 @@ export type Upload = {
   /** @deprecated URL redirects were removed in TPUv2/NEXT. */
   urlRedirect?: Maybe<Scalars['String']['output']>;
   user?: Maybe<PartialUserBase>;
-  userId: Scalars['Float']['output'];
+  userId: Scalars['Int']['output'];
 };
 
 export type User = {
@@ -2627,11 +2639,11 @@ export type User = {
   description?: Maybe<Scalars['String']['output']>;
   discordPrecache: Scalars['Boolean']['output'];
   domain?: Maybe<Domain>;
-  domainId: Scalars['Float']['output'];
+  domainId: Scalars['Int']['output'];
   email: Scalars['String']['output'];
   emailVerified: Scalars['Boolean']['output'];
   /** Collections that are excluded from the Collections filter in Gallery. */
-  excludedCollections?: Maybe<Array<Scalars['Float']['output']>>;
+  excludedCollections?: Maybe<Array<Scalars['Int']['output']>>;
   experiments?: Maybe<Array<Experiment>>;
   /** @deprecated Fake paths are no longer available as of TPUv2/NEXT. */
   fakePath?: Maybe<Scalars['String']['output']>;
@@ -2648,8 +2660,8 @@ export type User = {
   integrations: Array<Integration>;
   /** @deprecated Invisible URLs are no longer available as of TPUv2/NEXT. */
   invisibleURLs: Scalars['Boolean']['output'];
-  inviteId?: Maybe<Scalars['Float']['output']>;
-  itemsPerPage: Scalars['Float']['output'];
+  inviteId?: Maybe<Scalars['Int']['output']>;
+  itemsPerPage: Scalars['Int']['output'];
   language: Scalars['String']['output'];
   legacy: Scalars['Boolean']['output'];
   moderator: Scalars['Boolean']['output'];
@@ -2663,7 +2675,7 @@ export type User = {
   notifications: Array<Notification>;
   oauthAppId?: Maybe<Scalars['String']['output']>;
   /** How many AutoCollect approvals the user needs to approve/reject. */
-  pendingAutoCollects?: Maybe<Scalars['Float']['output']>;
+  pendingAutoCollects?: Maybe<Scalars['Int']['output']>;
   pendingDeletionDate?: Maybe<Scalars['Date']['output']>;
   plan?: Maybe<Plan>;
   planId?: Maybe<Scalars['Int']['output']>;
@@ -2683,13 +2695,13 @@ export type User = {
   /** User status/presence that has `invisible` and is shown to the current user. */
   storedStatus: UserStoredStatus;
   /** @deprecated Subdomains are no longer available as of TPUv2/NEXT. */
-  subdomainId?: Maybe<Scalars['Float']['output']>;
+  subdomainId?: Maybe<Scalars['Int']['output']>;
   subscription?: Maybe<TpuSubscription>;
   /** Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions. */
-  subscriptionId?: Maybe<Scalars['Float']['output']>;
+  subscriptionId?: Maybe<Scalars['Int']['output']>;
   themeEngine?: Maybe<Scalars['JSON']['output']>;
   /** @deprecated Replaced with `themeEngine`, used in legacy clients such as legacy.privateuploader.com. */
-  themeId: Scalars['Float']['output'];
+  themeId: Scalars['Int']['output'];
   totpEnable: Scalars['Boolean']['output'];
   updatedAt: Scalars['Date']['output'];
   /** @deprecated Hidden upload usernames are no longer available as of TPUv2/NEXT. */
@@ -2707,9 +2719,9 @@ export type UserSessionsArgs = {
 
 export type UserCollectionsInput = {
   filter?: Array<CollectionFilter>;
-  limit?: InputMaybe<Scalars['Float']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
   onlyInvited?: Scalars['Boolean']['input'];
-  page?: Scalars['Float']['input'];
+  page?: Scalars['Int']['input'];
   search?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2733,7 +2745,7 @@ export enum UserInsights {
 }
 
 export type UserProfileInput = {
-  id?: InputMaybe<Scalars['Float']['input']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
   username?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2795,12 +2807,12 @@ export type WorkspaceFolder = {
   __typename?: 'WorkspaceFolder';
   children: Array<Note>;
   createdAt: Scalars['Date']['output'];
-  folderId?: Maybe<Scalars['Float']['output']>;
+  folderId?: Maybe<Scalars['Int']['output']>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
   workspace: Workspace;
-  workspaceId: Scalars['Float']['output'];
+  workspaceId: Scalars['Int']['output'];
 };
 
 /** The type of workspace item */
@@ -2843,7 +2855,7 @@ export type WorkspaceUser = {
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
   workspace: Workspace;
-  workspaceId: Scalars['Float']['output'];
+  workspaceId: Scalars['Int']['output'];
   write: Scalars['Boolean']['output'];
 };
 

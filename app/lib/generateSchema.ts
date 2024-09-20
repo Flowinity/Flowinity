@@ -1,4 +1,4 @@
-import { buildSchema } from "type-graphql"
+import { buildSchema, Int } from "type-graphql"
 import {
   BadgeResolver,
   PartialUserBaseResolver,
