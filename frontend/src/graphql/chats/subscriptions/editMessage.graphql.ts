@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { StandardEmbedFragment } from "@/graphql/chats/messages.graphql";
 
-export const EditMessageSubscription = gql`
+const EditMessageSubscription = gql`
   ${StandardEmbedFragment}
   subscription OnMessageEdit {
     onEditMessage {

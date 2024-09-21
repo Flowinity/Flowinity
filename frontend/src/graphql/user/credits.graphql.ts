@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const CreditsQuery = gql`
+const CreditsQuery = gql`
   query Users {
     Troplo: user(input: { username: "Troplo" }) {
       username

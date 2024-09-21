@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const ChatsQuery = gql`
+const ChatsQuery = gql`
   query ChatsQuery {
     userEmoji {
       id
@@ -43,7 +43,7 @@ export const ChatsQuery = gql`
   }
 `;
 
-export const ChatQuery = gql`
+const ChatQuery = gql`
   query Chat($input: ChatInput!) {
     chat(input: $input) {
       id
@@ -81,7 +81,7 @@ export const ChatQuery = gql`
   }
 `;
 
-export const _OldChatsQuery = gql`
+const _OldChatsQuery = gql`
   query ChatsQueryOld {
     userEmoji {
       id
@@ -152,7 +152,7 @@ export const _OldChatsQuery = gql`
   }
 `;
 
-export const GetChatUsersQuery = gql`
+const GetChatUsersQuery = gql`
   query GetChatUsers($input: ChatInput!) {
     chat(input: $input) {
       users {

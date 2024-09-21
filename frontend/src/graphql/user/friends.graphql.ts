@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const FriendsQuery = gql`
+const FriendsQuery = gql`
   query Friends {
     friends {
       id

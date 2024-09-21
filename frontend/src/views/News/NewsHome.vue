@@ -86,7 +86,7 @@ const announcementsStore = useAnnouncementsStore();
 const page = ref(1);
 const search = ref("");
 const display = useDisplay();
-const news =
+const news = [];
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const MailStateQuery = gql`
+const MailStateQuery = gql`
   query MailStateQuery {
     unreadMail
     mailboxes {

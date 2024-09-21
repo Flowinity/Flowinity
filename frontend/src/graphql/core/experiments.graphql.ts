@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const ExperimentsQuery = gql`
+const ExperimentsQuery = gql`
   query GetExperiments($version: Int) {
     experiments(version: $version) {
       id
@@ -12,7 +12,7 @@ export const ExperimentsQuery = gql`
   }
 `;
 
-export const SetExperimentMutation = gql`
+const SetExperimentMutation = gql`
   mutation SetExperiment($input: SetExperimentInput!) {
     setExperiment(input: $input) {
       value

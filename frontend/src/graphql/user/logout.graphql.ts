@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const LogoutMutation = gql`
+const LogoutMutation = gql`
   mutation Logout {
     logout
   }

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { PagerFragment } from "../fragments/pager.graphql";
 
-export const StandardEmbedFragment = gql`
+const StandardEmbedFragment = gql`
   fragment StandardEmbed on EmbedDataV2 {
     media {
       url
@@ -41,7 +41,7 @@ export const StandardEmbedFragment = gql`
   }
 `;
 
-export const StandardMessageFragment = gql`
+const StandardMessageFragment = gql`
   ${StandardEmbedFragment}
   fragment StandardMessage on Message {
     id
@@ -110,7 +110,7 @@ export const StandardMessageFragment = gql`
   }
 `;
 
-export const MessagesQuery = gql`
+const MessagesQuery = gql`
   ${StandardMessageFragment}
   query Messages($input: InfiniteMessagesInput!) {
     messages(input: $input) {
@@ -119,7 +119,7 @@ export const MessagesQuery = gql`
   }
 `;
 
-export const PagedMessagesQuery = gql`
+const PagedMessagesQuery = gql`
   ${StandardMessageFragment}
   ${PagerFragment}
   query PagedMessages($input: PagedMessagesInput!) {

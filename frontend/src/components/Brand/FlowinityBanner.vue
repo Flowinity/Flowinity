@@ -1,6 +1,6 @@
 <template>
   <svg
-    v-if="$experiments.experiments.NEW_BRANDING"
+    v-if="experimentsStore.experiments.NEW_BRANDING"
     width="2042"
     height="512"
     viewBox="0 0 2042 512"
@@ -60,7 +60,7 @@
     height="512"
     viewBox="0 0 2042 512"
     xmlns="http://www.w3.org/2000/svg"
-    :fill="$vuetify.theme.current.dark ? '#fff' : '#121212'"
+    :fill="theme.current.value.dark ? '#fff' : '#121212'"
   >
     <g clip-path="url(#clip0_319_20)">
       <path
@@ -80,6 +80,12 @@
   </svg>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useExperimentsStore } from "@/store/experiments.store";
+import { useTheme } from "vuetify/lib/framework.mjs";
+
+const theme = useTheme();
+const experimentsStore = useExperimentsStore();
+</script>
 
 <style scoped></style>

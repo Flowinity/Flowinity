@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const UpdateCollectionMutation = gql`
+const UpdateCollectionMutation = gql`
   mutation UpdateCollection($input: UpdateCollectionInput!) {
     updateCollection(input: $input) {
       shareLink

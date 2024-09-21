@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const DeleteMessageSubscription = gql`
+const DeleteMessageSubscription = gql`
   subscription OnDeleteMessage {
     onDeleteMessage {
       id

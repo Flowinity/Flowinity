@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const AutoCollectsQuery = gql`
+const AutoCollectsQuery = gql`
   query AutoCollects($input: UserCollectionsInput!) {
     autoCollects(input: $input) {
       items {

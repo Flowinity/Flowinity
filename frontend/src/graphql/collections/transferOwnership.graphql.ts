@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const TransferCollectionOwnership = gql`
+const TransferCollectionOwnership = gql`
   mutation TransferCollectionOwnership(
     $input: TransferCollectionOwnershipInput!
   ) {
