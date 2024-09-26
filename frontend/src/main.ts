@@ -94,7 +94,7 @@ if (import.meta.env.VITE_PROD_ANALYTICS === "true") {
   });
 }
 
-if (process.env.NODE_ENV === "development") {
+if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
   const loggingMixin = {
     beforeMount() {
       if (
