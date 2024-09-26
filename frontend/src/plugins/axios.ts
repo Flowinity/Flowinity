@@ -12,7 +12,7 @@ export interface AxiosStaticWithAvoidance extends AxiosStatic {
 }
 
 const ax = axios.create({
-  baseURL: "/api/v3",
+  baseURL: import.meta.env.DEV ? "/api/v3" : "https://flowinity.com/api/v3",
   withCredentials: true,
   headers: {
     Authorization: localStorage.getItem("token"),
