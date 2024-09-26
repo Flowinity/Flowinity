@@ -297,8 +297,8 @@ import {
   ChangeUsernameDocument,
   DeleteGalleryDocument,
   UserInsights,
-  UserLightCollectionsQueryDocument,
-  UserLightCollectionsQueryQuery
+  LightCollectionsDocument,
+  LightCollectionsQuery
 } from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
 import { useApolloClient } from "@vue/apollo-composable";
@@ -347,9 +347,7 @@ const username = ref({
   passwordMode: false
 });
 
-const collections = ref<UserLightCollectionsQueryQuery["collections"]["items"]>(
-  []
-);
+const collections = ref<LightCollectionsQuery["collections"]["items"]>([]);
 const notificationSounds = ref([
   { title: "Default", key: 2 },
   { title: "KDE", key: 3 }
@@ -437,7 +435,7 @@ onMounted(async function () {
       collections: { items }
     }
   } = await apolloClient.client.query({
-    query: UserLightCollectionsQueryDocument,
+    query: LightCollectionsDocument,
     variables: {
       input: {
         limit: 99999

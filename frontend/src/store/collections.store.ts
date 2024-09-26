@@ -16,7 +16,6 @@ import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { useRoute } from "vue-router";
 import { isNumeric } from "@/plugins/isNumeric";
 import { computed, ref } from "vue";
-import { undefined } from "zod";
 
 export const useCollectionsStore = defineStore("collections", () => {
   const route = useRoute();

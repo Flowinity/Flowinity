@@ -327,22 +327,20 @@
 import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { MyAppQuery } from "@/graphql/developer/myApps.graphql";
 import {
+  AddOauthUserDocument,
   AvailableChatPermissionsDocument,
   ChatPermission,
+  DeleteOauthAppDocument,
+  DevAppDocument,
   OauthApp,
-  OauthUser
+  OauthUser,
+  ResetOauthSecretDocument,
+  UpdateOauthAppDocument,
+  UpdateOauthUserDocument
 } from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateBotAccountDialog from "@/components/Admin/AppAuth/CreateBotAccountDialog.vue";
-import {
-  AddOauthUserMutation,
-  DeleteOauthAppMutation,
-  ResetOauthAppSecretMutation,
-  UpdateOauthAppMutation,
-  UpdateOauthUserMutation
-} from "@/graphql/developer/updateApp.graphql";
 
 export default defineComponent({
   name: "AdminOauthItem",
@@ -409,7 +407,7 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.$apollo.mutate({
-          mutation: UpdateOauthUserMutation,
+          mutation: UpdateOauthUserDocument,
           variables: {
             input: {
               id,
@@ -435,7 +433,7 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.$apollo.mutate({
-          mutation: DeleteOauthAppMutation,
+          mutation: DeleteOauthAppDocument,
           variables: {
             input: {
               id: this.app.id
@@ -452,7 +450,7 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.$apollo.mutate({
-          mutation: ResetOauthAppSecretMutation,
+          mutation: ResetOauthSecretDocument,
           variables: {
             input: {
               id: this.app.id
@@ -475,7 +473,7 @@ export default defineComponent({
         const {
           data: { oauthApp }
         } = await this.$apollo.query({
-          query: MyAppQuery,
+          query: DevAppDocument,
           fetchPolicy: "network-only",
           variables: {
             input: {
@@ -492,7 +490,7 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.$apollo.mutate({
-          mutation: UpdateOauthAppMutation,
+          mutation: UpdateOauthAppDocument,
           variables: {
             input: {
               name: this.app.name,
@@ -523,7 +521,7 @@ export default defineComponent({
         }
         this.loading = true;
         await this.$apollo.mutate({
-          mutation: AddOauthUserMutation,
+          mutation: AddOauthUserDocument,
           variables: {
             input: {
               oauthAppId: this.app.id,

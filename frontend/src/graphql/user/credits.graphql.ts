@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const CreditsQuery = gql`
-  query Users {
+  query Credits {
     Troplo: user(input: { username: "Troplo" }) {
       username
       id

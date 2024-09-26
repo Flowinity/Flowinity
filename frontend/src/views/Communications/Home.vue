@@ -141,13 +141,13 @@ import { useChatStore } from "@/store/chat.store";
 import {
   BlockedUser,
   Chat,
+  ChatInviteDocument,
   Friend,
   FriendAction,
   FriendStatus,
   UserStatus
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
-import { ChatInviteQuery } from "@/graphql/chats/invite.graphql";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import FriendsList from "@/components/Communications/SocialHub/FriendsList.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
@@ -205,7 +205,7 @@ const tabs = ref([
 async function getPromotedChat() {
   if (!appStore.site.officialInstance) return;
   const chat = await apolloClient.client.query({
-    query: ChatInviteQuery,
+    query: ChatInviteDocument,
     variables: {
       input: {
         inviteId: "flowinity"

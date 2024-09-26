@@ -163,11 +163,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ChatPermission, OauthApp } from "@/gql/graphql";
 import {
-  AddBotToChat,
-  OauthAppConsentQuery
-} from "@/graphql/developer/consent.graphql";
+  AddBotToChatDocument,
+  ChatPermission,
+  OauthApp,
+  OauthAppConsentDocument
+} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
@@ -268,7 +269,7 @@ export default defineComponent({
         const {
           data: { oauthAppConsent, availableChatPermissions }
         } = await this.$apollo.query({
-          query: OauthAppConsentQuery,
+          query: OauthAppConsentDocument,
           variables: {
             input: {
               id: this.appId
@@ -304,7 +305,7 @@ export default defineComponent({
       this.loading = true;
       try {
         await this.$apollo.mutate({
-          mutation: AddBotToChat,
+          mutation: AddBotToChatDocument,
           variables: {
             input: {
               permissions: this.permissionsMap,
