@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { PagerFragment } from "../fragments/pager.graphql";
 
-const StandardEmbedFragment = gql`
+export const StandardEmbedFragment = gql`
   fragment StandardEmbed on EmbedDataV2 {
     media {
       url
@@ -41,7 +41,7 @@ const StandardEmbedFragment = gql`
   }
 `;
 
-const StandardMessageFragment = gql`
+export const StandardMessageFragment = gql`
   ${StandardEmbedFragment}
   fragment StandardMessage on Message {
     id

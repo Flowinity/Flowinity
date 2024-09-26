@@ -1,14 +1,13 @@
 import { useChatStore } from "@/store/chat.store";
 import { useMessagesStore } from "@/store/message.store";
 import { useSubscription } from "@vue/apollo-composable";
-import { ReadChatSubscription } from "@/graphql/chats/subscriptions/readChat.graphql";
-import { ReadReceiptSubscription } from "@/graphql/chats/subscriptions/readReceipt.graphql";
+import { OnReadChatDocument, OnReadReceiptDocument } from "@/gql/graphql";
 
 export default function setup() {
   const chatStore = useChatStore();
   const messagesStore = useMessagesStore();
 
-  useSubscription(ReadChatSubscription).onResult(({ data: { onReadChat } }) => {
+  useSubscription(OnReadChatDocument).onResult(({ data: { onReadChat } }) => {
     console.log(`ReadChatSubscription: `, onReadChat);
     chatStore.chats = chatStore.chats.map((c) => {
       if (c.association?.id === onReadChat) {
@@ -22,7 +21,7 @@ export default function setup() {
     });
   });
 
-  useSubscription(ReadReceiptSubscription).onResult(
+  useSubscription(OnReadReceiptDocument).onResult(
     ({ data: { onReadReceipt } }) => {
       //    const chat1 = chat.chats.find((c: Chat) => c.id === data.chatId);
       //     if (!chat1) return;

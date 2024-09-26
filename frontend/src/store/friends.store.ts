@@ -2,9 +2,11 @@
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import {
+  AddFriendDocument,
   AddFriendInput,
   Friend,
   FriendAction,
+  FriendsDocument,
   FriendStatus,
   PartialUserBase,
   PartialUserFriend,
@@ -12,9 +14,7 @@ import {
 } from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
 import { useApolloClient } from "@vue/apollo-composable";
-import { FriendsQuery } from "@/graphql/user/friends.graphql";
 import { useAppStore } from "@/store/app.store";
-import { AddFriendMutation } from "@/graphql/friends/addFriend.graphql";
 
 export interface FriendsState {
   friends: Friend[];
@@ -24,7 +24,7 @@ export const useFriendsStore = defineStore("friends", {
   state: () =>
     ({
       friends: []
-    }) as FriendsState,
+    } as FriendsState),
   getters: {
     validFriends() {
       return this.friends.filter(
@@ -74,7 +74,7 @@ export const useFriendsStore = defineStore("friends", {
       const {
         data: { friends, trackedUsers, blockedUsers }
       } = await useApolloClient().client.query({
-        query: FriendsQuery,
+        query: FriendsDocument,
         fetchPolicy: "network-only"
       });
       const userStore = useUserStore();
@@ -95,7 +95,7 @@ export const useFriendsStore = defineStore("friends", {
     async actOnFriend(friendId: number | string, action: FriendAction) {
       const apolloClient = useApolloClient();
       await apolloClient.client.mutate({
-        mutation: AddFriendMutation,
+        mutation: AddFriendDocument,
         variables: {
           input: {
             userId: typeof friendId === "number" ? friendId : undefined,

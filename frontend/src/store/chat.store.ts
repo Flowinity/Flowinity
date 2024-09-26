@@ -9,41 +9,36 @@ import { useUserStore } from "@/store/user.store";
 import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
-import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
+  AddChatUsersDocument,
   Chat,
+  ChatDocument,
   ChatEmoji,
   ChatInvite,
+  ChatInviteDocument,
   ChatRank,
+  ChatsQueryDocument,
   ChatType,
+  CreateChatDocument,
   InfiniteMessagesInput,
+  JoinChatFromInviteDocument,
+  LeaveChatDocument,
   Message,
   MessageType,
   PagedMessagesInput,
   PartialUserFriend,
   ScrollPosition,
+  SendMessageDocument,
   ToggleUser,
+  ToggleUserRankDocument,
+  UpdateChatDocument,
   UpdateChatInput,
   UserStatus
 } from "@/gql/graphql";
-import {
-  MessagesQuery,
-  PagedMessagesQuery
-} from "@/graphql/chats/messages.graphql";
 import { StateHandler } from "@/components/Scroll/types";
-import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
-import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
-import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
-import { LeaveGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
-import {
-  ChatInviteQuery,
-  JoinChatInviteMutation
-} from "@/graphql/chats/invite.graphql";
-import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
 import { h, markRaw, nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import { ChatQuery, ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { useMessagesStore } from "@/store/message.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
@@ -170,7 +165,7 @@ export const useChatStore = defineStore("chat", {
       rankId: string
     ) {
       await useApolloClient().client.mutate({
-        mutation: ToggleUserRankMutation,
+        mutation: ToggleUserRankDocument,
         variables: {
           input: {
             chatAssociationId,
@@ -184,7 +179,7 @@ export const useChatStore = defineStore("chat", {
       const {
         data: { joinChatFromInvite }
       } = await useApolloClient().client.mutate({
-        mutation: JoinChatInviteMutation,
+        mutation: JoinChatFromInviteDocument,
         variables: {
           input: {
             inviteId
@@ -197,7 +192,7 @@ export const useChatStore = defineStore("chat", {
       const {
         data: { chatInvite }
       } = await useApolloClient().client.query({
-        query: ChatInviteQuery,
+        query: ChatInviteDocument,
         variables: {
           input: {
             inviteId
@@ -208,7 +203,7 @@ export const useChatStore = defineStore("chat", {
     },
     async leaveChat(associationId: number) {
       await useApolloClient().client.mutate({
-        mutation: LeaveGroupMutation,
+        mutation: LeaveChatDocument,
         variables: {
           input: {
             associationId
@@ -266,7 +261,7 @@ export const useChatStore = defineStore("chat", {
       associationId?: number
     ) {
       await useApolloClient().client.mutate({
-        mutation: SendMessageMutation,
+        mutation: SendMessageDocument,
         variables: {
           input: {
             content,
@@ -359,7 +354,7 @@ export const useChatStore = defineStore("chat", {
       const {
         data: { updateChat }
       } = await useApolloClient().client.mutate({
-        mutation: UpdateChatMutation,
+        mutation: UpdateChatDocument,
         variables: {
           input: {
             name: input?.name ?? this.editingChat.name,
@@ -476,7 +471,7 @@ export const useChatStore = defineStore("chat", {
       chatAssociationId: number
     ) {
       await useApolloClient().client.mutate({
-        mutation: AddChatUserMutation,
+        mutation: AddChatUsersDocument,
         variables: {
           input: {
             chatAssociationId,
@@ -491,7 +486,7 @@ export const useChatStore = defineStore("chat", {
       const {
         data: { createChat }
       } = await useApolloClient().client.mutate({
-        mutation: CreateChatMutation,
+        mutation: CreateChatDocument,
         variables: {
           input: {
             users,
@@ -513,29 +508,10 @@ export const useChatStore = defineStore("chat", {
     async typing() {
       await this.$app.$sockets.chat.emit("typing", this.selectedChatId);
     },
-    async getMessages(
-      input: InfiniteMessagesInput | PagedMessagesInput
-    ): Promise<Message[]> {
-      const { data } = await useApolloClient().client.query({
-        query: "page" in input ? PagedMessagesQuery : MessagesQuery,
-        variables: {
-          input
-        },
-        fetchPolicy: "network-only"
-      });
-
-      return "page" in input
-        ? structuredClone(data.messagesPaged)
-        : structuredClone(data.messages);
-    },
     async setChat(id: number) {
       this.loading = true;
       const experimentsStore = useExperimentsStore();
       const messagesStore = useMessagesStore();
-      if (!experimentsStore.experiments.COMMUNICATIONS_KEEP_LOADED) {
-        if (messagesStore.messages[this.selectedChatId])
-          messagesStore.messages[this.selectedChatId] = [];
-      }
       this.selectedChatId = id;
       localStorage.setItem("selectedChatId", id.toString());
       const appStore = useAppStore();
@@ -543,15 +519,11 @@ export const useChatStore = defineStore("chat", {
         (chat: Chat) => chat.association.id === id
       ) as Chat;
       appStore.title = this.chatName(this.selectedChat);
-      const data = await this.getMessages({
-        associationId: id,
-        position: ScrollPosition.Top
-      });
+      await messagesStore.loadChatMessages(id);
       if (id !== this.selectedChatId) return;
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
       );
-      messagesStore.messages[id] = data;
       if (this.chats.length) {
         if (index === -1) {
           this.chats.push({
@@ -616,7 +588,7 @@ export const useChatStore = defineStore("chat", {
         const {
           data: { chat: chatData }
         } = await useApolloClient().client.query({
-          query: ChatQuery,
+          query: ChatDocument,
           variables: {
             input: {
               associationId
@@ -655,8 +627,8 @@ export const useChatStore = defineStore("chat", {
           offset !== undefined
             ? offset
             : position === ScrollPosition.Top
-              ? this.currentOffset.up
-              : this.currentOffset.down,
+            ? this.currentOffset.up
+            : this.currentOffset.down,
         limit: 50
       });
 
@@ -699,7 +671,7 @@ export const useChatStore = defineStore("chat", {
       const {
         data: { chats, userEmoji }
       } = await useApolloClient().client.query({
-        query: ChatsQuery,
+        query: ChatsQueryDocument,
         fetchPolicy: "network-only"
       });
       this.chats = chats

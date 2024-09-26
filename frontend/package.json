@@ -4,6 +4,7 @@
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
+  "packageManager": "yarn@1.22.21",
   "scripts": {
     "dev": "vite",
     "serve": "vite",

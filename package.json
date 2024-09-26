@@ -3,6 +3,7 @@
   "description": "TPUv2 Server",
   "version": "4.0.0",
   "private": true,
+  "packageManager": "yarn@1.22.21",
   "authors": [
     "Troplo <troplo@troplo.com>",
     "The Loose Goose"

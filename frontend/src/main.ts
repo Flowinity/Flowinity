@@ -32,6 +32,7 @@ import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 import { setupSockets } from "./boot/sockets";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
+import { useDebugStore } from "@/store/debug.store";
 
 const isSlideshow = window.location.pathname.startsWith("/slideshow/");
 
@@ -121,6 +122,31 @@ if (process.env.NODE_ENV === "development") {
       console.log(
         `[TPU/Dev] ${this.$options.__file?.split("/")?.pop()} updated`
       );
+      if (!this.$el?.style || !localStorage.getItem("renderMonitor")) return;
+      this.$el.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
+      setTimeout(() => {
+        this.$el.style.backgroundColor = "";
+      }, 200);
+      const debugStore = useDebugStore();
+      console.log(this);
+      if (!this.$data?._renderId) {
+        this.$data._renderId = Math.random() * 1000000;
+      }
+      const component = debugStore.rerenders.find(
+        (c) => c.id === this.$data._renderId.toString()
+      );
+      if (component) {
+        component.renders++;
+      } else {
+        debugStore.rerenders.push({
+          id: this.$data._renderId.toString(),
+          name: this.$options.__file?.split("/")?.pop(),
+          renders: 1,
+          el: this.$el,
+          stateA: null,
+          stateB: null
+        });
+      }
     }
   };
   app.mixin(loggingMixin);
@@ -139,14 +165,7 @@ registerPlugins(app);
 globals(app);
 
 if (!isSlideshow) {
-  if (
-    localStorage.getItem("tpuTransport") === "http" ||
-    location.port === "34582"
-  ) {
-    apolloHttp(app);
-  } else {
-    apolloWs(app);
-  }
+  apolloHttp(app);
 }
 
 if (!isSlideshow) {

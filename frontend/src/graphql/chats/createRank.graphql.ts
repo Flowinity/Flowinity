@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const CreateRankMutation = gql`
-  mutation AddChatRank($input: CreateRank!) {
+  mutation CreateChatRank($input: CreateRank!) {
     addChatRank(input: $input) {
       id
     }

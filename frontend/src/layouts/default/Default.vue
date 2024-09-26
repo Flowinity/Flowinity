@@ -33,6 +33,7 @@
     <NicknameDialog v-model="$app.dialogs.nickname.value" />
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
     <UploadFileV2 v-model="$app.dialogs.upload.value" />
+    <RenderMonitor v-if="$app.dialogs.renderMonitor" />
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
     <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
     <progressive-app-bar v-else-if="$app.site.finishedSetup !== false" />
@@ -97,10 +98,12 @@ import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettin
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import UploadFileV2 from "@/components/Gallery/Dialogs/UploadFileV2.vue";
 import ProgressiveSideBarMobile from "@/layouts/default/ProgressiveSideBarMobile.vue";
+import RenderMonitor from "@/components/Dev/Dialogs/RenderMonitor.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    RenderMonitor,
     ProgressiveSideBarMobile,
     UploadFileV2,
     FlowinityLogoAnimated,

@@ -47,10 +47,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Chat, PartialUserFriend } from "@/gql/graphql";
+import {
+  Chat,
+  PartialUserFriend,
+  TransferGroupOwnershipDocument
+} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
-import { TransferOwnershipMutation } from "@/graphql/chats/transferOwnership.graphql";
 
 export default defineComponent({
   components: { DangerZoneInput, UserAvatar, CoreDialog },
@@ -79,7 +82,7 @@ export default defineComponent({
       this.loading = true;
       try {
         await this.$apollo.mutate({
-          mutation: TransferOwnershipMutation,
+          mutation: TransferGroupOwnershipDocument,
           variables: {
             input: {
               userId: this.user.id,

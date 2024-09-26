@@ -13,14 +13,18 @@ import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
 import { SidebarItem } from "@/types/sidebar";
-import { WeatherQuery } from "@/graphql/core/weather.graphql";
-import { CoreState, Upload, Weather } from "@/gql/graphql";
+import {
+  CoreState,
+  CoreStateDocument,
+  Upload,
+  Weather,
+  WeatherDocument
+} from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
-import { CoreStateQuery } from "@/graphql/core/stateOnly.graphql";
 
 export enum Platform {
   WEB = "WEB",
@@ -127,7 +131,8 @@ export const useAppStore = defineStore("app", {
       actionDialog: false,
       networkInspector: false,
       createChat: false,
-      brandingDebug: false
+      brandingDebug: false,
+      renderMonitor: false
     },
     platform: getPlatform(),
     desktop: {
@@ -215,7 +220,7 @@ export const useAppStore = defineStore("app", {
         const {
           data: { weather }
         } = await useApolloClient().client.query({
-          query: WeatherQuery
+          query: WeatherDocument
         });
         this.weather.data = weather;
         this.weather.loading = false;
@@ -354,7 +359,7 @@ export const useAppStore = defineStore("app", {
       const {
         data: { coreState, experiments }
       } = await useApolloClient().client.query({
-        query: CoreStateQuery,
+        query: CoreStateDocument,
         fetchPolicy: "no-cache"
       });
       this.site = coreState;
@@ -406,7 +411,7 @@ export const useAppStore = defineStore("app", {
       const {
         data: { coreState }
       } = await useApolloClient().client.query({
-        query: CoreStateQuery,
+        query: CoreStateDocument,
         fetchPolicy: "no-cache"
       });
       this.site = coreState;

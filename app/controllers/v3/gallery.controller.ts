@@ -33,6 +33,7 @@ async function checkUserQuota(
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.body)
   function e(error: keyof typeof Errors = "QUOTA_EXCEEDED", custom?: any) {
     return res.status(400).json({
       errors: [custom ? custom : { name: error, ...Errors[error] }]

@@ -48,9 +48,9 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 import {
   AuditLogActionType,
   AuditLogCategory,
+  ChatAuditLogDocument,
   PaginatedChatAuditLogResponse
 } from "@/gql/graphql";
-import { AuditLogQuery } from "@/graphql/chats/auditLog.graphql";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -119,7 +119,7 @@ export default defineComponent({
       const {
         data: { chatAuditLog }
       } = await this.$apollo.query({
-        query: AuditLogQuery,
+        query: ChatAuditLogDocument,
         fetchPolicy: "network-only",
         variables: {
           input: {

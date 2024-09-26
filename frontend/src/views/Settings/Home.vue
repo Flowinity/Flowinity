@@ -295,15 +295,16 @@ import {
   ChangeUserEmailDocument,
   ChangeUserPasswordDocument,
   ChangeUsernameDocument,
-  Collection,
   DeleteGalleryDocument,
   UserInsights,
-  UserLightCollectionsQueryDocument
+  UserLightCollectionsQueryDocument,
+  UserLightCollectionsQueryQuery
 } from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 
 // Emits
 defineEmits(["update"]);
@@ -312,7 +313,7 @@ const apolloClient = useApolloClient();
 const toast = useToast();
 const userStore = useUserStore();
 const { t } = useI18n();
-
+const router = useRouter();
 // Theme setup
 const theme = useTheme();
 const themeName = ref(theme.global.name.value);
@@ -346,7 +347,9 @@ const username = ref({
   passwordMode: false
 });
 
-const collections = ref<Collection[]>([]);
+const collections = ref<UserLightCollectionsQueryQuery["collections"]["items"]>(
+  []
+);
 const notificationSounds = ref([
   { title: "Default", key: 2 },
   { title: "KDE", key: 3 }
@@ -433,7 +436,7 @@ onMounted(async function () {
     data: {
       collections: { items }
     }
-  } = await this.$apollo.query({
+  } = await apolloClient.client.query({
     query: UserLightCollectionsQueryDocument,
     variables: {
       input: {
@@ -458,14 +461,14 @@ async function changeEmail() {
   });
   this.userStore.user.email = email.value.email;
   this.userStore.user.emailVerified = false;
-  this.$toast.success("Your email has been updated!");
+  toast.success("Your email has been updated!");
 }
 
 async function changePassword() {
   if (password.value.newPassword !== password.value.confirmNewPassword) {
-    return this.$toast.error("Password doesn't match.");
+    return toast.error("Password doesn't match.");
   }
-  await this.$apollo.client.mutate({
+  await apolloClient.client.mutate({
     mutation: ChangeUserPasswordDocument,
     variables: {
       input: {
@@ -475,11 +478,11 @@ async function changePassword() {
       }
     }
   });
-  this.$toast.success("Your password has been updated!");
+  toast.success("Your password has been updated!");
 }
 
 async function changeUsername() {
-  await this.$apollo.mutate({
+  await apolloClient.client.mutate({
     mutation: ChangeUsernameDocument,
     variables: {
       input: {
@@ -491,13 +494,13 @@ async function changeUsername() {
       }
     }
   });
-  this.$toast.success("Your username has been updated!");
+  toast.success("Your username has been updated!");
 }
 
 async function deleteGallery(dangerZone: { password: string; totp: string }) {
   deletion.value.purging = true;
   try {
-    await this.$apollo.mutate({
+    await apolloClient.client.mutate({
       mutation: DeleteGalleryDocument,
       variables: {
         input: {
@@ -506,8 +509,8 @@ async function deleteGallery(dangerZone: { password: string; totp: string }) {
         }
       }
     });
-    this.$toast.success("Your gallery has been purged.");
-    return this.$router.push("/");
+    toast.success("Your gallery has been purged.");
+    return router.push("/");
   } finally {
     deletion.value.purging = false;
   }

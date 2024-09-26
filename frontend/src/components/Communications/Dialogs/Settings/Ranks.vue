@@ -172,16 +172,14 @@ import { defineComponent } from "vue";
 import {
   AvailableChatPermissionsDocument,
   ChatPermission,
-  ChatRank
+  ChatRank,
+  DeleteChatRankDocument,
+  UpdateChatRankDocument,
+  UpdateChatRankOrderDocument
 } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
-import {
-  UpdateRankMutation,
-  UpdateRankOrderMutation
-} from "@/graphql/chats/updateRank.graphql";
 import { VueDraggable } from "vue-draggable-plus";
 import CreateRank from "@/components/Communications/Dialogs/CreateRank.vue";
-import { DeleteChatRankMutation } from "@/graphql/chats/deleteRank.graphql";
 
 export default defineComponent({
   name: "ChatSettingsRanks",
@@ -233,7 +231,7 @@ export default defineComponent({
   methods: {
     async deleteRank(id: string) {
       await this.$apollo.mutate({
-        mutation: DeleteChatRankMutation,
+        mutation: DeleteChatRankDocument,
         variables: {
           input: {
             associationId: this.$chat.editingChat.association.id,
@@ -244,7 +242,7 @@ export default defineComponent({
     },
     async updateRankOrder() {
       await this.$apollo.mutate({
-        mutation: UpdateRankOrderMutation,
+        mutation: UpdateChatRankOrderDocument,
         variables: {
           input: {
             associationId: this.$chat.editingChat.association.id,
@@ -258,7 +256,7 @@ export default defineComponent({
         ? [...rank.permissionsMap, permission]
         : rank.permissionsMap.filter((id) => id !== permission);
       await this.$apollo.mutate({
-        mutation: UpdateRankMutation,
+        mutation: UpdateChatRankDocument,
         variables: {
           input: {
             permissionsMap,

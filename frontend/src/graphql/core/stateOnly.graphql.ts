@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const CoreStateQuery = gql`
-  query CoreStateQuery {
+  query CoreState {
     experiments {
       id
       value

@@ -6,7 +6,8 @@ import {
   from,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject
+  NormalizedCacheObject,
+  split
 } from "@apollo/client/core";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
@@ -17,7 +18,8 @@ import functions from "@/plugins/functions";
 import { useAppStore } from "@/store/app.store";
 import router from "@/router";
 import { provideApolloClient } from "@vue/apollo-composable";
-import { debugLink } from "@/boot/apollo.wsTransport";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { useDebugStore } from "@/store/debug.store";
 
 function getToken(app: App) {
   return (
@@ -25,11 +27,51 @@ function getToken(app: App) {
   );
 }
 
+const artificialLatency = parseInt(
+  localStorage.getItem("tpuArtificialLatency") ?? "0"
+);
+
+export function debugLink() {
+  const debugStore = useDebugStore();
+
+  // @ts-ignore
+  return new ApolloLink((operation, forward) => {
+    const id = new Date().getTime() + "-" + Math.random();
+    const startTime = performance.now();
+    debugStore.recentOperations.unshift({
+      id,
+      name: operation.operationName,
+      args: operation.variables,
+      result: {},
+      time: 0,
+      //@ts-ignore
+      type: operation.query.definitions[0]?.operation,
+      timestamp: new Date().getTime(),
+      pending: true,
+      sdl: operation.query.loc?.source.body
+    });
+    return forward(operation).map((response) => {
+      const endTime = performance.now();
+      const elapsedTime = endTime - startTime;
+
+      const op = debugStore.recentOperations.find((op) => op.id === id);
+
+      if (op) {
+        op.pending = false;
+        op.result = response;
+        op.time = elapsedTime;
+      }
+
+      return response;
+    });
+  });
+}
+
 export default function setup(app: App) {
   const appStore = useAppStore();
   const toast = useToast();
   const httpLink = new HttpLink({
-    uri: "/graphql"
+    uri: import.meta.env.DEV ? "/graphql" : "https://flowinity.com/graphql"
   });
 
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -39,9 +81,6 @@ export default function setup(app: App) {
         if (error.extensions?.code === "UNAUTHORIZED") {
           console.log("ERROR LOGOUT THROWN");
           console.log(error);
-          //localStorage.removeItem("token");
-          //const user = useUserStore();
-          //user.user = null;
         } else if (error.extensions?.code === "BAD_USER_INPUT") {
           for (const err of error.extensions.validationErrors as any[]) {
             const values: string[] = Object.values(err.constraints);
@@ -81,7 +120,6 @@ export default function setup(app: App) {
       }
     })
   );
-
   const authLink = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
     const token = getToken(app);
@@ -95,17 +133,17 @@ export default function setup(app: App) {
     return forward(operation);
   });
 
-  const cleanTypeName = new ApolloLink((operation, forward) => {
-    if (operation.variables) {
-      const omitTypename = (key, value) =>
-        key === "__typename" ? undefined : value;
-      operation.variables = JSON.parse(
-        JSON.stringify(operation.variables),
-        omitTypename
+  const splitLink = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === "OperationDefinition" &&
+        definition.operation === "subscription"
       );
-    }
-    return forward(operation);
-  });
+    },
+    wsLink,
+    httpLink
+  );
 
   if (import.meta.env.DEV) {
     loadDevMessages();
@@ -117,12 +155,10 @@ export default function setup(app: App) {
     localStorage.getItem("tpuNetworkInspection") === "true";
 
   const appLink = from([
-    cleanTypeName,
     authLink,
     ...(networkInspection ? [debugLink()] : []),
     errorLink,
-    httpLink,
-    wsLink
+    splitLink
   ]);
 
   // Create the apollo client

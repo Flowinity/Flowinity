@@ -14,7 +14,7 @@ const config: CodegenConfig = {
         isExperiments = true;
       }
       if (isExperiments) {
-        if (str === "meta") isExperiments = false;
+        if (str === "ZZ_TEST") isExperiments = false;
         return str;
       }
       if (!str) return str;

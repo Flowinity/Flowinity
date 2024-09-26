@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const UserLightCollectionsQuery = gql`
-  query UserLightCollectionsQuery($input: UserCollectionsInput!) {
+  query LightCollections($input: UserCollectionsInput!) {
     collections(input: $input) {
       items {
         id
@@ -35,7 +35,7 @@ const UserLightCollectionsQuery = gql`
 `;
 
 const UserCollectionsQuery = gql`
-  query UserCollectionsQuery($input: UserCollectionsInput!) {
+  query Collections($input: UserCollectionsInput!) {
     collections(input: $input) {
       items {
         id

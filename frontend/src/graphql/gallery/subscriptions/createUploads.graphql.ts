@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const UploadsSubscription = gql`
-  subscription CreateUploads {
+  subscription OnCreateUploads {
     onCreateUpload {
       upload {
         id

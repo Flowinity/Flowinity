@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const ECoreStateQuery = gql`
-  query ExtraStateQuery {
+  query ExtraState {
     friends {
       id
       status

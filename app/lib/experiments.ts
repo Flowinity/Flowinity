@@ -76,8 +76,14 @@ export enum Experiments {
   EXPERIENCE_GALLERY_ITEM_WIDTH = "EXPERIENCE_GALLERY_ITEM_WIDTH",
   ANDROID_CONFIG = "ANDROID_CONFIG",
   LEGACY_ATTRIBUTES_UI = "LEGACY_ATTRIBUTES_UI",
+  ZZ_TEST = "ZZ_TEST"
+}
+
+export enum ExperimentsMeta {
   meta = "meta"
 }
+
+export type ExperimentsLegacy = Experiments | ExperimentsMeta
 
 export const experiments = {
   NEW_BRANDING: false,
@@ -158,7 +164,13 @@ export const experiments = {
   EXPERIENCE_GALLERY_ITEM_WIDTH: 4,
   ANDROID_CONFIG: true,
   LEGACY_ATTRIBUTES_UI: false,
+  ZZ_TEST: false,
   meta: {
+    ZZ_TEST: {
+      description: "ZZ_TEST",
+      createdAt: "2024-09-26T00:00:00.000Z",
+      versions: [5]
+    },
     NEW_BRANDING: {
       description: "Enable the new Flowinity branding.",
       createdAt: "2024-06-18T00:00:00.000Z",
@@ -403,7 +415,7 @@ export const experiments = {
       description:
         "Keep communication messages loaded in the store. Removed in v4.1.18+",
       createdAt: "2023-03-02T00:00:00.000Z",
-      versions: [3, 4, 5]
+      versions: [3, 4]
     },
     COMMUNICATIONS_INLINE_SIDEBAR_HIRES: {
       description:

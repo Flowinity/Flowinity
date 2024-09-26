@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-const PagerFragment = gql`
+export const PagerFragment = gql`
   fragment Pager on Pager {
     totalItems
     currentPage

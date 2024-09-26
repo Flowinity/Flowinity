@@ -23,7 +23,11 @@ import { WeatherResponse } from "@app/interfaces/weather"
 import { State, Stats } from "@app/types/v4/core"
 import { ExperimentType } from "@app/classes/graphql/core/experiments"
 import { isNumeric } from "@app/lib/isNumeric"
-import { Experiments, experiments } from "@app/lib/experiments"
+import {
+  Experiments,
+  experiments,
+  ExperimentsLegacy
+} from "@app/lib/experiments"
 
 let city: Reader<CityResponse> | undefined
 
@@ -385,7 +389,7 @@ export class CoreService {
     dev: boolean = false,
     gold: boolean = false,
     majorVersion: number | undefined = undefined
-  ): Promise<Record<Experiments, any>> {
+  ): Promise<Record<ExperimentsLegacy, any>> {
     experiments.COMMUNICATIONS = config?.features?.communications ?? true
     experiments.INTERACTIVE_NOTES = config?.features?.workspaces ?? true
     experiments.OFFICIAL_INSTANCE = config?.officialInstance

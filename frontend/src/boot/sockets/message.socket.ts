@@ -4,15 +4,15 @@ import { useUserStore } from "@/store/user.store";
 import { useMessagesStore } from "@/store/message.store";
 import { useToast } from "vue-toastification";
 import { useSubscription } from "@vue/apollo-composable";
-import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
-import { EditMessageEvent, Message, UserStoredStatus } from "@/gql/graphql";
-import MessageToast from "@/components/Communications/MessageToast.vue";
 import {
-  CancelTypingSubscription,
-  TypingSubscription
-} from "@/graphql/chats/subscriptions/typing.graphql";
-import { EditMessageSubscription } from "@/graphql/chats/subscriptions/editMessage.graphql";
-import { DeleteMessageSubscription } from "@/graphql/chats/subscriptions/deleteMessage.graphql";
+  CancelTypingEventDocument,
+  EditMessageEvent,
+  Message,
+  OnDeleteMessageDocument,
+  OnMessageEditDocument,
+  UserStoredStatus
+} from "@/gql/graphql";
+import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Ref } from "vue";
 import { Chat, Typing } from "@/models/chat";
 import router from "@/router";
@@ -120,8 +120,8 @@ export default function setup() {
     }
   });
 
-  const typing = useSubscription(TypingSubscription);
-  const cancelTyping = useSubscription(CancelTypingSubscription);
+  const typing = useSubscription(TypingEventDocument);
+  const cancelTyping = useSubscription(CancelTypingEventDocument);
 
   typing.onResult(({ data: { onTyping } }) => {
     const index = chatStore.chats.findIndex((c) => c.id === onTyping.chatId);
@@ -146,22 +146,18 @@ export default function setup() {
       userId: onTyping.user.id,
       expires: onTyping.expires,
       user: onTyping.user,
-      timeout: setTimeout(
-        () => {
-          const chat: Chat = chatStore.chats.find(
-            (c) => c.id === onTyping.chatId
-          );
-          if (!chat || !chat.typers) return;
-          chat.typers.splice(
-            chat.typers.findIndex(
-              (t) =>
-                t.chatId === onTyping.chatId && t.userId === onTyping.user.id
-            ),
-            1
-          );
-        },
-        new Date(onTyping.expires).getTime() - Date.now()
-      )
+      timeout: setTimeout(() => {
+        const chat: Chat = chatStore.chats.find(
+          (c) => c.id === onTyping.chatId
+        );
+        if (!chat || !chat.typers) return;
+        chat.typers.splice(
+          chat.typers.findIndex(
+            (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+          ),
+          1
+        );
+      }, new Date(onTyping.expires).getTime() - Date.now())
     });
   });
 
@@ -227,13 +223,13 @@ export default function setup() {
     }
   }
 
-  useSubscription(EditMessageSubscription).onResult(
+  useSubscription(OnMessageEditDocument).onResult(
     ({ data: { onEditMessage } }) => {
       onEmbedResolution(onEditMessage);
     }
   );
 
-  useSubscription(DeleteMessageSubscription).onResult(
+  useSubscription(OnDeleteMessageDocument).onResult(
     ({ data: { onDeleteMessage } }) => {
       if (!messagesStore.messages[onDeleteMessage.associationId]) return;
       const index = messagesStore.messages[

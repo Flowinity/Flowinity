@@ -4,23 +4,19 @@ import axios from "@/plugins/axios";
 import { Workspace } from "@/models/workspace";
 import { Note } from "@/models/note";
 import { useRoute } from "vue-router";
-import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
 import {
-  SaveNoteBlockMutation,
-  SaveNoteMutation
-} from "@/graphql/workspaces/saveNote.graphql";
-import {
+  NoteDocument,
+  SaveNoteBlockDocument,
+  SaveNoteDocument,
   SaveNoteInput,
-  UpdateNoteEvent,
   UpdateNoteEventInput,
   UpdateNoteEventType,
-  WorkspaceNote
+  WorkspaceNote,
+  WorkspacesDocument
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
-import { WorkspacesQuery } from "@/graphql/workspaces/workspaces.graphql";
 import { BlockAPI } from "@flowinity/editorjs";
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -44,13 +40,13 @@ export const useWorkspacesStore = defineStore("workspaces", {
         dialog: false,
         loading: false
       }
-    }) as WorkspacesState,
+    } as WorkspacesState),
   actions: {
     async getNote(id: string | number) {
       const {
         data: { note }
       } = await useApolloClient().client.query({
-        query: NoteQuery,
+        query: NoteDocument,
         variables: {
           input: {
             id: isNumeric(id)
@@ -58,7 +54,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
                 ? id
                 : parseInt(id)
               : undefined,
-            shareLink: !isNumeric(id) ? id : undefined
+            shareLink: !isNumeric(id) ? <string>id : undefined
           }
         },
         fetchPolicy: "no-cache"
@@ -74,7 +70,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       const {
         data: { workspaces }
       } = await useApolloClient().client.query({
-        query: WorkspacesQuery,
+        query: WorkspacesDocument,
         fetchPolicy: "network-only"
       });
       this.items = workspaces;
@@ -103,7 +99,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
     },
     async saveNote(data: WorkspaceNote, manualSave = false) {
       await useApolloClient().client.mutate({
-        mutation: SaveNoteMutation,
+        mutation: SaveNoteDocument,
         variables: {
           input: {
             id: parseInt(this.$app.$route.params.id),
@@ -118,7 +114,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
         return;
       }
       await useApolloClient().client.mutate({
-        mutation: SaveNoteBlockMutation,
+        mutation: SaveNoteBlockDocument,
         variables: {
           input: {
             blockId: data?.id,

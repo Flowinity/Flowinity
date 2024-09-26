@@ -109,7 +109,7 @@
           >
             <SideBarItem
               v-for="item in entries as NavigationOption[]"
-              :key="item.id + item.path + ''"
+              :key="item.path"
               class="flex items-center"
               :item="item"
               :disabled="

@@ -197,8 +197,7 @@
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { ref, watch } from "vue";
 import CreateChatWizard from "@/components/Communications/Dialogs/GroupWizard/CreateChatWizard.vue";
-import { Chat, ChatType } from "@/gql/graphql";
-import { CreateChatInviteMutation } from "@/graphql/chats/invite.graphql";
+import { Chat, ChatType, CreateChatInviteDocument } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { useChatStore } from "@/store/chat.store";
 import { useRouter } from "vue-router";
@@ -247,7 +246,7 @@ async function generateInvite() {
     const {
       data: { createChatInvite }
     } = await apolloClient.client.mutate({
-      mutation: CreateChatInviteMutation,
+      mutation: CreateChatInviteDocument,
       variables: {
         input: {
           associationId: createdChat.value.association.id

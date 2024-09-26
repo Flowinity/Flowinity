@@ -7,25 +7,24 @@ import { useToast } from "vue-toastification";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
-import { GetUserQuery } from "@/graphql/user/user.graphql";
-import {
-  UpdateUserMutation,
-  UpdateUserStatusMutation
-} from "@/graphql/user/update.graphql";
 import {
   BlockedUser,
+  FriendsQuery,
   PartialUserFriend,
   UpdateUserInput,
   User,
   UserStatus,
-  UserStoredStatus
+  UserStoredStatus,
+  UpdateStatusDocument,
+  BlockUserDocument,
+  UserDocument,
+  LogoutDocument,
+  CurrentUserDocument,
+  UpdateUserDocument
 } from "@/gql/graphql";
-import { ProfileQuery } from "@/graphql/user/profile.graphql";
-import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { IpcChannels } from "@/electron-types/ipc";
 import { useProgressiveUIStore } from "@/store/progressive.store";
-import { LogoutMutation } from "@/graphql/user/logout.graphql";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -51,8 +50,8 @@ export const useUserStore = defineStore("user", {
     defaultVuetify: null as any,
     disableProfileColors:
       localStorage.getItem("disableProfileColors") === "true",
-    tracked: [] as PartialUserFriend[],
-    blocked: [] as BlockedUser[],
+    tracked: [] as FriendsQuery["trackedUsers"],
+    blocked: [] as FriendsQuery["blockedUsers"],
     idleTimer: 0,
     ignoreTab: false,
     loggedOut: true
@@ -102,7 +101,7 @@ export const useUserStore = defineStore("user", {
         ) {
           this.user.status = UserStatus.Idle;
           await useApolloClient().client.mutate({
-            mutation: UpdateUserStatusMutation,
+            mutation: UpdateStatusDocument,
             variables: {
               input: {
                 status: UserStatus.Idle
@@ -117,7 +116,7 @@ export const useUserStore = defineStore("user", {
       ) {
         this.user.status = this.user.storedStatus;
         await useApolloClient().client.mutate({
-          mutation: UpdateUserStatusMutation,
+          mutation: UpdateStatusDocument,
           variables: {
             input: {
               status: this.user.storedStatus
@@ -144,7 +143,7 @@ export const useUserStore = defineStore("user", {
     },
     async blockUser() {
       await useApolloClient().client.mutate({
-        mutation: BlockUserMutation,
+        mutation: BlockUserDocument,
         variables: {
           input: {
             userId: this.dialogs.block.userId,
@@ -167,7 +166,7 @@ export const useUserStore = defineStore("user", {
       const {
         data: { user }
       } = await useApolloClient().client.query({
-        query: ProfileQuery,
+        query: UserDocument,
         fetchPolicy: "network-only",
         variables: {
           input: {
@@ -293,7 +292,7 @@ export const useUserStore = defineStore("user", {
       const uiStore = useProgressiveUIStore();
       uiStore.loggedInViewReady = false;
       await useApolloClient().client.mutate({
-        mutation: LogoutMutation
+        mutation: LogoutDocument
       });
       localStorage.removeItem("token");
       localStorage.removeItem("userStore");
@@ -324,7 +323,7 @@ export const useUserStore = defineStore("user", {
       const {
         data: { currentUser }
       } = await useApolloClient().client.query({
-        query: GetUserQuery,
+        query: CurrentUserDocument,
         fetchPolicy: "network-only"
       });
       this.user = currentUser;
@@ -380,7 +379,7 @@ export const useUserStore = defineStore("user", {
           this.defaultVuetify.amoled.colors;
       }
       await useApolloClient().client.mutate({
-        mutation: UpdateUserMutation,
+        mutation: UpdateUserDocument,
         variables: {
           input: {
             darkTheme: this.user.darkTheme,

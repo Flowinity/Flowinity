@@ -47,6 +47,10 @@ declare module "@vue/runtime-core" {
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
     axios: Axios;
+    /**
+     * @deprecated
+     */
+    $vuetify: typeof Vuetify;
     $apollo: ApolloClient<NormalizedCacheObject>;
     $sockets: {
       chat: Socket;

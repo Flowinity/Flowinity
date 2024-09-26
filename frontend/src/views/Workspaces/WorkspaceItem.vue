@@ -146,16 +146,12 @@ import {
   CollabEventType,
   NoteCollabPosition,
   UpdateNoteEventType,
-  WorkspaceNote
+  WorkspaceNote,
+  SaveNoteCollabPositionDocument
 } from "@/gql/graphql";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 import { isNumeric } from "@/plugins/isNumeric";
 import { useApolloClient } from "@vue/apollo-composable";
-import {
-  NoteCollabPositionSubscription,
-  SaveNoteCollabPositionMutation,
-  UpdateNoteSubscription
-} from "@/graphql/workspaces/collaboration";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import functions from "@/plugins/functions";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
@@ -794,7 +790,7 @@ export default defineComponent({
           position
         };
         this.$apollo.mutate({
-          mutation: SaveNoteCollabPositionMutation,
+          mutation: SaveNoteCollabPositionDocument,
           variables: {
             input: {
               noteId: parseInt(this.$route.params.id),
