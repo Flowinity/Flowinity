@@ -8,11 +8,9 @@
 import pinia from "../store";
 // Types
 import { App, markRaw } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import router from "@/router";
 
 export function registerPlugins(app: App) {
-  app.use(router);
   pinia.use(({ store }) => {
     store.$apollo = app.config.globalProperties.$apollo;
     store.$apolloProvider = app.config.globalProperties.$apolloProvider;
@@ -21,4 +19,5 @@ export function registerPlugins(app: App) {
     store.$route = app.config.globalProperties.$route;
   });
   app.use(pinia);
+  app.use(router);
 }

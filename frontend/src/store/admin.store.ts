@@ -18,11 +18,11 @@ export const useAdminStore = defineStore("admin", {
   state: () => ({} as AdminState),
   actions: {
     async getUsers() {
-      const { data } = await axios.get("/admin/users");
+      const { data } = await axios().get("/admin/users");
       return data as User[];
     },
     async getExperimentValues(userId: number): Promise<Record<string, any>[]> {
-      const { data } = await axios.get(`/admin/experiment/${userId}`);
+      const { data } = await axios().get(`/admin/experiment/${userId}`);
       return data;
     }
   },

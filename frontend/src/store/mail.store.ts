@@ -42,7 +42,7 @@ export const useMailStore = defineStore("mail", {
       return email?.from?.[0]?.name || email?.from?.[0]?.address || "Unknown";
     },
     async getMessages(mailbox: string, page: number) {
-      const { data } = await axios.get(`/mail/mailbox/${mailbox}/${page}`);
+      const { data } = await axios().get(`/mail/mailbox/${mailbox}/${page}`);
       this.selected.emails = data;
       this.loading = false;
     },
@@ -52,7 +52,7 @@ export const useMailStore = defineStore("mail", {
       await this.getMessages(mailbox, 1);
     },
     async getMailboxes() {
-      const response = await axios.get("/mail/mailboxes");
+      const response = await axios().get("/mail/mailboxes");
       this.mailboxes = response.data;
 
       const apolloClient = useApolloClient();

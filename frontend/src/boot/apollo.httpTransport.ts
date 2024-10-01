@@ -6,7 +6,6 @@ import {
   from,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject,
   split
 } from "@apollo/client/core";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
@@ -20,16 +19,15 @@ import router from "@/router";
 import { provideApolloClient } from "@vue/apollo-composable";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { useDebugStore } from "@/store/debug.store";
+import { useUserStore } from "@/store/user.store";
+import { useRoute, useRouter } from "vue-router";
+import { useEndpointsStore } from "@/store/endpoints.store";
 
 function getToken(app: App) {
   return (
     app.config.globalProperties.$app.token ?? localStorage.getItem("token")
   );
 }
-
-const artificialLatency = parseInt(
-  localStorage.getItem("tpuArtificialLatency") ?? "0"
-);
 
 export function debugLink() {
   const debugStore = useDebugStore();
@@ -67,11 +65,12 @@ export function debugLink() {
   });
 }
 
-export default function setup(app: App) {
+export default async function setup(app: App) {
   const appStore = useAppStore();
   const toast = useToast();
+  const gqlEndpoint = useEndpointsStore().selected.gql.url;
   const httpLink = new HttpLink({
-    uri: import.meta.env.DEV ? "/graphql" : "https://flowinity.com/graphql"
+    uri: gqlEndpoint
   });
 
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -81,6 +80,11 @@ export default function setup(app: App) {
         if (error.extensions?.code === "UNAUTHORIZED") {
           console.log("ERROR LOGOUT THROWN");
           console.log(error);
+          localStorage.removeItem("token");
+          const user = useUserStore();
+          const loggedIn = !!user.user;
+          user.user = null;
+          if (loggedIn) window._tpu_router.push("/login");
         } else if (error.extensions?.code === "BAD_USER_INPUT") {
           for (const err of error.extensions.validationErrors as any[]) {
             const values: string[] = Object.values(err.constraints);
@@ -112,11 +116,11 @@ export default function setup(app: App) {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "/graphql",
+      url: gqlEndpoint.replace("http", "ws"),
       connectionParams: {
         token: localStorage.getItem("token") || "",
         "x-tpu-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": window.electron ? "Flowinity5 Electron" : "Flowinity5"
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
       }
     })
   );
@@ -127,7 +131,7 @@ export default function setup(app: App) {
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": window.electron ? "Flowinity5 Electron" : "Flowinity5"
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
       }
     });
     return forward(operation);
@@ -145,6 +149,18 @@ export default function setup(app: App) {
     httpLink
   );
 
+  const cleanTypeName = new ApolloLink((operation, forward) => {
+    if (operation.variables) {
+      const omitTypename = (key, value) =>
+        key === "__typename" ? undefined : value;
+      operation.variables = JSON.parse(
+        JSON.stringify(operation.variables),
+        omitTypename
+      );
+    }
+    return forward(operation);
+  });
+
   if (import.meta.env.DEV) {
     loadDevMessages();
     loadErrorMessages();
@@ -155,6 +171,8 @@ export default function setup(app: App) {
     localStorage.getItem("tpuNetworkInspection") === "true";
 
   const appLink = from([
+    // Clean type-name link will be removed in v5
+    cleanTypeName,
     authLink,
     ...(networkInspection ? [debugLink()] : []),
     errorLink,
@@ -165,21 +183,7 @@ export default function setup(app: App) {
   const apolloClient = new ApolloClient({
     link: appLink,
     cache: new InMemoryCache({
-      addTypename: true,
-      typePolicies: {
-        Query: {
-          // messages
-          fields: {
-            messages: {
-              keyArgs: ["input"],
-              merge(existing = [], incoming) {
-                console.log("MERGING", existing, incoming);
-                return [...incoming, ...existing];
-              }
-            }
-          }
-        }
-      }
+      addTypename: true
     }),
     connectToDevTools: true
   });

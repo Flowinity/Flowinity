@@ -74,6 +74,17 @@
        #spinner-overlay {
          padding-top: 6px;
        }
+
+       .crashed {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+       }
+
+       .flowinity-path {
+          fill: rgb(var(--v-theme-background));
+       }
     </style>
     <link rel="stylesheet" href="/fonts/inter/inter.css">
     <link rel="stylesheet" href="/fonts/flowinity/flowinity.css">
@@ -105,6 +116,35 @@
     </div>
     <script src="./src/main.ts" type="module"></script>
     <script>
+      window.flowinityNetworkOffline = (error) => {
+        console.error(error);
+        document.getElementById("spinner-overlay").innerHTML = `
+          <div class="crashed">
+            <div class="margin title">
+              You are offline.
+            </div>
+            <div class="margin subtitle">
+              Flowinity requires an active internet connection. Please check your connection and refresh.
+            </div>
+          </div>
+        `;
+      };
+      window.flowinityInitError = (error) => {
+        console.error(error);
+        document.getElementById("spinner-overlay").innerHTML = `
+          <div class="crashed">
+            <div class="margin title">
+              Flowinity failed to initialize.
+            </div>
+            <div class="margin subtitle">
+              An error occurred while initializing Flowinity. Please try refreshing the page.
+            </div>
+            <code style="font-size: 9px">
+              ${error}
+            </code>
+          </div>
+        `;
+      };
       addEventListener("error", () => {
         if(window.tpuInternals === undefined) {
           console.warn("Flowinity failed to initialize.")

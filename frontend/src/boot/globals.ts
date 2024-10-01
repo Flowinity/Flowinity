@@ -18,6 +18,7 @@ import { useMessagesStore } from "@/store/message.store";
 import { useProgressiveUIStore } from "@/store/progressive.store";
 import { useModulesStore } from "@/store/modules.store";
 import { useToast } from "vue-toastification";
+import { useEndpointsStore } from "@/store/endpoints.store";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -27,7 +28,7 @@ function createSocket(namespace: string) {
     },
     transports: ["websocket"],
     reconnection: true,
-    path: "/gateway",
+    path: useEndpointsStore().selected.gateway.url.replace("http", "ws"),
     reconnectionAttempts: 99999,
     query: {
       // In v4 legacy socket, the typing will not be emit to the user itself
@@ -46,7 +47,7 @@ function createSocket(namespace: string) {
 }
 
 export default function setup(app) {
-  app.config.globalProperties.axios = axios;
+  app.config.globalProperties.axios = axios();
   const user = useUserStore();
   const core = useAppStore();
   app.config.globalProperties.$user = user;

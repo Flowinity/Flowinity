@@ -143,6 +143,7 @@ import ColubrinaRedirect from "@/components/Home/ColubrinaRedirect.vue";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
+  name: "UnauthHome",
   components: {AccessibleTransition , ColubrinaRedirect, DownloadButton, PromoCard},
   data() {
     return {
@@ -187,7 +188,7 @@ export default defineComponent({
       ) {
         window.location.href =
           (this.$app.site.hostnameWithProtocol ??
-            "https://images.flowinity.com") + "/home?redirected=true";
+            "https://flowinity.com") + "/?redirected=true";
       }
     }
     this.$app.title = "Welcome";

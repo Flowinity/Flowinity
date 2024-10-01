@@ -32,6 +32,7 @@ import vuetify from "@/plugins/vuetify";
 import { setupSockets } from "./boot/sockets";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
 import { useDebugStore } from "@/store/debug.store";
+import { useEndpointsStore } from "./store/endpoints.store";
 
 const isSlideshow = window.location.pathname.startsWith("/slideshow/");
 
@@ -179,20 +180,18 @@ if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
 registerPlugins(app);
-globals(app);
-
-if (!isSlideshow) {
-  apolloHttp(app);
-}
-
-if (!isSlideshow) {
-  events();
-  socket(app).then(() => {});
-  setupSockets(app);
-}
-
-app.component("TpuSwitch", TpuSwitch);
-
-app.mount("#tpu-app");
+useEndpointsStore()
+  .fetchEndpoints()
+  .then(() => {
+    globals(app);
+    if (!isSlideshow) {
+      apolloHttp(app);
+      events();
+      socket(app).then(() => {});
+      setupSockets(app);
+    }
+    app.component("TpuSwitch", TpuSwitch);
+    app.mount("#tpu-app");
+  });
 
 export default app;
