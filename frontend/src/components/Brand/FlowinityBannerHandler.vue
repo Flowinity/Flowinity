@@ -24,7 +24,7 @@
     id="tpu-brand-logo"
     class="text-gradient unselectable ml-4 pointer"
     style="z-index: 10; cursor: pointer; font-size: 32px"
-    title="PrivateUploader"
+    :title="$app.site.name"
     @click="$router.push('/')"
   >
     {{ $app.site.name }}

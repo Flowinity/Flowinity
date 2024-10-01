@@ -24,7 +24,7 @@ export const useFriendsStore = defineStore("friends", {
   state: () =>
     ({
       friends: []
-    }) as FriendsState,
+    } as FriendsState),
   getters: {
     validFriends() {
       return this.friends.filter(
@@ -85,7 +85,7 @@ export const useFriendsStore = defineStore("friends", {
       localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
     },
     async actFriend(userId: number) {
-      await axios.post(`/user/friends/${userId}`);
+      await axios().post(`/user/friends/${userId}`);
       await this.getFriends();
       return true;
     },

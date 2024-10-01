@@ -32,6 +32,7 @@ import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 import { setupSockets } from "./boot/sockets";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
+import { useEndpointsStore } from "./store/endpoints.store";
 
 const isSlideshow = window.location.pathname.startsWith("/slideshow/");
 
@@ -136,25 +137,21 @@ if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
 registerPlugins(app);
-globals(app);
+useEndpointsStore()
+  .fetchEndpoints()
+  .then(() => {
+    globals(app);
+    if (!isSlideshow) {
+      apolloHttp(app);
+    }
 
-if (!isSlideshow) {
-  if (
-    localStorage.getItem("tpuTransport") === "http" ||
-    location.port === "34582"
-  ) {
-    apolloHttp(app);
-  } else {
-    apolloWs(app);
-  }
-}
+    if (!isSlideshow) {
+      events();
+      socket(app).then(() => {});
+      setupSockets(app);
+    }
 
-if (!isSlideshow) {
-  events();
-  socket(app).then(() => {});
-  setupSockets(app);
-}
+    app.component("TpuSwitch", TpuSwitch);
 
-app.component("TpuSwitch", TpuSwitch);
-
-app.mount("#tpu-app");
+    app.mount("#tpu-app");
+  });

@@ -128,7 +128,12 @@ const config = {
       autoImport: true
     })
   ],
-  define: { "process.env": {} },
+  define: {
+    "process.env": {},
+    "import.meta.env.FLOWINITY_ENDPOINTS": process.env.FLOWINITY_ENDPOINTS
+      ? `"${process.env.FLOWINITY_ENDPOINTS}"`
+      : '"/endpoints.local.json"'
+  },
   resolve: {
     alias: [{ find: /^@\/(.*)/, replacement: resolve("./src/$1") }],
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]

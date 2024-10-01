@@ -526,7 +526,7 @@ export const useAppStore = defineStore("app", {
     async deleteItem(item: Upload | undefined) {
       if (!item) return;
       this.dialogs.deleteItem.item = item;
-      await axios.delete("/gallery/" + item.id);
+      await axios().delete("/gallery/" + item.id);
       this.dialogs.deleteItem.value = false;
       this.dialogs.deleteItem.emit = true;
     },
@@ -743,7 +743,7 @@ export const useAppStore = defineStore("app", {
           formData.append("attachments", file);
         }
         this.dialogs.upload.loading = true;
-        const { data } = await axios.post("/gallery/site", formData, {
+        const { data } = await axios().post("/gallery/site", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },

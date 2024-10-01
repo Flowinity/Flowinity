@@ -276,7 +276,7 @@ export const useUserStore = defineStore("user", {
         this.actions.emailSent.loading = true;
         const {
           data: { success }
-        } = await axios.post("/user/verification/send");
+        } = await axios().post("/user/verification/send");
         if (success) {
           this.actions.emailSent.value = true;
           this.actions.emailSent.loading = false;
@@ -303,7 +303,7 @@ export const useUserStore = defineStore("user", {
       useAppStore().reconnectSocket("");
       this._postInitRan = false;
       this.loggedOut = true;
-      this.$router.push("/home");
+      this.$router.push("/");
     },
     async changeStatus(status: UserStoredStatus) {
       if (!this.user) return;
@@ -329,6 +329,7 @@ export const useUserStore = defineStore("user", {
       });
       this.user = currentUser;
       this.loggedOut = !currentUser;
+      this._postInitRan = true;
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }

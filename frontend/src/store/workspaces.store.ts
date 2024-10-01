@@ -44,7 +44,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
         dialog: false,
         loading: false
       }
-    }) as WorkspacesState,
+    } as WorkspacesState),
   actions: {
     async getNote(id: string | number) {
       const {
@@ -66,7 +66,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       return note;
     },
     async getRecent() {
-      const { data } = await axios.get("/notes/recent");
+      const { data } = await axios().get("/notes/recent");
       this.recent = data;
       return data;
     },

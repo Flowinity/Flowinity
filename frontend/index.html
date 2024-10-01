@@ -74,6 +74,17 @@
        #spinner-overlay {
          padding-top: 6px;
        }
+
+       .crashed {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+       }
+
+       .flowinity-path {
+          fill: rgb(var(--v-theme-background));
+       }
     </style>
     <link rel="stylesheet" href="/fonts/inter/inter.css">
   </head>
@@ -82,12 +93,12 @@
     <div id="tpu-app">
       <div class="preinit-flex">
         <svg id="flowinity-preinit-logo" viewBox="0 0 741 741" style="max-width:128px" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <rect width="741" height="741" fill="#121212"></rect>
+          <rect width="741" height="741" class="flowinity-path"></rect>
           <circle cx="370.5" cy="370.5" r="370.5" fill="white"></circle>
-          <path d="M108 426C108 409.984 120.984 397 137 397C153.016 397 166 409.984 166 426V691H108V426Z" fill="#121212" id="path-0"></path>
-          <path d="M583 284C583 266.327 597.327 252 615 252V252C632.673 252 647 266.327 647 284V691H583V284Z" fill="#121212" id="path-3"></path>
-          <path d="M196 252C196 220.52 221.52 195 253 195V195C284.48 195 310 220.52 310 252V739H196V252Z" fill="#121212" id="path-1"></path>
-          <path d="M413 436C413 404.52 438.52 379 470 379V379C501.48 379 527 404.52 527 436V741H413V436Z" fill="#121212" id="path-2"></path>
+          <path d="M108 426C108 409.984 120.984 397 137 397C153.016 397 166 409.984 166 426V691H108V426Z" class="flowinity-path" id="path-0"></path>
+          <path d="M583 284C583 266.327 597.327 252 615 252V252C632.673 252 647 266.327 647 284V691H583V284Z" class="flowinity-path" id="path-3"></path>
+          <path d="M196 252C196 220.52 221.52 195 253 195V195C284.48 195 310 220.52 310 252V739H196V252Z" class="flowinity-path" id="path-1"></path>
+          <path d="M413 436C413 404.52 438.52 379 470 379V379C501.48 379 527 404.52 527 436V741H413V436Z" class="flowinity-path" id="path-2"></path>
 
           <defs>
             <linearGradient id="paint0_linear_370_5" x1="371" y1="0" x2="371" y2="741" gradientUnits="userSpaceOnUse">
@@ -111,6 +122,35 @@
     </div>
     <script src="./src/main.ts" type="module"></script>
     <script>
+      window.flowinityNetworkOffline = (error) => {
+        console.error(error);
+        document.getElementById("spinner-overlay").innerHTML = `
+          <div class="crashed">
+            <div class="margin title">
+              You are offline.
+            </div>
+            <div class="margin subtitle">
+              Flowinity requires an active internet connection. Please check your connection and refresh.
+            </div>
+          </div>
+        `;
+      };
+      window.flowinityInitError = (error) => {
+        console.error(error);
+        document.getElementById("spinner-overlay").innerHTML = `
+          <div class="crashed">
+            <div class="margin title">
+              Flowinity failed to initialize.
+            </div>
+            <div class="margin subtitle">
+              An error occurred while initializing Flowinity. Please try refreshing the page.
+            </div>
+            <code style="font-size: 9px">
+              ${error}
+            </code>
+          </div>
+        `;
+      };
       addEventListener("error", () => {
         if(window.tpuInternals === undefined) {
           console.warn("Flowinity failed to initialize.")

@@ -279,7 +279,7 @@ export const useChatStore = defineStore("chat", {
     },
     async pinMessage(id: number | undefined, pinned: boolean | undefined) {
       if (!id || pinned === undefined) return;
-      await axios.put(`/chats/${this.selectedChatId}/message`, {
+      await axios().put(`/chats/${this.selectedChatId}/message`, {
         pinned,
         id
       });
@@ -655,8 +655,8 @@ export const useChatStore = defineStore("chat", {
           offset !== undefined
             ? offset
             : position === ScrollPosition.Top
-              ? this.currentOffset.up
-              : this.currentOffset.down,
+            ? this.currentOffset.up
+            : this.currentOffset.down,
         limit: 50
       });
 
@@ -753,7 +753,7 @@ export const useChatStore = defineStore("chat", {
       }
     },
     setNotifications(type: "all" | "mentions" | "none", associationId: number) {
-      axios.patch(`/chats/association/${associationId}`, {
+      axios().patch(`/chats/association/${associationId}`, {
         notifications: type
       });
       this.chats.find(

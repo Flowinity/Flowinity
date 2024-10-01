@@ -1,0 +1,23 @@
+{
+  "gql": [
+    {
+      "url": "/graphql",
+      "region": "unknown",
+      "priority": 1
+    }
+  ],
+  "api": [
+    {
+      "url": "/api/v3",
+      "region": "unknown",
+      "priority": 1
+    }
+  ],
+  "gateway": [
+    {
+      "url": "/gateway",
+      "region": "unknown",
+      "priority": 1
+    }
+  ]
+}

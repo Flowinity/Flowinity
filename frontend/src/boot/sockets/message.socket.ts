@@ -13,9 +13,7 @@ import {
 } from "@/graphql/chats/subscriptions/typing.graphql";
 import { EditMessageSubscription } from "@/graphql/chats/subscriptions/editMessage.graphql";
 import { DeleteMessageSubscription } from "@/graphql/chats/subscriptions/deleteMessage.graphql";
-import { Ref } from "vue";
 import { Chat, Typing } from "@/models/chat";
-import router from "@/router";
 import { Platform, useAppStore } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import functions from "@/plugins/functions";
@@ -146,22 +144,18 @@ export default function setup() {
       userId: onTyping.user.id,
       expires: onTyping.expires,
       user: onTyping.user,
-      timeout: setTimeout(
-        () => {
-          const chat: Chat = chatStore.chats.find(
-            (c) => c.id === onTyping.chatId
-          );
-          if (!chat || !chat.typers) return;
-          chat.typers.splice(
-            chat.typers.findIndex(
-              (t) =>
-                t.chatId === onTyping.chatId && t.userId === onTyping.user.id
-            ),
-            1
-          );
-        },
-        new Date(onTyping.expires).getTime() - Date.now()
-      )
+      timeout: setTimeout(() => {
+        const chat: Chat = chatStore.chats.find(
+          (c) => c.id === onTyping.chatId
+        );
+        if (!chat || !chat.typers) return;
+        chat.typers.splice(
+          chat.typers.findIndex(
+            (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+          ),
+          1
+        );
+      }, new Date(onTyping.expires).getTime() - Date.now())
     });
   });
 

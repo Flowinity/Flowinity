@@ -334,7 +334,7 @@ const routes = [
       {
         path: "/home",
         name: "Home",
-        component: () => import("@/views/Auth/Home.vue")
+        redirect: "/"
       },
       {
         path: "/passwordReset/:code",
@@ -402,11 +402,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const user = useUserStore();
+  // If there's a token, and _postInitRan hasn't been set to true yet, we shouldn't redirect. But if $user.user is null and _postInitRan is true, we should redirect.
+  if (!user._postInitRan) return;
   if (
     !user.user &&
     ![
       "Login",
       "Home",
+      "Dashboard",
       "Register",
       "404",
       "Collection Item",
@@ -430,7 +433,7 @@ router.beforeEach(async (to, from) => {
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
-    return { name: "Home" };
+    return { name: "Dashboard" };
   } else if (
     user.user &&
     ["Home", "Login", "Register"].includes(to.name as string)
