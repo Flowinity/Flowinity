@@ -61,6 +61,8 @@ declare module "@vue/runtime-core" {
 
 declare global {
   interface Window {
+    flowinityNetworkOffline: (error: string) => void;
+    flowinityInitError: (error: string) => void;
     socket: Socket;
     _tpu_router: Router;
     isSlideshow: boolean | undefined;
