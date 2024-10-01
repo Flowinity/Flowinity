@@ -15,7 +15,7 @@
   ],
   "gateway": [
     {
-      "url": "/gateway",
+      "url": "",
       "region": "unknown",
       "priority": 1
     }

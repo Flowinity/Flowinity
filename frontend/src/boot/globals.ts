@@ -20,21 +20,24 @@ import { useEndpointsStore } from "@/store/endpoints.store";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
-  const socket = io(`/${namespace}`, {
-    auth: {
-      token: localStorage.getItem("token")
-    },
-    transports: ["websocket"],
-    reconnection: true,
-    path: useEndpointsStore().selected.gateway.url.replace("http", "ws"),
-    reconnectionAttempts: 99999,
-    query: {
-      // In v4 legacy socket, the typing will not be emit to the user itself
-      // In v5, this was changed, however, we need to access the typing status of the user in v4
-      // This is the only difference
-      version: "5"
+  const socket = io(
+    `${useEndpointsStore().selected.gateway.url}/${namespace}`,
+    {
+      auth: {
+        token: localStorage.getItem("token")
+      },
+      transports: ["websocket"],
+      reconnection: true,
+      path: "/gateway",
+      reconnectionAttempts: 99999,
+      query: {
+        // In v4 legacy socket, the typing will not be emit to the user itself
+        // In v5, this was changed, however, we need to access the typing status of the user in v4
+        // This is the only difference
+        version: "5"
+      }
     }
-  });
+  );
   socket.on("connect", () => {
     console.log(`[TPU/Socket] Connected to ${namespace}`);
   });
