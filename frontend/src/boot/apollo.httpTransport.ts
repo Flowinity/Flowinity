@@ -1,4 +1,4 @@
-import { App } from "vue";
+import { App, watch } from "vue";
 import { createApolloProvider } from "@vue/apollo-option";
 import {
   ApolloClient,
@@ -22,6 +22,7 @@ import { useDebugStore } from "@/store/debug.store";
 import { useUserStore } from "@/store/user.store";
 import { useRoute, useRouter } from "vue-router";
 import { useEndpointsStore } from "@/store/endpoints.store";
+import { setupSockets } from "./sockets";
 
 function getToken(app: App) {
   return (
@@ -66,6 +67,12 @@ export function debugLink() {
 }
 
 export default async function setup(app: App) {
+  // WebSocket reset
+  let restartRequestedBeforeConnected = false;
+  let gracefullyRestart = () => {
+    restartRequestedBeforeConnected = true;
+  };
+
   const appStore = useAppStore();
   const toast = useToast();
   const gqlEndpoint = useEndpointsStore().selected.gql.url;
@@ -117,13 +124,49 @@ export default async function setup(app: App) {
   const wsLink = new GraphQLWsLink(
     createClient({
       url: gqlEndpoint.replace("http", "ws"),
-      connectionParams: {
-        token: localStorage.getItem("token") || "",
-        "x-tpu-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
+      connectionParams: async () => {
+        return {
+          authorization: getToken(app),
+          "x-tpu-client-version": import.meta.env.TPU_VERSION,
+          "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
+        };
+      },
+      lazy: false,
+      keepAlive: 5000,
+      on: {
+        error: () => {
+          console.log("[Flowinity/GraphQL] Disconnected from socket.");
+          const appStore = useAppStore();
+          appStore.connected = false;
+        },
+        connected: (socket: any) => {
+          setupSockets(app);
+          const appStore = useAppStore();
+          appStore.connected = true;
+          console.log("[Flowinity/GraphQL] Connected to socket.");
+          gracefullyRestart = () => {
+            if (socket.readyState === WebSocket.OPEN) {
+              appStore.connected = false;
+              socket.close(4205, "Client Restart");
+            }
+          };
+
+          if (restartRequestedBeforeConnected) {
+            restartRequestedBeforeConnected = false;
+            gracefullyRestart();
+          }
+        }
       }
     })
   );
+
+  watch(
+    () => appStore.token,
+    () => {
+      gracefullyRestart();
+    }
+  );
+
   const authLink = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
     const token = getToken(app);
