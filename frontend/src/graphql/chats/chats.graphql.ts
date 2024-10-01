@@ -2,15 +2,6 @@ import { gql } from "@apollo/client";
 
 const ChatsQuery = gql`
   query ChatsQuery {
-    userEmoji {
-      id
-      userId
-      chatId
-      icon
-      name
-      createdAt
-      updatedAt
-    }
     chats {
       id
       description
@@ -39,6 +30,20 @@ const ChatsQuery = gql`
         lastRead
         notifications
       }
+    }
+  }
+`;
+
+const UserEmoji = gql`
+  query UserEmoji {
+    userEmoji {
+      id
+      userId
+      chatId
+      icon
+      name
+      createdAt
+      updatedAt
     }
   }
 `;

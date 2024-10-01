@@ -48,6 +48,7 @@ export const StandardMessageFragment = gql`
     createdAt
     updatedAt
     chatId
+    pending
     userId
     content
     type
@@ -111,21 +112,145 @@ export const StandardMessageFragment = gql`
 `;
 
 const MessagesQuery = gql`
-  ${StandardMessageFragment}
   query Messages($input: InfiniteMessagesInput!) {
     messages(input: $input) {
-      ...StandardMessage
+      id
+      createdAt
+      updatedAt
+      pending
+      chatId
+      userId
+      content
+      type
+      emoji {
+        name
+        icon
+        id
+        chatId
+      }
+      embeds {
+        ...StandardEmbed
+      }
+      reply {
+        readReceipts {
+          associationId
+          user {
+            id
+            avatar
+            username
+            legacy
+          }
+          messageId
+        }
+        content
+        userId
+        id
+        embeds {
+          metadata {
+            type
+          }
+          media {
+            type
+          }
+        }
+        user {
+          username
+          id
+          avatar
+        }
+      }
+      user {
+        username
+        id
+        avatar
+      }
+      edited
+      editedAt
+      replyId
+      pinned
+      readReceipts {
+        associationId
+        user {
+          id
+          avatar
+          username
+          legacy
+        }
+        messageId
+      }
     }
   }
 `;
 
 const PagedMessagesQuery = gql`
-  ${StandardMessageFragment}
   ${PagerFragment}
   query PagedMessages($input: PagedMessagesInput!) {
     messagesPaged(input: $input) {
       items {
-        ...StandardMessage
+        id
+        createdAt
+        updatedAt
+        chatId
+        userId
+        pending
+        content
+        type
+        emoji {
+          name
+          icon
+          id
+          chatId
+        }
+        embeds {
+          ...StandardEmbed
+        }
+        reply {
+          readReceipts {
+            associationId
+            user {
+              id
+              avatar
+              username
+              legacy
+            }
+            messageId
+          }
+          content
+          userId
+          id
+          embeds {
+            metadata {
+              type
+            }
+            media {
+              type
+            }
+          }
+          user {
+            username
+            id
+            avatar
+          }
+        }
+        user {
+          username
+          id
+          avatar
+        }
+        edited
+        editedAt
+        replyId
+        pinned
+        readReceipts {
+          associationId
+          user {
+            id
+            avatar
+            username
+            legacy
+          }
+          messageId
+        }
       }
       pager {
         ...Pager

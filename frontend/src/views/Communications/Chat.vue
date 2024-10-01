@@ -2,7 +2,7 @@
   <keep-alive :max="<number>$experiments.experiments.CHAT_CACHING || 0">
     <component
       v-if="$route.params.chatId"
-      :is="ChatV2"
+      :is="ChatV3"
       :key="parseInt(<string>$route.params.chatId)"
       :chat-id="parseInt(<string>$route.params.chatId)"
     />
@@ -51,6 +51,7 @@ import {
   RiUserFill,
   RiUserLine
 } from "@remixicon/vue";
+import ChatV3 from "@/views/Communications/ChatV3.vue";
 </script>
 
 <style scoped></style>

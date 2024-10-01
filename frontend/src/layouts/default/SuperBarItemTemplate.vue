@@ -1,5 +1,6 @@
 <template>
   <super-bar-item
+    :selected="uiStore.navigationMode === item.id"
     @click="
       item.scopesRequired &&
       !functions.checkScope(item.scopesRequired, $user.user?.scopes)

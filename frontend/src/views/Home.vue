@@ -4,6 +4,7 @@
       <v-col md="6">
         <UserWidget />
         <BlogWidget class="mt-6" />
+        <AnnouncementsWidget class="mt-6" />
       </v-col>
       <v-col md="6">
         <StatsWidget />
@@ -19,6 +20,7 @@ import UserWidget from "@/components/Dashboard/UserWidget.vue";
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import BlogWidget from "@/components/Dashboard/BlogWidget.vue";
+import AnnouncementsWidget from "@/components/Dashboard/AnnouncementsWidget.vue";
 
 export default defineComponent({
   name: "Home",
@@ -26,7 +28,8 @@ export default defineComponent({
     BlogWidget,
     GraphWidget,
     StatsWidget,
-    UserWidget
+    UserWidget,
+    AnnouncementsWidget
   },
   mounted() {
     this.$app.title = "Dashboard";

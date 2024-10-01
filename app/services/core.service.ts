@@ -142,7 +142,7 @@ export class CoreService {
     }
   }
 
-  async getAnnouncements() {
+  async getAnnouncements(): Promise<Announcement[]> {
     return await Announcement.findAll({
       order: [["createdAt", "DESC"]],
       include: [
@@ -354,14 +354,20 @@ export class CoreService {
     userId: number,
     dev: boolean = false,
     gold: boolean = false,
-    majorVersion: number = 4
+    majorVersion: number = 4,
+    wantedExperiments: string[] | undefined = undefined
   ): Promise<ExperimentType[]> {
     const overrides = await Experiment.findAll({
       where: {
         userId
       }
     })
-    const experiments = await this.getExperimentsV4(dev, gold, majorVersion)
+    const experiments = await this.getExperimentsV4(
+      dev,
+      gold,
+      majorVersion,
+      wantedExperiments
+    )
     return [
       ...experiments.map((experiment) => {
         if (experiment.force) {
@@ -388,7 +394,8 @@ export class CoreService {
   async getExperiments(
     dev: boolean = false,
     gold: boolean = false,
-    majorVersion: number | undefined = undefined
+    majorVersion: number | undefined = undefined,
+    wantedExperiments: string[] | undefined = undefined
   ): Promise<Record<ExperimentsLegacy, any>> {
     experiments.COMMUNICATIONS = config?.features?.communications ?? true
     experiments.INTERACTIVE_NOTES = config?.features?.workspaces ?? true
@@ -416,7 +423,7 @@ export class CoreService {
     }
 
     // only return experiments that are available for the major version
-    if (majorVersion) {
+    if (majorVersion && !wantedExperiments) {
       for (const key in experiments) {
         if (key === "meta") continue
         if (
@@ -428,6 +435,16 @@ export class CoreService {
         }
         delete experiments[key as keyof typeof experiments]
         delete experiments.meta[key as keyof typeof experiments.meta]
+      }
+    }
+
+    if (wantedExperiments) {
+      for (const key in experiments) {
+        if (key === "meta") continue
+        if (!wantedExperiments.includes(key)) {
+          delete experiments[key as keyof typeof experiments]
+          delete experiments.meta[key as keyof typeof experiments.meta]
+        }
       }
     }
 
@@ -456,9 +473,16 @@ export class CoreService {
   async getExperimentsV4(
     dev: boolean = false,
     gold: boolean = false,
-    majorVersion: number = 4
+    majorVersion: number = 4,
+    wantedExperiments: string[] | undefined = undefined
   ): Promise<ExperimentType[]> {
-    const experiments = await this.getExperiments(dev, gold, majorVersion)
+    console.log(wantedExperiments)
+    const experiments = await this.getExperiments(
+      dev,
+      gold,
+      majorVersion,
+      wantedExperiments
+    )
     // remove meta from object.entries
     return Object.entries(experiments)
       .filter((experiment) => {

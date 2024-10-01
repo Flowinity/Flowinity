@@ -165,7 +165,21 @@ export default function setup(app: App) {
   const apolloClient = new ApolloClient({
     link: appLink,
     cache: new InMemoryCache({
-      addTypename: true
+      addTypename: true,
+      typePolicies: {
+        Query: {
+          // messages
+          fields: {
+            messages: {
+              keyArgs: ["input"],
+              merge(existing = [], incoming) {
+                console.log("MERGING", existing, incoming);
+                return [...incoming, ...existing];
+              }
+            }
+          }
+        }
+      }
     }),
     connectToDevTools: true
   });

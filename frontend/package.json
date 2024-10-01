@@ -47,6 +47,7 @@
     "@flowinity/vite-version": "^1.0.3",
     "@guolao/vue-monaco-editor": "^1.1.2",
     "@highlightjs/vue-plugin": "1.0.2",
+    "@mdi/font": "^7.4.47",
     "@remixicon/vue": "^4.2.0",
     "@rollup/plugin-graphql": "^2.0.4",
     "@svgmoji/noto": "^3.2.0",

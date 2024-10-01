@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, sans-serif;
+  font-family: FlowinityIcons, Inter, sans-serif;
 }
 
 .user-content {
@@ -11,7 +11,7 @@
 }
 
 @supports (font-variation-settings: normal) {
-  :root { font-family: InterVariable, sans-serif; }
+  :root { font-family: FlowinityIcons, InterVariable, sans-serif; }
 }
 
 .text-gradient {

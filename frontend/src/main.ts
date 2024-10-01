@@ -27,7 +27,6 @@ import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
-import apolloWs from "./boot/apollo.wsTransport";
 import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 import { setupSockets } from "./boot/sockets";
@@ -95,6 +94,24 @@ if (import.meta.env.VITE_PROD_ANALYTICS === "true") {
 }
 
 if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
+  const debugNotification = document.createElement("div");
+  debugNotification.id = "debug-notification";
+  debugNotification.innerHTML =
+    "<strong>Debug menu loaded.</strong><br>CTRL+ALT+M to open.";
+  debugNotification.classList.add(
+    "absolute",
+    "top-0",
+    "right-0",
+    "p-2",
+    "border-red",
+    "border-2"
+  );
+  debugNotification.style.zIndex = "10000";
+  document.body.appendChild(debugNotification);
+  setTimeout(() => {
+    debugNotification.remove();
+  }, 2000);
+
   const loggingMixin = {
     beforeMount() {
       if (

@@ -6,13 +6,146 @@ import { gql } from "@apollo/client";
 import {
   ExperimentOverrideInput,
   Experiments,
-  GetExperimentsDocument,
+  ExperimentsDocument,
   SetExperimentDocument,
-  GetExperimentsQuery
+  ExperimentsQuery
 } from "@/gql/graphql";
 
 export const useExperimentsStore = defineStore("experiments", () => {
-  const experimentsConfig = ref<GetExperimentsQuery["experiments"]>([]);
+  const experimentsConfig = ref<ExperimentsQuery["experiments"]>([
+    {
+      id: Experiments.NEW_BRANDING,
+      value: 1
+    },
+    {
+      id: Experiments.EDITOR_V2,
+      value: 0
+    },
+    {
+      id: Experiments.WIDGETS,
+      value: 0
+    },
+    {
+      id: Experiments.BADGES,
+      value: 0
+    },
+    {
+      id: Experiments.NATIVE_BADGES,
+      value: 1
+    },
+    {
+      id: Experiments.REMOVE_LEGACY_SOCKET,
+      value: 1
+    },
+    {
+      id: Experiments.CHAT_CACHING,
+      value: 10
+    },
+    {
+      id: Experiments.COPY_MSG_ID,
+      value: 0
+    },
+    {
+      id: Experiments.WEATHER,
+      value: 1
+    },
+    {
+      id: Experiments.BREADCRUMB_SHOW_PARENT,
+      value: 0
+    },
+    {
+      id: Experiments.COMMS_SUPERBAR,
+      value: 1
+    },
+    {
+      id: Experiments.PROGRESSIVE_HOME,
+      value: 0
+    },
+    {
+      id: Experiments.DISABLE_ANIMATIONS,
+      value: 0
+    },
+    {
+      id: Experiments.PROGRESSIVE_UI,
+      value: 1
+    },
+    {
+      id: Experiments.CHAT_GUIDED_WIZARD,
+      value: 1
+    },
+    {
+      id: Experiments.NOTE_COLLAB,
+      value: 0
+    },
+    {
+      id: Experiments.IAF_NAG,
+      value: 0
+    },
+    {
+      id: Experiments.DOWNLOAD_THE_APP_NAG,
+      value: 0
+    },
+    {
+      id: Experiments.ENABLE_AUTOSTART_APP_NAG,
+      value: 0
+    },
+    {
+      id: Experiments.DEBUG_FAVICON,
+      value: 0
+    },
+    {
+      id: Experiments.FLOWINITY,
+      value: 1
+    },
+    {
+      id: Experiments.PRIDE,
+      value: 0
+    },
+    {
+      id: Experiments.NOTIFICATION_SOUND,
+      value: 1
+    },
+    {
+      id: Experiments.RESIZABLE_SIDEBARS,
+      value: 0
+    },
+    {
+      id: Experiments.OFFICIAL_INSTANCE,
+      value: 1
+    },
+    {
+      id: Experiments.USER_V3_EDITOR,
+      value: 0
+    },
+    {
+      id: Experiments.USER_V3_MODIFY,
+      value: 1
+    },
+    {
+      id: Experiments.PINNED_MESSAGES,
+      value: 1
+    },
+    {
+      id: Experiments.COMMUNICATIONS,
+      value: 1
+    },
+    {
+      id: Experiments.WEBMAIL,
+      value: 0
+    },
+    {
+      id: Experiments.ACCOUNT_DEV_ELIGIBLE,
+      value: 0
+    },
+    {
+      id: Experiments.SFX_KFX,
+      value: 0
+    },
+    {
+      id: Experiments.SFX_KOLF,
+      value: 0
+    }
+  ]);
   const experiments = computed<Record<Experiments, number>>(() => {
     return experimentsConfig.value.reduce((acc, cur) => {
       acc[cur.id] = cur.value;
@@ -79,13 +212,15 @@ export const useExperimentsStore = defineStore("experiments", () => {
     const {
       data: { experiments: getExperiments }
     } = await useApolloClient().client.query({
-      query: GetExperimentsDocument,
+      query: ExperimentsDocument,
       variables:
         version !== undefined
           ? {
               version
             }
-          : undefined,
+          : {
+              experiments: experimentsConfig.value.map((e) => e.id)
+            },
       fetchPolicy: "network-only"
     });
     experimentsConfig.value = getExperiments;

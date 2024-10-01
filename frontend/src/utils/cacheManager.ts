@@ -1,12 +1,14 @@
 import { DocumentNode } from "graphql/language";
 import { ApolloClient } from "@apollo/client/core";
 
-export async function updateCache<P, I, C>(
+export async function updateCache<P, I>(
   patch: Partial<P> | Partial<P>[],
   queryDocument: DocumentNode,
   key: string,
   input: I,
-  apollo: ApolloClient<any>
+  apollo: ApolloClient<any>,
+  referenceKey: string,
+  mergeOptions: { position: "prepend" | "append" } = { position: "append" }
 ) {
   // If no selected form, we'll do nothing
   // Get the cache object from the GraphQL API client
@@ -25,29 +27,19 @@ export async function updateCache<P, I, C>(
       patch
     });
   }
-  const existingValue = cacheObj[key];
-
-  let updatedValue: Partial<P>[] | Partial<P>;
   if (!patch) {
     cache.evict({ fieldName: key, args: { input } });
     return;
-  } else if (Array.isArray(existingValue) && Array.isArray(patch)) {
-    updatedValue = [...existingValue, ...patch];
-  } else if (
-    typeof existingValue === "object" &&
-    !Array.isArray(existingValue)
-  ) {
-    updatedValue = { ...existingValue, ...patch };
-  } else {
-    updatedValue = patch;
   }
+
+  console.log("MERGE PATCH", patch, cacheObj);
 
   // Write the updated value back to the cache
   cache.writeQuery({
     query: queryDocument,
     variables: { input },
     data: {
-      [key]: updatedValue
+      [key]: patch
     }
   });
 }

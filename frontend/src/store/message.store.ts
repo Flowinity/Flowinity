@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import {
   InfiniteMessagesInput,
   Message,
+  MessageType,
   MessagesDocument,
   MessagesQuery,
   PagedMessagesDocument,
@@ -13,6 +14,7 @@ import {
 import { useChatStore } from "@/store/chat.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import { updateCache } from "@/utils/cacheManager";
+import { useUserStore } from "./user.store";
 
 export const useMessagesStore = defineStore("messages", () => {
   const messages = ref<Record<number, MessagesQuery["messages"]>>({});
@@ -56,10 +58,21 @@ export const useMessagesStore = defineStore("messages", () => {
    * @param {number} associationId
    */
   async function insertMessage(
-    message: Message | Message[],
+    message: MessagesQuery["messages"][0],
     associationId: number
-  ) {
-    if (!messages.value[chatStore.selectedChatId]) {
+  ): Promise<void> {
+    console.log(`INSERTING`, message, associationId);
+    if (!message || !associationId) {
+      console.warn(
+        "[Flowinity/Messages] Tried to insert message without message or associationId",
+        {
+          message,
+          associationId
+        }
+      );
+      return;
+    }
+    if (!messages.value[associationId]) {
       console.warn(
         "[Flowinity/Messages] Tried to insert message into non-existing chat. It's likely it's not loaded therefore we don't need to insert it.",
         {
@@ -70,14 +83,19 @@ export const useMessagesStore = defineStore("messages", () => {
     }
 
     const apolloClient = useApolloClient();
-
-    await updateCache<Message, InfiniteMessagesInput, MessagesQuery>(
-      message,
-      MessagesDocument,
-      "messages",
-      { associationId },
-      apolloClient.client
-    );
+    apolloClient.client.cache.writeQuery({
+      query: MessagesDocument,
+      variables: {
+        input: {
+          associationId: associationId,
+          limit: 50,
+          position: ScrollPosition.Top
+        }
+      },
+      data: {
+        messages: [message]
+      }
+    });
     await loadChatMessages(associationId);
   }
 
@@ -87,6 +105,7 @@ export const useMessagesStore = defineStore("messages", () => {
       limit: 50,
       position: ScrollPosition.Top
     });
+    console.log(`LOADING`, data, associationId);
     messages.value[associationId || chatStore.selectedChatId] = data;
   }
 

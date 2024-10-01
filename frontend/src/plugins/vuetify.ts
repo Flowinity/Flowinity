@@ -164,7 +164,7 @@ export default createVuetify({
   },
   icons: {
     aliases,
-    defaultSet: "ri",
+    defaultSet: "mdi",
     sets: {
       ri: remixIcon
     }

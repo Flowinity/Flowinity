@@ -101,7 +101,6 @@ export class CoreResolver {
     return {
       ...((await redis.json.get("core:state")) ||
         (await this.cacheService.refreshState())),
-      announcements: [],
       server: cluster.worker?.id
         ? `${os.hostname()?.toUpperCase()}#${cluster.worker?.id}`
         : os.hostname()?.toUpperCase(),
@@ -184,13 +183,19 @@ export class CoreResolver {
     @Arg("version", () => Int, {
       nullable: true
     })
-    version: number | null
+    version: number | null,
+    @Arg("experiments", () => [String], {
+      nullable: true,
+      description: "Clients use this to request specific experiments."
+    })
+    experiments: string[] | undefined
   ) {
     if (!ctx.user?.id) {
       return this.coreService.getExperimentsV4(
         config.release === "dev",
         false,
-        version !== null ? version : ctx.client.majorVersion
+        version !== null ? version : ctx.client.majorVersion,
+        experiments
       )
     }
     return await this.coreService.getUserExperimentsV4(
@@ -199,7 +204,8 @@ export class CoreResolver {
         ctx.user?.administrator ||
         ctx.user?.moderator,
       ctx.user.planId === 6,
-      version !== null ? version : ctx.client.majorVersion
+      version !== null ? version : ctx.client.majorVersion,
+      experiments
     )
   }
 

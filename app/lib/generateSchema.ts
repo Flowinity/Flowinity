@@ -47,6 +47,7 @@ import {
 } from "@app/controllers/graphql/messageEmbed.resolver"
 import { WorkspaceUserResolver } from "@app/controllers/graphql/workspaceUser.resolver"
 import { NotificationResolver } from "@app/controllers/graphql/notification.resolver"
+import { ExperimentsResolver } from "@app/controllers/graphql/experiments.resolver"
 
 export const generateSchema = () => {
   const centralSchema = buildSchema({
@@ -87,7 +88,8 @@ export const generateSchema = () => {
       PartialUserBaseResolver,
       EmbedMediaResolver,
       WorkspaceUserResolver,
-      NotificationResolver
+      NotificationResolver,
+      ExperimentsResolver
     ],
     container: Container,
     authChecker: authChecker,

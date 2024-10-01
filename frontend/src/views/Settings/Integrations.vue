@@ -264,7 +264,7 @@ export default defineComponent({
       await this.axios.delete(`/oauth/${id}/authorize`);
       await this.getUserOAuth();
       this.loading = false;
-      this.$toast.success("TPU app disconnected!");
+      this.$toast.success("Flowinity app disconnected!");
     }
   }
 });

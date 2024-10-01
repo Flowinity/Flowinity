@@ -1,5 +1,5 @@
 <template>
-  <chat-dev-options v-if="$chat.dialogs.chatDevOptions.value" />
+  <chat-dev-options v-if="chatStore.dialogs.chatDevOptions.value" />
   <WorkspaceDeleteDialog
     v-model="dialogs.delete.value"
     title="Delete Message"
@@ -14,25 +14,25 @@
     @drop="dragDropHandler"
   >
     <v-menu
-      v-model="$chat.dialogs.emojiMenu.value"
-      :attach="$chat.dialogs.emojiMenu.bindingElement"
+      v-model="chatStore.dialogs.emojiMenu.value"
+      :attach="chatStore.dialogs.emojiMenu.bindingElement"
       style="margin-left: 60px; z-index: 99999"
       height="60px"
       content-class="force-bg"
     >
       <v-card color="toolbar" width="100%" class="no-border">
         <div
-          v-if="$chat.dialogs.emojiMenu.emoji"
+          v-if="chatStore.dialogs.emojiMenu.emoji"
           class="justify-items-center align-content-center width flex-row"
           style="width: 100%"
         >
           <v-card-title class="mt-n1">
-            :{{ $chat.dialogs.emojiMenu.emoji.name }}:
+            :{{ chatStore.dialogs.emojiMenu.emoji.name }}:
           </v-card-title>
           <v-card-subtitle class="mt-n3">
             {{
-              $chat.dialogs.emojiMenu.chat
-                ? $chat.chatName($chat.dialogs.emojiMenu.chat)
+              chatStore.dialogs.emojiMenu.chat
+                ? chatStore.chatName(chatStore.dialogs.emojiMenu.chat)
                 : "Private group"
             }}
           </v-card-subtitle>
@@ -41,7 +41,7 @@
     </v-menu>
     <v-navigation-drawer
       v-if="$vuetify.display.mobile"
-      v-model="$chat.dialogs.message.value"
+      v-model="chatStore.dialogs.message.value"
       color="card"
       :floating="true"
       location="bottom"
@@ -49,44 +49,44 @@
       :touchless="true"
     >
       <message-actions-list
-        v-if="$chat.dialogs.message.message"
+        v-if="chatStore.dialogs.message.message"
         @delete="
           $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
+            ? deleteMessage(chatStore.dialogs.message.message?.id)
+            : confirmDelete(chatStore.dialogs.message.message);
+          chatStore.dialogs.message.value = false;
         "
         @edit="
           handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
+            id: chatStore.dialogs.message.message?.id || 0,
+            content: chatStore.dialogs.message.message?.content || ''
           });
-          $chat.dialogs.message.value = false;
+          chatStore.dialogs.message.value = false;
         "
         @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
+          replyId = chatStore.dialogs.message.message?.id;
+          chatStore.dialogs.message.value = false;
         "
       />
     </v-navigation-drawer>
-    <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
+    <v-menu v-else v-model="chatStore.dialogs.message.value" :style="menuStyle">
       <message-actions-list
         @delete="
           $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
+            ? deleteMessage(chatStore.dialogs.message.message?.id)
+            : confirmDelete(chatStore.dialogs.message.message);
+          chatStore.dialogs.message.value = false;
         "
         @edit="
           handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
+            id: chatStore.dialogs.message.message?.id || 0,
+            content: chatStore.dialogs.message.message?.content || ''
           });
-          $chat.dialogs.message.value = false;
+          chatStore.dialogs.message.value = false;
         "
         @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
+          replyId = chatStore.dialogs.message.message?.id;
+          chatStore.dialogs.message.value = false;
         "
       />
     </v-menu>
@@ -98,9 +98,9 @@
     >
       <div id="sentinel-bottom" ref="sentinelBottom" />
       <infinite-loading
-        v-if="messages && $chat.loadNew"
-        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
-        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
+        v-if="messages && chatStore.loadNew"
+        :identifier="`${chatStore.selectedChat?.id}-${chatStore.loadNew}-bottom`"
+        @infinite="chatStore.loadHistory($event, ScrollPosition.Bottom)"
       >
         <template #spinner>
           <div class="text-center">
@@ -121,6 +121,7 @@
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
         :unread-id="unreadId"
+        v-memo="[message, expandBlocked, editing, editingText, replyId]"
         :key="message.id"
         :uncollapse-blocked="expandBlocked"
         class="mr-2 ml-2"
@@ -148,20 +149,23 @@
         @jump-to-message="$chat.jumpToMessage($event, chatId)"
         @reply="replyId = $event.id"
       />
-      <v-skeleton-loader
-        v-for="index in 20"
-        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
-        :key="index"
-        type="list-item-avatar-three-line"
-        color="background no-border"
-      />
+      <template
+        v-if="!chatStore.selectedChat?.messages?.length && chatStore.loading"
+      >
+        <v-skeleton-loader
+          v-for="index in 20"
+          :key="index"
+          type="list-item-avatar-three-line"
+          color="background no-border"
+        />
+      </template>
       <infinite-loading
         v-if="$messages.currentMessages"
         direction="top"
         :top="true"
-        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
+        :identifier="`${chatStore.selectedChat?.id}-${chatStore.loadNew}`"
         :value="'bottom'"
-        @infinite="$chat.loadHistory"
+        @infinite="chatStore.loadHistory"
       >
         <template #spinner>
           <div class="text-center">
@@ -177,19 +181,19 @@
           <div class="text-center">
             <PromoNoContent
               icon="mdi-message-processing-outline"
-              :title="`Welcome to the start of ${$chat.chatName(
-                $chat.selectedChat
+              :title="`Welcome to the start of ${chatStore.chatName(
+                chatStore.selectedChat
               )}!`"
               description="Send a message to start the conversation!"
             />
           </div>
         </template>
       </infinite-loading>
-      <div v-if="$chat.isReady" id="sentinel" ref="sentinel"></div>
+      <div v-if="chatStore.isReady" id="sentinel" ref="sentinel"></div>
     </div>
     <div class="input-container">
       <v-toolbar
-        v-if="$chat.loadNew || avoidAutoScroll"
+        v-if="chatStore.loadNew || avoidAutoScroll"
         class="pointer unselectable pl-2 force-bg dynamic-background"
         color="toolbar"
         height="25"
@@ -258,7 +262,7 @@
         </v-slide-group>
       </v-toolbar>
       <CommunicationsInput
-        ref="input"
+        ref="inputRef"
         v-model="message"
         class="message-input user-content"
         style="margin-top: auto; z-index: 1001"
@@ -313,14 +317,24 @@ import {
   RiUserFill,
   RiUserLine
 } from "@remixicon/vue";
-import { Chat, Message, ScrollPosition, UserStoredStatus } from "@/gql/graphql";
-import { Platform } from "@/store/app.store";
+import {
+  Chat,
+  Message,
+  MessageType,
+  ScrollPosition,
+  UserStoredStatus
+} from "@/gql/graphql";
+import { Platform, useAppStore } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import functions from "@/plugins/functions";
 import { RailMode } from "@/store/progressive.store";
 import { useChatStore } from "@/store/chat.store";
 import { useUserStore } from "@/store/user.store";
 import { useMessagesStore } from "@/store/message.store";
+import axios from "@/plugins/axios";
+import { useDisplay } from "vuetify";
+import dayjs from "@/plugins/dayjs";
+import { useExperimentsStore } from "@/store/experiments.store";
 
 const props = defineProps({
   chatId: {
@@ -343,7 +357,6 @@ const editing = ref<number | undefined>(undefined);
 const editingText = ref<string | undefined>(undefined);
 const replyId = ref<number | undefined>(undefined);
 const observer = ref<MutationObserver | undefined>(undefined);
-const renderKey = ref(false);
 const typingStatus = reactive({
   rateLimit: null as number | null
 });
@@ -402,14 +415,13 @@ const blocked = computed(() => {
     : { value: false, you: false };
 });
 
-const ScrollPosition = ScrollPosition;
-
 const height = computed(() => {
   const navbar = document.getElementById("navbar");
   if (!navbar) return "calc(100vh)";
   return "calc(100vh - " + navbar.offsetHeight + "px)";
 });
 
+const display = useDisplay();
 const menuStyle = computed(() => {
   let offset = 0;
   const chatDialogsMessage = chatStore.dialogs.message;
@@ -426,10 +438,9 @@ const menuStyle = computed(() => {
     offset += 48;
   }
   return `position: absolute; top: ${
-    chatDialogsMessage.y + window.scrollY + 211 + offset <
-    useVuetify().display.height
+    chatDialogsMessage.y + window.scrollY + 211 + offset < display.height.value
       ? chatDialogsMessage.y + window.scrollY
-      : useVuetify().display.height - 211 - offset
+      : display.height.value - 211 - offset
   }px; left: ${chatDialogsMessage.x + window.scrollX}px;`;
 });
 
@@ -446,7 +457,7 @@ const finished = computed(() => {
 });
 
 watch(name, (val) => {
-  useApp().title = val;
+  useAppStore().title = val;
 });
 
 watch(
@@ -510,8 +521,10 @@ watch(replyId, () => {
   });
 });
 
+const experimentsStore = useExperimentsStore();
+
 onUnmounted(() => {
-  if (!useExperiments().experiments.REMOVE_LEGACY_SOCKET) {
+  if (!experimentsStore.experiments.REMOVE_LEGACY_SOCKET) {
     // useSockets().chat.off("message", onMessage);
     // useSockets().chat.off("typing", onTyping);
     // useSockets().chat.off("embedResolution", onEmbedResolution);
@@ -519,6 +532,8 @@ onUnmounted(() => {
 });
 
 // Define your other methods similarly using `ref` and `computed`
+const sentinel = ref<HTMLElement | null>(null);
+const sentinelBottom = ref<HTMLElement | null>(null);
 function autoScroll() {
   if (
     avoidAutoScroll.value &&
@@ -571,17 +586,18 @@ function editLastMessage() {
 }
 
 // Focus the input area
+const inputRef = ref<HTMLElement | null>(null);
 function focusInput() {
   inputRef.value?.focus();
 }
 
 async function jumpToBottom() {
-  this.avoidAutoScroll = false;
-  if (this.$chat.loadNew) {
-    this.$chat.setChat(this.chat?.association.id);
-    this.$chat.loadNew = false;
+  avoidAutoScroll.value = false;
+  if (chatStore.loadNew) {
+    chatStore.setChat(this.chat?.association.id);
+    chatStore.loadNew = false;
   }
-  this.autoScroll();
+  autoScroll();
 }
 
 // Handle keyboard shortcuts
@@ -637,7 +653,7 @@ function shortcutHandler(e) {
 
   if (
     e.ctrlKey &&
-    (e.key === "v" || (e.key === "a" && editingText.value.length)) &&
+    (e.key === "v" || (e.key === "a" && editingText.value?.length)) &&
     e.target.tagName !== "INPUT" &&
     e.target.tagName !== "TEXTAREA"
   ) {
@@ -688,6 +704,256 @@ async function handleAuthorClick(event, username) {
     chatStore.dialogs.userMenu.y = event.y;
     chatStore.dialogs.userMenu.location = event.location || "top";
     chatStore.dialogs.userMenu.value = true;
+  }
+}
+
+function dateSeparator(index: number) {
+  if (!messages.value) return false;
+  const message = messages.value[index];
+  const previousMessage = messages.value[index + 1];
+  return !dayjs(message?.createdAt).isSame(previousMessage?.createdAt, "day");
+}
+
+function confirmDelete(message?: Message | null) {
+  if (!message) return;
+  dialogs.delete.message = message;
+  dialogs.delete.value = true;
+}
+
+function handleQuickTPULink(e: {
+  media_formats: { gif: { url: string } };
+  attachment: string;
+}) {
+  if (!e.attachment) {
+    message.value = e.media_formats?.gif.url;
+    sendMessage();
+    return;
+  }
+  message.value = chatStore.domain + e.attachment;
+  sendMessage();
+}
+
+async function handlePaste(e: ClipboardEvent) {
+  const items = e.clipboardData?.items;
+  if (items) {
+    for (const item of items) {
+      if (item.kind === "file") {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          files.value.push({
+            file,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            tpuLink: undefined,
+            uploadProgress: 0,
+            finished: false
+          });
+        }
+      }
+    }
+    await uploadFiles();
+  }
+}
+
+async function uploadHandle(e: FileList) {
+  if (e.length > 0) {
+    for (const file of e) {
+      files.value.push({
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        tpuLink: undefined,
+        uploadProgress: 0
+      });
+    }
+    await uploadFiles();
+  }
+}
+
+async function dragDropHandler(e: DragEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+  const filesList = e.dataTransfer?.files;
+  if (filesList && filesList.length > 0) {
+    for (const file of filesList) {
+      files.value.push({
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        tpuLink: undefined,
+        uploadProgress: 0
+      });
+    }
+    await uploadFiles();
+  }
+}
+
+async function uploadFiles() {
+  if (files.value.length > 0) {
+    if (uploading.value) return;
+    uploading.value = true;
+
+    const formData = new FormData();
+    for (const file of files.value.filter((file) => !file.tpuLink)) {
+      formData.append("attachments", file.file);
+    }
+
+    try {
+      const { data } = await axios.post(`/gallery/site`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: (progressEvent) => {
+          uploadProgress.value = Math.round(
+            (progressEvent.loaded / (progressEvent.total || 0)) * 100
+          );
+          files.value.forEach((file) => {
+            if (!file.tpuLink) {
+              file.uploadProgress = uploadProgress.value;
+            }
+          });
+        }
+      });
+      files.value.forEach((file, index) => {
+        file.tpuLink = data[index]?.upload?.attachment;
+        file.finished = true;
+      });
+      uploading.value = false;
+    } catch (e) {
+      files.value = [];
+    }
+  } else {
+    uploading.value = false;
+  }
+}
+
+async function doEditMessage() {
+  if (!editingText.value?.length) {
+    return deleteMessage(editing.value!);
+  }
+  const emojiRegex = /(?:^|[^:\w~-]):[\w~-]+:(?![\w~-])/g;
+  editingText.value = editingText.value.replace(emojiRegex, (match) => {
+    try {
+      const name = match.split(":")[1].split(":")[0];
+      const emoji = chatStore.emoji.find((emoji) => emoji.name === name);
+      return `:${name}:${emoji.id}:`;
+    } catch {
+      return match;
+    }
+  });
+  await axios.put(`/chats/${chatStore.chat?.association?.id}/message`, {
+    id: editing.value,
+    content: editingText.value
+  });
+  editing.value = undefined;
+  editingText.value = undefined;
+  focusInput();
+}
+
+function handleEdit(event: { id: number | undefined; content: string }) {
+  if (!event.id) {
+    editing.value = undefined;
+    editingText.value = undefined;
+    focusInput();
+  } else {
+    editing.value = event.id;
+    editingText.value = event.content;
+  }
+}
+
+async function deleteMessage(id?: number) {
+  if (!id) return;
+  await axios.delete(
+    `/chats/${chatStore.chat?.association?.id}/messages/${id}`
+  );
+}
+
+async function sendMessage() {
+  focusInput();
+  chatStore.cancelTyping();
+  if (unreadId.value) unreadId.value = 0;
+  if (!messages.value) return;
+
+  let content = message.value.trim();
+  if (!content && !files.value.length) return;
+  if (!finished.value) return;
+
+  const emojiRegex = /:[\w~-]+:/g;
+  content = content.replace(emojiRegex, (match) => {
+    try {
+      const name = match.split(":")[1].split(":")[0];
+      const emoji = chatStore.emoji.find((emoji) => emoji.name === name);
+      return `:${name}:${emoji.id}:`;
+    } catch {
+      return match;
+    }
+  });
+
+  if (!message.value && files.value.length) content = " ";
+  const tempId = new Date().getTime();
+  const attachments = files.value.map((file) => file.tpuLink);
+  message.value = "";
+
+  await messagesStore.insertMessage(
+    {
+      content: content,
+      createdAt: new Date().toISOString(),
+      user: {
+        id: userStore.user?.id,
+        username: userStore.user?.username,
+        avatar: userStore.user?.avatar
+      },
+      pending: true,
+      // Temp ID because it's a pending message
+      id: tempId,
+      chatId: chatStore.selectedChatId,
+      updatedAt: new Date().toISOString(),
+      type: MessageType.Message,
+      embeds: [],
+      edited: false,
+      replyId: replyId.value,
+      reply: replying.value,
+      readReceipts: [],
+      pinned: false,
+      userId: userStore.user?.id,
+      emoji: chatStore.emoji.map((emoji) => ({
+        id: emoji.id,
+        name: emoji.name,
+        icon: emoji.icon,
+        chatId: emoji.chatId
+      }))
+    },
+    chatStore.selectedChatId
+  );
+  replyId.value = undefined;
+  files.value = [];
+  autoScroll();
+
+  const chatIndex = chatStore.chats.findIndex(
+    (c) => c.id === chatStore.chat?.id
+  );
+  if (chatIndex && chatIndex !== -1) {
+    const chatToMove = chatStore.chats[chatIndex];
+    chatStore.chats.splice(chatIndex, 1);
+    chatStore.chats.unshift(chatToMove);
+  }
+
+  chatStore.setDraft(chatStore.selectedChatId.toString(), "");
+
+  try {
+    await chatStore.sendMessage(content, attachments, replyId.value);
+  } catch (e) {
+    const messageIndex = messages.value.findIndex(
+      (message) => message.id === tempId
+    );
+    if (messageIndex === -1 || messageIndex === undefined || !chatStore.chat)
+      return;
+    messages.value[messageIndex].pending = false;
+    messages.value[messageIndex].error = true;
   }
 }
 

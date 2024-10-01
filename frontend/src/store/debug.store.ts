@@ -31,7 +31,7 @@ export const useDebugStore = defineStore("debug", () => {
   const recentOperations = ref<Operation[]>([]);
   const dialogs = ref<Dialog[]>([]);
   const rerenders = ref<Component[]>([]);
-  const renderMonitor = ref(localStorage.getItem("renderMonitor") === "true");
+  const renderMonitor = ref(localStorage.getItem("renderMonitor") !== "false");
 
   watch(
     () => renderMonitor.value,
