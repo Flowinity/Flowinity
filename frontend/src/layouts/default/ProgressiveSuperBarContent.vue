@@ -186,6 +186,21 @@
           </v-tooltip>
           <RiDownloadCloud2Fill />
         </super-bar-item>
+        <v-btn
+          :color="calculateColorQuota"
+          variant="tonal"
+          icon
+          @click="appStore.dialogs.gold.value = true"
+        >
+          <v-progress-circular
+            :color="calculateColorQuota"
+            size="48"
+            style="font-size: 12px"
+            :model-value="calculateQuota"
+          >
+            {{ calculateQuota }}%
+          </v-progress-circular>
+        </v-btn>
         <super-bar-item-template
           v-for="item in uiStore.navigation.railOptions.filter(
             (opt) => opt.misc
@@ -254,8 +269,8 @@ import { useUserStore } from "@/store/user.store";
 import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { ref, watch } from "vue";
 import SuperBarItem from "@/layouts/default/SuperBarItem.vue";
+import { computed, ref, watch } from "vue";
 import {
   RiFeedbackLine,
   RiLogoutCircleLine,
@@ -311,4 +326,21 @@ const updateDesktopApp = () => {
   if (appStore.platform === Platform.WEB) return;
   window.electron.ipcRenderer.send(IpcChannels.UPDATE);
 };
+
+const calculateQuota = computed(() => {
+  if (!userStore.user) return 0;
+  return Math.round(
+    (userStore.user?.quota / userStore.user?.plan?.quotaMax) * 100
+  );
+});
+
+const calculateColorQuota = computed(() => {
+  if (calculateQuota.value >= 80 && calculateQuota.value < 95) {
+    return "warning";
+  } else if (calculateQuota.value >= 95) {
+    return "error";
+  } else {
+    return "green";
+  }
+});
 </script>

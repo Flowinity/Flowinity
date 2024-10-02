@@ -1,7 +1,7 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, Float, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class SubscriptionMetadata {
-  @Field()
+  @Field(() => Float)
   hours: number
 }
