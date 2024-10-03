@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const SaveNoteMutation = gql`
   mutation SaveNote($input: SaveNoteInput!) {

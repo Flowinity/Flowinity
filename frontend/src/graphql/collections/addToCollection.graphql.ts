@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const AddToCollectionMutation = gql`
   mutation AddToCollection($input: AddToCollectionInput!) {

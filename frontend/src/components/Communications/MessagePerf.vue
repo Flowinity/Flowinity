@@ -261,7 +261,7 @@
               :key="readReceipt.id"
             >
               <ReadReceipt
-                v-if="index < $chat.renderableReadReceipts"
+                v-if="index < 3"
                 :message="message"
                 :read-receipt="readReceipt"
                 :class="{ 'ml-1': message.readReceipts.length <= 3 }"

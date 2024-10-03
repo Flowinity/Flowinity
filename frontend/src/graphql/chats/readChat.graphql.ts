@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const ReadChatMutation = gql`
   mutation ReadChat($input: ReadChatInput!) {

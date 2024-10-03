@@ -82,6 +82,7 @@
             mode="out-in"
             tag="div"
             class="flex"
+            v-if="userStore.user"
           >
             <div
               v-for="(rail, index) in items"
@@ -94,7 +95,7 @@
               >
                 <RiArrowRightSLine
                   v-if="items.length > 1 && index !== 0"
-                  class="w-6 fill-medium-emphasis-dark items-center"
+                  class="w-6 fill-medium-emphasis-dark items-center mr-2"
                 />
                 <div class="flex items-center flex-grow">
                   <router-link

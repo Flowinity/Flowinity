@@ -1,5 +1,4 @@
 import { App, watch } from "vue";
-import { createApolloProvider } from "@vue/apollo-option";
 import {
   ApolloClient,
   ApolloLink,
@@ -15,14 +14,12 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";
 import { useAppStore } from "@/store/app.store";
-import router from "@/router";
-import { provideApolloClient } from "@vue/apollo-composable";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { useDebugStore } from "@/store/debug.store";
 import { useUserStore } from "@/store/user.store";
-import { useRoute, useRouter } from "vue-router";
 import { useEndpointsStore } from "@/store/endpoints.store";
 import { setupSockets } from "./sockets";
+import { useApolloClient } from "@vue/apollo-composable";
 
 function getToken(app: App) {
   return (
@@ -66,7 +63,7 @@ export function debugLink() {
   });
 }
 
-export default async function setup(app: App) {
+export default function apolloFlowinity(app: App) {
   // WebSocket reset
   let restartRequestedBeforeConnected = false;
   let gracefullyRestart = () => {
@@ -192,18 +189,6 @@ export default async function setup(app: App) {
     httpLink
   );
 
-  const cleanTypeName = new ApolloLink((operation, forward) => {
-    if (operation.variables) {
-      const omitTypename = (key, value) =>
-        key === "__typename" ? undefined : value;
-      operation.variables = JSON.parse(
-        JSON.stringify(operation.variables),
-        omitTypename
-      );
-    }
-    return forward(operation);
-  });
-
   if (import.meta.env.DEV) {
     loadDevMessages();
     loadErrorMessages();
@@ -214,8 +199,6 @@ export default async function setup(app: App) {
     localStorage.getItem("tpuNetworkInspection") === "true";
 
   const appLink = from([
-    // Clean type-name link will be removed in v5
-    cleanTypeName,
     authLink,
     ...(networkInspection ? [debugLink()] : []),
     errorLink,
@@ -223,30 +206,28 @@ export default async function setup(app: App) {
   ]);
 
   // Create the apollo client
-  const apolloClient = new ApolloClient({
+  return new ApolloClient({
     link: appLink,
     cache: new InMemoryCache({
-      addTypename: true
+      addTypename: true,
+      typePolicies: {
+        Query: {
+          fields: {
+            messages: {
+              keyArgs: ["input"],
+              merge(_, incoming) {
+                return incoming;
+              }
+            },
+            readReceipts: {
+              merge(_, incoming) {
+                return incoming;
+              }
+            }
+          }
+        }
+      }
     }),
     connectToDevTools: true
-  });
-
-  // Create a provider
-  const apolloProvider = createApolloProvider({
-    defaultClient: apolloClient
-  });
-
-  app.config.globalProperties.$apollo = apolloClient;
-
-  app.use(apolloProvider);
-  appStore.connected = true;
-
-  provideApolloClient(apolloClient);
-
-  appStore.init().then(() => {
-    if (!appStore.site.finishedSetup) {
-      router.push("/setup");
-    }
-    console.info("[TPU/CoreStore] Core initialized");
   });
 }

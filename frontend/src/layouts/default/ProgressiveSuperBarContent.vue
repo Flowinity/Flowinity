@@ -181,7 +181,7 @@
             {{
               $app.platform === Platform.LINUX
                 ? "Update available in your package manager"
-                : "Update available to install"
+                : "Update ready to install"
             }}
           </v-tooltip>
           <RiDownloadCloud2Fill />
@@ -190,16 +190,25 @@
           :color="calculateColorQuota"
           variant="tonal"
           icon
+          size="40"
           @click="appStore.dialogs.gold.value = true"
         >
           <v-progress-circular
             :color="calculateColorQuota"
-            size="48"
-            style="font-size: 12px"
+            style="font-size: 10px"
+            size="40"
             :model-value="calculateQuota"
           >
             {{ calculateQuota }}%
           </v-progress-circular>
+          <v-tooltip activator="parent" location="right">
+            {{
+              $t("core.sidebar.quota", {
+                used: functions.fileSize(userStore.user?.quota),
+                quota: functions.fileSize(userStore.user?.plan?.quotaMax)
+              })
+            }}
+          </v-tooltip>
         </v-btn>
         <super-bar-item-template
           v-for="item in uiStore.navigation.railOptions.filter(
@@ -289,7 +298,7 @@ import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue"
 import Notifications from "@/components/Core/Notifications.vue";
 import SuperBarItemTemplate from "@/layouts/default/SuperBarItemTemplate.vue";
 import { IpcChannels } from "@/electron-types/ipc";
-
+import functions from "@/plugins/functions";
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
 const props = defineProps({

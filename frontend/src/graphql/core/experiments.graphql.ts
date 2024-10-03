@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const Experiments = gql`
   query Experiments($experiments: [String!], $version: Int) {

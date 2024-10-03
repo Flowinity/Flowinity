@@ -101,7 +101,7 @@ import ProgressiveSideBarMobile from "@/layouts/default/ProgressiveSideBarMobile
 import RenderMonitor from "@/components/Dev/Dialogs/RenderMonitor.vue";
 
 export default defineComponent({
-  name: "TPUDefaultLayout",
+  name: "FlowinityDefaultLayout",
   components: {
     RenderMonitor,
     ProgressiveSideBarMobile,

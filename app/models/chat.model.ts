@@ -104,10 +104,17 @@ export class Chat extends Model {
     nullable: true
   })
   unread: number | undefined
+
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: "Use `sortDate` instead."
+  })
+  _redisSortDate: string | undefined
+
   @Field(() => String, {
     nullable: true
   })
-  _redisSortDate: string | undefined
+  sortDate: string | undefined
 
   @Field(() => [ChatRank])
   @HasMany(() => ChatRank, "chatId")

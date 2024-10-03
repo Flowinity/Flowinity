@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const CollectionUpdatedSubscription = gql`
   subscription OnCollectionUpdated($input: FilterCollectionInput) {

@@ -377,6 +377,16 @@ const routes = [
         name: "Download Redirect"
       },
       {
+        path: "/news",
+        name: "News",
+        component: () => import("@/views/News/NewsHome.vue")
+      },
+      {
+        path: "/news/:id",
+        name: "News Item",
+        component: () => import("@/views/News/NewsItem.vue")
+      },
+      {
         // any :value/*****
         path: "/forms/:pathMatch(.*)?",
         name: "Forms",

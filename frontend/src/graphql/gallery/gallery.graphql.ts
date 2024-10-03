@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const GalleryQuery = gql`
   query Gallery($input: GalleryInput!) {

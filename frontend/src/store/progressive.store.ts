@@ -279,8 +279,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           },
           {
             icon: markRaw(RiNewsLine),
-            name: "Blog",
-            path: "/blog",
+            name: "News",
+            path: "/news",
             selectedIcon: markRaw(RiNewsFill)
           }
         ];
@@ -349,33 +349,41 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             selectedIcon: markRaw(RiChat1Fill),
             scopesRequired: ["chats.create"]
           },
-          ...chatStore.chats.map((chat) => ({
-            icon: markRaw(
-              h(
-                "span",
-                {
-                  class: "flex items-center mr-3",
-                  style: "height: 40px"
-                },
-                [
-                  h(UserAvatar, {
-                    chat: chat.recipient ? undefined : chat,
-                    user: chat.recipient
-                      ? userStore.users[chat.recipient.id]
-                      : undefined,
-                    size: 40,
-                    status: true,
-                    dotStatus: true
-                  })
-                ]
-              )
-            ),
-            subtitle:
-              chat.type === "group" ? `${chat.usersCount} members` : undefined,
-            name: chatStore.chatName(chat),
-            path: `/communications/${chat.association.id}`,
-            badge: chat.unread ? chat.unread.toLocaleString() : undefined
-          }))
+          ...chatStore.chats
+            .map((chat) => ({
+              icon: markRaw(
+                h(
+                  "span",
+                  {
+                    class: "flex items-center mr-3",
+                    style: "height: 40px"
+                  },
+                  [
+                    h(UserAvatar, {
+                      chat: chat.recipient ? undefined : chat,
+                      user: chat.recipient
+                        ? userStore.users[chat.recipient.id]
+                        : undefined,
+                      size: 40,
+                      status: true,
+                      dotStatus: true
+                    })
+                  ]
+                )
+              ),
+              subtitle:
+                chat.type === "group"
+                  ? `${chat.usersCount} members`
+                  : undefined,
+              name: chatStore.chatName(chat),
+              path: `/communications/${chat.association.id}`,
+              badge: chat.unread ? chat.unread.toLocaleString() : undefined
+            }))
+            .sort((a, b) => {
+              const aDate = parseInt(a.sortDate);
+              const bDate = parseInt(b.sortDate);
+              return bDate - aDate;
+            })
         ];
       }),
       [RailMode.WORKSPACES]: computed(() => {

@@ -291,7 +291,8 @@ export const useUserStore = defineStore("user", {
     async logout() {
       const uiStore = useProgressiveUIStore();
       uiStore.loggedInViewReady = false;
-      await useApolloClient().client.mutate({
+      const apolloClient = useApolloClient();
+      await apolloClient.client.mutate({
         mutation: LogoutDocument
       });
       localStorage.removeItem("token");
@@ -302,13 +303,23 @@ export const useUserStore = defineStore("user", {
       useAppStore().reconnectSocket("");
       this._postInitRan = false;
       this.loggedOut = true;
+      await apolloClient.client.clearStore();
       this.$router.push("/");
     },
     async changeStatus(status: UserStoredStatus) {
       if (!this.user) return;
-      this.user.status = status;
-      this.user.storedStatus = status;
-      await this.save();
+      await this.save({ storedStatus: status });
+    },
+    async getCurrentUser() {
+      const {
+        data: { currentUser }
+      } = await useApolloClient().client.query({
+        query: CurrentUserDocument,
+        fetchPolicy: "network-only"
+      });
+      this.user = currentUser;
+      this.loggedOut = !currentUser;
+      localStorage.setItem("userStore", JSON.stringify(currentUser));
     },
     async init() {
       const user = localStorage.getItem("userStore");
@@ -320,20 +331,12 @@ export const useUserStore = defineStore("user", {
           //
         }
       }
-      const {
-        data: { currentUser }
-      } = await useApolloClient().client.query({
-        query: CurrentUserDocument,
-        fetchPolicy: "network-only"
-      });
-      this.user = currentUser;
-      this.loggedOut = !currentUser;
+      await this.getCurrentUser();
       this._postInitRan = true;
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }
       this.applyTheme();
-      localStorage.setItem("userStore", JSON.stringify(currentUser));
     },
     applyCSS(emergency: boolean = false) {
       //if (this.user?.plan.internalName !== "GOLD") return;
@@ -354,7 +357,7 @@ export const useUserStore = defineStore("user", {
         document.head.appendChild(style);
       }
     },
-    async save() {
+    async save(input: UpdateUserInput) {
       if (!this.user) return;
       this.applyCSS();
       // prev is undocumented and contains previous Vuetify values causing a memory leak
@@ -381,32 +384,8 @@ export const useUserStore = defineStore("user", {
       }
       await useApolloClient().client.mutate({
         mutation: UpdateUserDocument,
-        variables: {
-          input: {
-            darkTheme: this.user.darkTheme,
-            description: this.user.description,
-            discordPrecache: this.user.discordPrecache,
-            excludedCollections: this.user.excludedCollections,
-            insights: this.user.insights,
-            itemsPerPage: this.user.itemsPerPage,
-            language: this.user.language,
-            nameColor: this.user.nameColor,
-            privacyPolicyAccepted: this.user.privacyPolicyAccepted,
-            profileLayout: this.user.profileLayout,
-            publicProfile: this.user.publicProfile,
-            storedStatus: this.user.storedStatus,
-            username: this.user.username,
-            weatherUnit: this.user.weatherUnit,
-            themeEngine: this.user.themeEngine?.theme?.amoled?.colors
-              ? this.user.themeEngine
-              : null,
-            pulse: this.user.pulse,
-            groupPrivacy: this.user.groupPrivacy,
-            friendRequests: this.user.friendRequests
-          }
-        } as UpdateUserInput
+        variables: { input }
       });
-      i18n.global.locale = this.user?.language || "en";
     },
     async savePasswordRequired() {
       // TODO: new GraphQL mutation

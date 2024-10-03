@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const UpdateRankMutation = gql`
   mutation UpdateChatRank($input: UpdateRank!) {

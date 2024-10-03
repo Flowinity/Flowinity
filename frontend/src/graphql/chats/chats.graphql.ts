@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const ChatsQuery = gql`
   query ChatsQuery {
@@ -13,7 +13,7 @@ const ChatsQuery = gql`
       icon
       createdAt
       updatedAt
-      _redisSortDate
+      sortDate
       usersCount
       onlineCount
       recipient {
@@ -137,7 +137,7 @@ const _OldChatsQuery = gql`
         lastRead
         ranksMap
       }
-      _redisSortDate
+      sortDate
       recipient {
         id
       }

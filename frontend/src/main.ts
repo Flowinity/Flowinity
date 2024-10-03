@@ -27,9 +27,8 @@ import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
-import apolloHttp from "./boot/apollo.httpTransport";
+import apolloHttp from "./boot/apollo";
 import vuetify from "@/plugins/vuetify";
-import { setupSockets } from "./boot/sockets";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
 import { useDebugStore } from "@/store/debug.store";
 import { useEndpointsStore } from "./store/endpoints.store";
@@ -147,24 +146,26 @@ if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
       }, 200);
       const debugStore = useDebugStore();
       console.log(this);
-      if (!this.$data?._renderId) {
-        this.$data._renderId = Math.random() * 1000000;
-      }
-      const component = debugStore.rerenders.find(
-        (c) => c.id === this.$data._renderId.toString()
-      );
-      if (component) {
-        component.renders++;
-      } else {
-        debugStore.rerenders.push({
-          id: this.$data._renderId.toString(),
-          name: this.$options.__file?.split("/")?.pop(),
-          renders: 1,
-          el: this.$el,
-          stateA: null,
-          stateB: null
-        });
-      }
+      try {
+        if (!this.$data?._renderId) {
+          this.$data._renderId = Math.random() * 1000000;
+        }
+        const component = debugStore.rerenders.find(
+          (c) => c.id === this.$data._renderId.toString()
+        );
+        if (component) {
+          component.renders++;
+        } else {
+          debugStore.rerenders.push({
+            id: this.$data._renderId.toString(),
+            name: this.$options.__file?.split("/")?.pop(),
+            renders: 1,
+            el: this.$el,
+            stateA: null,
+            stateB: null
+          });
+        }
+      } catch {}
     }
   };
   app.mixin(loggingMixin);
@@ -188,7 +189,6 @@ useEndpointsStore()
       apolloHttp(app);
       events();
       socket(app).then(() => {});
-      setupSockets(app);
     }
     app.component("TpuSwitch", TpuSwitch);
     app.mount("#tpu-app");

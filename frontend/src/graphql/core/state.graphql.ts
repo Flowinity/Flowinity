@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const ECoreStateQuery = gql`
   query ExtraState {
@@ -87,7 +87,7 @@ const ECoreStateQuery = gql`
         lastRead
         ranksMap
       }
-      _redisSortDate
+      sortDate
       recipient {
         id
       }

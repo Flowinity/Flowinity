@@ -25,6 +25,7 @@ import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
+import { useUserPresenceStore } from "@/store/userPresence.store";
 
 export enum Platform {
   WEB = "WEB",
@@ -382,7 +383,7 @@ export const useAppStore = defineStore("app", {
       //   })
       //   .sort((a: Chat, b: Chat) => {
       //     return (
-      //       Number(b._redisSortDate) - Number(a._redisSortDate) ||
+      //       Number(b.sortDate) - Number(a.sortDate) ||
       //       Number(b.id) - Number(a.id)
       //     );
       //   });
@@ -406,6 +407,7 @@ export const useAppStore = defineStore("app", {
       useCollectionsStore().init();
       useWorkspacesStore().init();
       useFriendsStore().init();
+      useUserPresenceStore().getTracked();
     },
     async refresh() {
       const {

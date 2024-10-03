@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { PagerFragment } from "../fragments/pager.graphql";
 
 export const StandardEmbedFragment = gql`
@@ -49,6 +49,7 @@ export const StandardMessageFragment = gql`
     updatedAt
     chatId
     pending
+    error
     userId
     content
     type
@@ -118,6 +119,7 @@ const MessagesQuery = gql`
       createdAt
       updatedAt
       pending
+      error
       chatId
       userId
       content

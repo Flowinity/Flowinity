@@ -129,7 +129,14 @@ export class ChatResolver {
 
   @FieldResolver(() => String)
   async _redisSortDate(@Root() chat: Chat) {
-    return (await redis.get(`chat:${chat.id}:sortDate`)) || "0"
+    if (!chat._redisSortDate)
+      return (await redis.get(`chat:${chat.id}:sortDate`)) || "0"
+    return chat._redisSortDate
+  }
+
+  @FieldResolver(() => String)
+  sortDate(@Root() chat: Chat) {
+    return this._redisSortDate(chat)
   }
 
   @FieldResolver(() => PartialUserBase || null, {
@@ -364,6 +371,7 @@ export class ChatResolver {
     return []
   }
 
+  @FieldResolver(() => String)
   @FieldResolver(() => String)
   async name(@Root() chat: Chat, @Ctx() ctx: Context) {
     if (chat.name === "Unnamed Group") {

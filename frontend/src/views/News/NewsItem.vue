@@ -1,64 +1,87 @@
 <template>
-  <Banner :announcement="announcement" />
-  <NewsItem :announcement="announcement" />
+  <template v-if="appStore.site?.officialInstance">
+    <Banner :announcement="announcement" />
+    <NewsItem :announcement="announcement" />
+    <teleport
+      to="#appbar-options"
+      v-if="
+        uiStore.ready &&
+        (userStore.user?.administrator || userStore.user?.moderator)
+      "
+    >
+      <accessible-transition mode="out-in" name="slide-up" appear>
+        <div class="flex gap-2">
+          <v-btn
+            icon
+            size="small"
+            :href="`https://troplo.com/admin/announcements/${announcement?.id}`"
+            target="_blank"
+          >
+            <RiPencilLine />
+            <v-tooltip location="bottom" activator="parent">
+              Edit on Troplo.com
+            </v-tooltip>
+          </v-btn>
+        </div>
+      </accessible-transition>
+    </teleport>
+  </template>
 </template>
 
 <script setup lang="ts">
-import { useRoute, useAsyncData } from "#app"
-import { useApolloClient } from "@vue/apollo-composable"
-import { AnnouncementDocument, type AnnouncementQuery } from "@/gql/graphql"
-import dayjs from "@/lib/dayjs"
-import mdAnnouncements from "@/lib/mdAnnouncements"
-import { useDisplay } from "vuetify"
-import Banner from "~/components/Announcements/Banner.vue"
-import NewsItem from "~/components/Announcements/NewsItem.vue"
+import { useApolloClient } from "@vue/apollo-composable";
+import {
+  AnnouncementDocument,
+  type AnnouncementQuery
+} from "@/troploservices-gql/graphql";
+import Banner from "@/components/News/Banner.vue";
+import NewsItem from "@/components/News/NewsItem.vue";
+import { ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
+import { RiNewsLine, RiPencilLine } from "@remixicon/vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import { useUserStore } from "@/store/user.store";
+import { useAppStore } from "@/store/app.store";
 
-// Get the current route
-const route = useRoute()
-const id = ref<string>(route.params.id as string)
-const apollo = useApolloClient()
-const display = useDisplay()
+const route = useRoute();
+const id = ref<string>(route.params.id as string);
+const apollo = useApolloClient("troploservices");
+const announcement = ref<AnnouncementQuery["announcement"]>();
+const uiStore = useProgressiveUIStore();
+const userStore = useUserStore();
+const appStore = useAppStore();
 
-// Fetch announcement data using asyncData for SSR support
-const { data: announcement } = await useAsyncData(
-  `announcement-${id.value}`,
-  async () =>
-    apollo.client
-      .query({
-        query: AnnouncementDocument,
-        variables: { announcementId: id.value }
-      })
-      .then((res) => res.data.announcement as AnnouncementQuery["announcement"])
-)
+async function getAnnouncement() {
+  const { data } = await apollo.client.query({
+    query: AnnouncementDocument,
+    variables: { announcementId: id.value }
+  });
+  announcement.value = data.announcement as AnnouncementQuery["announcement"];
+  uiStore._currentNavItem = {
+    item: {
+      name: announcement.value?.title || "News item",
+      icon: RiNewsLine,
+      path: `/news/${id.value}`
+    },
+    rail: [
+      uiStore.navigation.options[RailMode.HOME].find(
+        (item) => item.path === "/news"
+      )
+    ]
+  };
+}
 
-useHead({
-  title: `${announcement.value?.title || "Announcement"} - Troplo.com`,
-  meta: [
-    {
-      name: "description",
-      content:
-        announcement.value?.description || "An update from TroploServices."
-    },
-    {
-      property: "og:title",
-      content: `${announcement.value?.title || "Announcement"} - Troplo.com`
-    },
-    { property: "og:image", content: announcement.value?.image || "" },
-    {
-      property: "og:description",
-      content:
-        announcement.value?.description || "An update from TroploServices."
-    },
-    {
-      property: "twitter:card",
-      content: "summary_large_image"
-    },
-    {
-      property: "twitter:image",
-      content: announcement.value?.image || ""
-    }
-  ]
-})
+onMounted(() => {
+  getAnnouncement();
+});
+
+watch(
+  () => id.value,
+  () => {
+    getAnnouncement();
+  }
+);
 </script>
 
 <style scoped></style>

@@ -72,17 +72,14 @@ export const useFriendsStore = defineStore("friends", {
         }
       }
       const {
-        data: { friends, trackedUsers, blockedUsers }
+        data: { friends }
       } = await useApolloClient().client.query({
         query: FriendsDocument,
         fetchPolicy: "network-only"
       });
       const userStore = useUserStore();
       this.friends = friends;
-      userStore.tracked = trackedUsers;
-      userStore.blocked = blockedUsers;
       localStorage.setItem("friendsStore", JSON.stringify(this.friends));
-      localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
     },
     async actFriend(userId: number) {
       await axios().post(`/user/friends/${userId}`);

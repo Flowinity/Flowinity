@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import { useApolloClient } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import {
   ExperimentOverrideInput,
   Experiments,

@@ -46,16 +46,14 @@
             :key="chat.id"
             :image="image(chat)"
             :secondary-text="
-              chat._redisSortDate
-                ? `Last message was ${$date(
-                    parseInt(chat._redisSortDate)
-                  ).fromNow()}`
+              chat.sortDate
+                ? `Last message was ${$date(parseInt(chat.sortDate)).fromNow()}`
                 : chat.description
             "
-            :right-text="chat._redisSortDate ? undefined : 'Promoted'"
+            :right-text="chat.sortDate ? undefined : 'Promoted'"
             :title="$chat.chatName(chat)"
             :to="
-              chat._redisSortDate
+              chat.sortDate
                 ? `/communications/${chat.association?.id}`
                 : '/invite/flowinity'
             "
@@ -222,9 +220,9 @@ onMounted(() => {
 });
 
 const recentChats = computed(() => {
-  // find ones with _redisSortDate within 48h
+  // find ones with sortDate within 48h
   const chats = chatStore.chats.filter((chat) => {
-    return chat._redisSortDate > Date.now() - 48 * 60 * 60 * 1000;
+    return chat.sortDate > Date.now() - 48 * 60 * 60 * 1000;
   });
   return promotedGroup.value ? [...chats, promotedGroup.value] : chats;
 });

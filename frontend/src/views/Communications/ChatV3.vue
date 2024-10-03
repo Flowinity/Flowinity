@@ -119,7 +119,7 @@
       <message-perf
         v-for="(message, index) in messages"
         :id="'message-id-' + message.id"
-        :ref="`message-${index}`"
+        :ref="`message-${index === 0 ? 0 : message.id}`"
         :unread-id="unreadId"
         v-memo="[message, expandBlocked, editing, editingText, replyId]"
         :key="message.id"
@@ -543,12 +543,12 @@ function autoScroll() {
 
   if (!messages.value) return;
 
-  const sentinelElem = sentinel.value;
+  const sentinelElem = sentinelBottom.value;
   if (!sentinelElem) return;
 
   try {
     const messageEl = document.querySelector('[data-message-id="0"]');
-    if (messageEl) resizeObserver.observe(messageEl);
+    if (messageEl) resizeObserver.value?.observe(messageEl);
   } catch (e) {
     console.error(e);
   }
@@ -898,37 +898,37 @@ async function sendMessage() {
   const attachments = files.value.map((file) => file.tpuLink);
   message.value = "";
 
-  await messagesStore.insertMessage(
-    {
-      content: content,
-      createdAt: new Date().toISOString(),
-      user: {
-        id: userStore.user?.id,
-        username: userStore.user?.username,
-        avatar: userStore.user?.avatar
-      },
-      pending: true,
-      // Temp ID because it's a pending message
-      id: tempId,
-      chatId: chatStore.selectedChatId,
-      updatedAt: new Date().toISOString(),
-      type: MessageType.Message,
-      embeds: [],
-      edited: false,
-      replyId: replyId.value,
-      reply: replying.value,
-      readReceipts: [],
-      pinned: false,
-      userId: userStore.user?.id,
-      emoji: chatStore.emoji.map((emoji) => ({
-        id: emoji.id,
-        name: emoji.name,
-        icon: emoji.icon,
-        chatId: emoji.chatId
-      }))
+  const tempMessage = {
+    content: content,
+    createdAt: new Date().toISOString(),
+    user: {
+      id: userStore.user?.id,
+      username: userStore.user?.username,
+      avatar: userStore.user?.avatar
     },
-    chatStore.selectedChatId
-  );
+    pending: true,
+    // Temp ID because it's a pending message
+    id: tempId,
+    chatId: chatStore.selectedChatId,
+    updatedAt: new Date().toISOString(),
+    type: MessageType.Message,
+    embeds: [],
+    edited: false,
+    replyId: replyId.value ?? null,
+    reply: replying.value ?? null,
+    editedAt: null,
+    readReceipts: [],
+    pinned: false,
+    userId: userStore.user?.id,
+    emoji: chatStore.emoji.map((emoji) => ({
+      id: emoji.id,
+      name: emoji.name,
+      icon: emoji.icon,
+      chatId: emoji.chatId
+    })),
+    error: false
+  };
+  await messagesStore.insertMessage(tempMessage, chatStore.selectedChatId);
   replyId.value = undefined;
   files.value = [];
   autoScroll();
@@ -947,13 +947,10 @@ async function sendMessage() {
   try {
     await chatStore.sendMessage(content, attachments, replyId.value);
   } catch (e) {
-    const messageIndex = messages.value.findIndex(
-      (message) => message.id === tempId
-    );
-    if (messageIndex === -1 || messageIndex === undefined || !chatStore.chat)
-      return;
-    messages.value[messageIndex].pending = false;
-    messages.value[messageIndex].error = true;
+    await messagesStore.updateMessage({
+      ...tempMessage,
+      error: true
+    });
   }
 }
 

@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
-const FriendsQuery = gql`
+const Friends = gql`
   query Friends {
     friends {
       id
@@ -16,34 +16,6 @@ const FriendsQuery = gql`
         moderator
         avatar
         status
-      }
-    }
-    trackedUsers {
-      username
-      id
-      createdAt
-      administrator
-      moderator
-      avatar
-      blocked
-      status
-      nameColor
-      bot
-      nickname {
-        nickname
-      }
-    }
-    blockedUsers {
-      id
-      userId
-      createdAt
-      updatedAt
-      blockedUserId
-      silent
-      blockedUser {
-        id
-        avatar
-        username
       }
     }
   }

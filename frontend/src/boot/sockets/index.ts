@@ -11,8 +11,5 @@ export function setupSockets(app: App) {
   setupMessages();
   setupChatAssociation();
   setupUser();
-  console.log(
-    `[Flowinity/Socket] Force new socket setup: ${app.config.globalProperties.$experiments.experiments.REMOVE_LEGACY_SOCKET}`
-  );
   setupCollections(app);
 }

@@ -382,7 +382,6 @@ export const useChatStore = defineStore("chat", () => {
         }
       }
     });
-    // TODO: Fix cache
     return sendMessage;
   }
 
@@ -745,33 +744,33 @@ export const useChatStore = defineStore("chat", () => {
   }
 
   async function loadChatUsers(associationId: number) {
-    if (!chats.value.length) await getChats();
-    let index = chats.value.findIndex(
-      (chat: Chat) => chat.association.id === associationId
-    );
-    if (index === -1) return;
-    if (!chats.value[index]?.users) {
-      const {
-        data: { chat: chatData }
-      } = await useApolloClient().client.query({
-        query: ChatDocument,
-        variables: {
-          input: {
-            associationId
-          }
-        }
-      });
-      index = chats.value.findIndex(
-        (chat: Chat) => chat.association.id === associationId
-      );
-      chats.value[index] = {
-        ...(chats.value.find(
-          (chat: Chat) => chat.association.id === associationId
-        ) as Chat),
-        ...chatData
-      };
-      setNavItem(chats.value[index]);
-    }
+    // if (!chats.value.length) await getChats();
+    // let index = chats.value.findIndex(
+    //   (chat: Chat) => chat.association.id === associationId
+    // );
+    // if (index === -1) return;
+    // if (!chats.value[index]?.users) {
+    //   const {
+    //     data: { chat: chatData }
+    //   } = await useApolloClient().client.query({
+    //     query: ChatDocument,
+    //     variables: {
+    //       input: {
+    //         associationId
+    //       }
+    //     }
+    //   });
+    //   index = chats.value.findIndex(
+    //     (chat: Chat) => chat.association.id === associationId
+    //   );
+    //   chats.value[index] = {
+    //     ...(chats.value.find(
+    //       (chat: Chat) => chat.association.id === associationId
+    //     ) as Chat),
+    //     ...chatData
+    //   };
+    //   setNavItem(chats.value[index]);
+    // }
   }
 
   async function loadHistory(
@@ -787,7 +786,7 @@ export const useChatStore = defineStore("chat", () => {
     }
     loading.value = true;
     if ($state) $state.loading();
-    const data = await getMessages({
+    const data = await messagesStore.getMessages({
       associationId: selectedChatId.value,
       position,
       offset:

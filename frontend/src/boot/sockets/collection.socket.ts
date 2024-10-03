@@ -1,7 +1,7 @@
 import { useSubscription } from "@vue/apollo-composable";
 import { useRoute, useRouter } from "vue-router";
 import { useCollectionsStore } from "@/store/collections.store";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { App } from "vue";
 import {
   OnCollectionCreatedDocument,

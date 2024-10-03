@@ -21,6 +21,7 @@ import { Context } from "@app/types/graphql/context"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   InfiniteMessagesInput,
+  MessageType,
   PagedMessagesInput,
   ScrollPosition,
   SubscriptionMessageInput
@@ -41,6 +42,7 @@ import { embedTranslator } from "@app/lib/embedParser"
 import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 import { User } from "@app/models/user.model"
 import { DeleteMessage } from "@app/classes/graphql/chat/deleteMessage"
+import { GqlError } from "@app/lib/gqlErrors"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -64,6 +66,7 @@ export class MessageResolver {
     @Arg("input") input: SendMessageInput,
     @Ctx() ctx: Context
   ): Promise<Message> {
+    if (input.content === "ForceError") throw new GqlError("BLOCKED")
     if (input.embeds?.length && !ctx.user?.bot)
       throw new GraphQLError("You need to be a bot to use embeds.")
     return await this.chatService.sendMessage(
@@ -270,6 +273,11 @@ export class MessageResolver {
         id: matches?.map((match) => match.split(":")[2]) || []
       }
     })
+  }
+
+  @FieldResolver(() => MessageType)
+  type(@Root() message: Message) {
+    return message.type || MessageType.MESSAGE
   }
 
   @Authorization({

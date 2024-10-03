@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { StandardEmbedFragment } from "@/graphql/chats/messages.graphql";
 
 const EmbedPrecacheMutation = gql`

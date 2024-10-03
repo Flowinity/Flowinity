@@ -19,7 +19,7 @@
       "upgradeToGold": "Upgrade to Pro",
       "admin": "Admin Panel",
       "member": "Member of {names}",
-      "experiments": "TPU Experimental Overrides (GQL)",
+      "experiments": "TPU Experimental Overrides (v5)",
       "close": "Close sidebar",
       "communicationsShort": "Comms",
       "quickAction": "Select a new quick action.",
@@ -36,7 +36,8 @@
       "adminSeparator": "Admin",
       "secretMenu": "Secret Menu",
       "tryProgressive": "Try the new look",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "quota": "{used} / {quota} storage used"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",

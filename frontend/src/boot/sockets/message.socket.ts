@@ -3,8 +3,10 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/user.store";
 import { useMessagesStore } from "@/store/message.store";
 import { useToast } from "vue-toastification";
-import { useSubscription } from "@vue/apollo-composable";
+import { useApolloClient, useSubscription } from "@vue/apollo-composable";
 import {
+  Chat,
+  MessagesDocument,
   NewMessageDocument,
   StandardMessageFragmentDoc,
   UserStoredStatus
@@ -24,78 +26,40 @@ export default function setup() {
   const toast = useToast();
 
   const newMsg = useSubscription(NewMessageDocument);
+  const cache = useApolloClient().client.cache;
 
-  newMsg.onResult(({ data: { onMessage } }) => {
+  newMsg.onResult(async ({ data: { onMessage } }) => {
     const data = useFragment(StandardMessageFragmentDoc, onMessage.message);
     console.log("message", data);
     const index = chatStore.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
-    // move chat to top
-    const chatToMove = chatStore.chats[index];
-    chatStore.chats = [
-      {
-        ...chatToMove,
-        unread:
-          chatStore.selectedChat?.id === data.chatId
-            ? chatToMove.unread
-            : (chatToMove.unread || 0) + 1
-      },
-      ...chatStore.chats.slice(0, index),
-      ...chatStore.chats.slice(index + 1)
-    ];
-    const msgChat = chatStore.chats.find((c) => c.id === onMessage.chat.id);
-    const assocId = msgChat?.association?.id || -1;
-    if (
-      assocId &&
-      messagesStore.messages[assocId] &&
-      !messagesStore.messages[assocId].find((m) => m.id === data.id)
-    ) {
-      const index = messagesStore.messages[assocId]?.findIndex(
-        (msg) => msg.pending && msg.content === data.content
-      );
-      // REWRITE ALL OF THIS
-      if (index === -1) {
-        messagesStore.messages[assocId].unshift(data);
-      } else {
-        messagesStore.messages[assocId].splice(index, 1);
-        messagesStore.messages[assocId].unshift(onMessage.message);
-      }
 
-      if (
-        document.hasFocus() &&
-        chatStore.selectedChat?.id === onMessage.message.chatId
-      ) {
-        chatStore.readChat();
-      }
-    }
-    if (
-      onMessage.message.userId === userStore.user?.id ||
-      (chatToMove.association?.notifications === "mentions" &&
-        !onMessage.mention) ||
-      chatToMove.association?.notifications === "none"
-    )
-      return;
-    if (
-      userStore.user?.storedStatus !== UserStoredStatus.Busy &&
-      onMessage.message.userId !== userStore.user?.id
-    ) {
-      chatStore.sound();
-      toast.info(
-        {
-          component: MessageToast,
-          props: {
-            message: onMessage.message
+    // Move the chat to the top of the list
+    cache.modify({
+      id: `Chat:${data.chatId}`,
+      fields: {
+        sortDate: () => new Date().getTime().toString(),
+        unread: (unread) => {
+          if (
+            chatStore.selectedChat?.id === data.chatId &&
+            document.hasFocus()
+          ) {
+            return 0;
           }
-        },
-        {
-          toastClassName: "message-toast",
-          icon: false,
-          onClick: () => {
-            router.push("/communications/" + onMessage.associationId);
-          }
+          return (unread as number) + 1;
         }
-      );
-    }
+      }
+    });
+    chatStore.getChats();
+
+    // We use a different query to get messages, not chat. MessagesDocument
+    //    const { data } = await apolloClient.client.query({
+    //       query: MessagesDocument,
+    //       variables: {
+    //         input
+    //       }
+    await messagesStore.insertMessage(data, onMessage.associationId);
+    console.log("UPDATEd CHAT", `Chat:${data.chatId}`);
 
     if (appStore.platform !== Platform.WEB) {
       window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
@@ -105,9 +69,7 @@ export default function setup() {
           domain: appStore.domain,
           hostname: appStore.site.hostname,
           hostnameWithProtocol: appStore.site.hostnameWithProtocol,
-          notificationIcon: functions.avatar(
-            userStore.users[onMessage.message.userId]
-          )
+          notificationIcon: functions.avatar(userStore.users[data.userId])
         }
       });
     }

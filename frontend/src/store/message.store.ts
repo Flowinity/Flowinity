@@ -17,6 +17,9 @@ import { updateCache } from "@/utils/cacheManager";
 import { useUserStore } from "./user.store";
 
 export const useMessagesStore = defineStore("messages", () => {
+  /**
+   * Record<ChatAssociationId, Message[]>
+   */
   const messages = ref<Record<number, MessagesQuery["messages"]>>({});
   const chatStore = useChatStore();
 
@@ -34,6 +37,7 @@ export const useMessagesStore = defineStore("messages", () => {
         input
       }
     });
+    console.log(`GETTING`, data, input);
 
     return data.messages;
   }
@@ -56,6 +60,7 @@ export const useMessagesStore = defineStore("messages", () => {
    * Insert a message or messages into the store and cache
    * @param {Message | Message[]} message
    * @param {number} associationId
+   * @param {boolean} replace Replace the pending message if it exists
    */
   async function insertMessage(
     message: MessagesQuery["messages"][0],
@@ -83,6 +88,16 @@ export const useMessagesStore = defineStore("messages", () => {
     }
 
     const apolloClient = useApolloClient();
+    const pendingMessage = messages.value[associationId].find(
+      (m) => m.content === message.content && m.pending
+    );
+    const messagesToInsert = messages.value[associationId].filter(
+      (m) => m.id !== pendingMessage?.id
+    );
+    if (pendingMessage)
+      apolloClient.client.cache.evict({
+        id: `Message:${pendingMessage.id}`
+      });
     apolloClient.client.cache.writeQuery({
       query: MessagesDocument,
       variables: {
@@ -93,10 +108,32 @@ export const useMessagesStore = defineStore("messages", () => {
         }
       },
       data: {
-        messages: [message]
+        messages: [message, ...messagesToInsert]
       }
     });
-    await loadChatMessages(associationId);
+    if (message.chatId === chatStore.selectedChatId)
+      await loadChatMessages(associationId);
+  }
+
+  async function updateMessage(message: Message) {
+    const cache = useApolloClient().client.cache;
+    cache.modify({
+      id: `Message:${message.id}`,
+      fields: {
+        content: () => message.content,
+        updatedAt: () => message.updatedAt,
+        type: () => message.type,
+        edited: () => message.edited,
+        embeds: () => message.embeds,
+        pinned: () => message.pinned,
+        editedAt: () => message.editedAt,
+        readReceipts: () => message.readReceipts,
+        error: () => message.error,
+        pending: () => message.pending
+      }
+    });
+    if (message.chatId === chatStore.selectedChatId)
+      await loadChatMessages(message.chatId);
   }
 
   async function loadChatMessages(associationId?: number) {
@@ -115,6 +152,7 @@ export const useMessagesStore = defineStore("messages", () => {
     getPagedMessages,
     insertMessage,
     loadChatMessages,
-    currentMessages
+    currentMessages,
+    updateMessage
   };
 });
