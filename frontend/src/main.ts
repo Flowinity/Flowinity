@@ -114,6 +114,7 @@ if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
 
   const loggingMixin = {
     beforeMount() {
+      if (localStorage.getItem("renderMonitor") !== "true") return;
       if (
         //@ts-ignore
         this.$options?.name?.startsWith("V") ||
@@ -128,6 +129,7 @@ if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
       );
     },
     updated() {
+      if (localStorage.getItem("renderMonitor") !== "true") return;
       if (
         //@ts-ignore
         this.$options?.name?.startsWith("V") ||
@@ -139,7 +141,7 @@ if (import.meta.env.DEV || import.meta.env.DEBUG_FEATURES) {
       console.log(
         `[TPU/Dev] ${this.$options.__file?.split("/")?.pop()} updated`
       );
-      if (!this.$el?.style || !localStorage.getItem("renderMonitor")) return;
+      if (!this.$el?.style) return;
       this.$el.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
       setTimeout(() => {
         this.$el.style.backgroundColor = "";

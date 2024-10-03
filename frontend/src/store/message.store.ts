@@ -9,12 +9,14 @@ import {
   PagedMessagesDocument,
   PagedMessagesInput,
   PagedMessagesQuery,
-  ScrollPosition
+  ScrollPosition,
+  StandardMessageFragmentDoc
 } from "@/gql/graphql";
 import { useChatStore } from "@/store/chat.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import { updateCache } from "@/utils/cacheManager";
 import { useUserStore } from "./user.store";
+import { StandardMessageFragment } from "@/graphql/chats/messages.graphql";
 
 export const useMessagesStore = defineStore("messages", () => {
   /**
@@ -37,7 +39,6 @@ export const useMessagesStore = defineStore("messages", () => {
         input
       }
     });
-    console.log(`GETTING`, data, input);
 
     return data.messages;
   }
@@ -111,29 +112,38 @@ export const useMessagesStore = defineStore("messages", () => {
         messages: [message, ...messagesToInsert]
       }
     });
-    if (message.chatId === chatStore.selectedChatId)
+    if (associationId === chatStore.selectedChatId)
       await loadChatMessages(associationId);
   }
 
   async function updateMessage(message: Message) {
+    console.log(`UPDATING`, message);
     const cache = useApolloClient().client.cache;
+    const associationId = chatStore.chats.find((c) => c.id === message.chatId)
+      ?.association?.id;
+    const existingMessage = messages.value[associationId]?.find(
+      (m) => m.id === message.id
+    );
+    console.log(`EXISTING`, existingMessage);
+    if (!existingMessage) return;
     cache.modify({
       id: `Message:${message.id}`,
       fields: {
-        content: () => message.content,
-        updatedAt: () => message.updatedAt,
-        type: () => message.type,
-        edited: () => message.edited,
-        embeds: () => message.embeds,
-        pinned: () => message.pinned,
-        editedAt: () => message.editedAt,
-        readReceipts: () => message.readReceipts,
-        error: () => message.error,
-        pending: () => message.pending
+        content: () => message.content ?? existingMessage.content,
+        updatedAt: () => message.updatedAt ?? existingMessage.updatedAt,
+        type: () => message.type ?? existingMessage.type,
+        edited: () => message.edited ?? existingMessage.edited,
+        embeds: () => message.embeds ?? existingMessage.embeds,
+        pinned: () => message.pinned ?? existingMessage.pinned,
+        editedAt: () => message.editedAt ?? existingMessage.editedAt,
+        readReceipts: () =>
+          message.readReceipts ?? existingMessage.readReceipts,
+        error: () => message.error ?? existingMessage.error,
+        pending: () => message.pending ?? existingMessage.pending
       }
     });
-    if (message.chatId === chatStore.selectedChatId)
-      await loadChatMessages(message.chatId);
+    if (associationId === chatStore.selectedChatId)
+      await loadChatMessages(associationId);
   }
 
   async function loadChatMessages(associationId?: number) {

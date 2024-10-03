@@ -224,14 +224,14 @@ export const useChatStore = defineStore("chat", () => {
     return !useDisplay().mdAndDown.value;
   });
 
+  const route = useRoute();
+
   const isCommunications = computed(() => {
-    return useRoute().path.startsWith("/communications/");
+    return route.path.startsWith("/communications/");
   });
 
   const commsSidebar = computed(() => {
-    return useRoute().path.startsWith(
-      `/communications/${selectedChatId.value}`
-    );
+    return route.path.startsWith(`/communications/${selectedChatId.value}`);
   });
 
   // Methods
@@ -634,21 +634,6 @@ export const useChatStore = defineStore("chat", () => {
           }
         }
       });
-      await updateCache<ChatsQueryQuery["chats"][0], { associationId: number }>(
-        chats.value.map((chat) => {
-          if (chat.association.id === (chatId || selectedChatId.value)) {
-            return {
-              ...chat,
-              unread: 0
-            };
-          }
-          return chat;
-        }),
-        ChatsQueryDocument,
-        "chats",
-        { associationId: chatId || selectedChatId.value },
-        useApolloClient().client
-      );
       await getChats();
     }
   }

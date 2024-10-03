@@ -33,55 +33,55 @@ export default function setup() {
     });
     chatStore.getChats();
   });
-  //
-  // useSubscription(OnReadReceiptDocument).onResult(
-  //   ({ data: { onReadReceipt } }) => {
-  //     //    const chat1 = chat.chats.find((c: Chat) => c.id === data.chatId);
-  //     //     if (!chat1) return;
-  //     //     const assocId = chat1.association?.id || -1;
-  //     //     if (!messages.messages[assocId]?.length) return;
-  //     //     const messageIndex = messages.messages[assocId].findIndex(
-  //     //       (m: Message) => m. id === data.id
-  //     //     );
-  //     //     if (messageIndex === -1) return;
-  //     //     messages.messages[assocId].forEach((message: Message) => {
-  //     //       message.readReceipts = message.readReceipts.filter(
-  //     //         (r: ChatAssociation) => r.userId !== data.userId
-  //     //       );
-  //     //     });
-  //     //     messages.messages[assocId][messageIndex].readReceipts.push(data);
-  //     // That's the original code, but it's immutable now
-  //     console.log(`ReadReceiptSubscription: `, onReadReceipt);
-  //     const message = cache.readFragment({
-  //       id: `Message:${onReadReceipt.messageId}`,
-  //       fragment: gql`
-  //         fragment ReadReceipt on Message {
-  //           id
-  //           readReceipts {
-  //             associationId
-  //             user {
-  //               id
-  //               avatar
-  //               username
-  //             }
-  //             messageId
-  //           }
-  //         }
-  //       `
-  //     }) as any;
-  //     console.log(`ReadReceiptSubscription: `, message);
-  //     messagesStore.updateMessage({
-  //       id: onReadReceipt.messageId,
-  //       chatId: onReadReceipt.chatId,
-  //       readReceipts: [
-  //         ...(message.readReceipts || []),
-  //         {
-  //           associationId: onReadReceipt.associationId,
-  //           user: onReadReceipt.user,
-  //           messageId: onReadReceipt.messageId
-  //         }
-  //       ]
-  //     });
-  //   }
-  // );
+
+  useSubscription(OnReadReceiptDocument).onResult(
+    ({ data: { onReadReceipt } }) => {
+      //    const chat1 = chat.chats.find((c: Chat) => c.id === data.chatId);
+      //     if (!chat1) return;
+      //     const assocId = chat1.association?.id || -1;
+      //     if (!messages.messages[assocId]?.length) return;
+      //     const messageIndex = messages.messages[assocId].findIndex(
+      //       (m: Message) => m. id === data.id
+      //     );
+      //     if (messageIndex === -1) return;
+      //     messages.messages[assocId].forEach((message: Message) => {
+      //       message.readReceipts = message.readReceipts.filter(
+      //         (r: ChatAssociation) => r.userId !== data.userId
+      //       );
+      //     });
+      //     messages.messages[assocId][messageIndex].readReceipts.push(data);
+      // That's the original code, but it's immutable now
+      console.log(`ReadReceiptSubscription: `, onReadReceipt);
+      const message = cache.readFragment({
+        id: `Message:${onReadReceipt.messageId}`,
+        fragment: gql`
+          fragment ReadReceipt on Message {
+            id
+            readReceipts {
+              associationId
+              user {
+                id
+                avatar
+                username
+              }
+              messageId
+            }
+          }
+        `
+      }) as any;
+      console.log(`ReadReceiptSubscription: `, message);
+      messagesStore.updateMessage({
+        id: onReadReceipt.messageId,
+        chatId: onReadReceipt.chatId,
+        readReceipts: [
+          ...(message.readReceipts || []),
+          {
+            associationId: onReadReceipt.associationId,
+            user: onReadReceipt.user,
+            messageId: onReadReceipt.messageId
+          }
+        ]
+      });
+    }
+  );
 }

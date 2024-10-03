@@ -332,7 +332,7 @@ export class MessageResolver {
   @Authorization({
     scopes: "chats.view"
   })
-  @Subscription({
+  @Subscription(() => ReadReceipt, {
     topics: ({ context }) => {
       return `READ_RECEIPTS:${context.user!!.id}`
     }

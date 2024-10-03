@@ -59,7 +59,12 @@ export default function setup() {
     //         input
     //       }
     await messagesStore.insertMessage(data, onMessage.associationId);
-    console.log("UPDATEd CHAT", `Chat:${data.chatId}`);
+    if (
+      onMessage.associationId === chatStore.selectedChatId &&
+      chatStore.isCommunications
+    ) {
+      chatStore.readChat();
+    }
 
     if (appStore.platform !== Platform.WEB) {
       window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
