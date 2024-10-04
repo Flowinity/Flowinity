@@ -10,7 +10,7 @@
       <div v-if="!selected.length && supports.multiSelect" class="float-right">
         <slot name="multi-select-actions">
           <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-            <v-icon>mdi-plus</v-icon>
+            <v-icon>add-line</v-icon>
             &nbsp;{{ $t("gallery.selectAll") }}
           </v-btn>
         </slot>
@@ -23,7 +23,7 @@
           name="multi-select-actions-length"
         >
           <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-            <v-icon class="mr-1">mdi-plus</v-icon>
+            <v-icon class="mr-1">add-line</v-icon>
             {{ $t("gallery.selectAll") }}
           </v-btn>
           <v-btn class="rounded-xl ml-2" variant="text" @click="deselectAll()">
@@ -36,7 +36,7 @@
             variant="text"
             @click="bulkDeleteConfirm()"
           >
-            <v-icon class="mr-1">mdi-delete</v-icon>
+            <v-icon class="mr-1">close-line</v-icon>
             {{ $t("gallery.deleteSelected") }}
           </v-btn>
           <v-btn

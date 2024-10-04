@@ -7,7 +7,7 @@
         <v-spacer />
         <v-btn icon @click="create = true">
           <v-tooltip activator="parent" location="bottom">Create app</v-tooltip>
-          <v-icon>mdi-plus</v-icon>
+          <v-icon>add-line</v-icon>
         </v-btn>
       </v-toolbar>
 

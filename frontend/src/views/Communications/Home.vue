@@ -32,7 +32,9 @@
         v-if="tab !== 0 && tab !== 5"
         v-model="search"
         label="Search"
-        placeholder="Search for friends"
+        :placeholder="
+          tab !== 4 ? 'Search for friends' : 'Search for blocked users'
+        "
         outlined
         dense
         clearable
@@ -110,7 +112,7 @@
         <div>
           <v-divider></v-divider>
           <div class="d-flex justify-center align-center">
-            <v-icon size="96">mdi-account-multiple-plus</v-icon>
+            <v-icon size="90">group-line</v-icon>
             <div class="ml-2" style="max-width: 400px">
               <v-card-title
                 class="text-h6"
@@ -171,32 +173,32 @@ const addFriend = ref({
 const tabs = ref([
   {
     title: "Feed",
-    icon: "mdi-account-multiple"
+    icon: "chat-3-line"
   },
   {
     title: "Friends",
-    icon: "mdi-account-group",
+    icon: "group-line",
     badge: () =>
       currentFriendsOffline.value.length + currentFriendsOnline.value.length
   },
   {
     title: "Incoming",
-    icon: "mdi-inbox-arrow-down",
+    icon: "user-received-line",
     badge: () => incomingFriends.value.length
   },
   {
     title: "Outgoing",
-    icon: "mdi-inbox-arrow-up",
+    icon: "user-shared-line",
     badge: () => outgoingFriends.value.length
   },
   {
     title: "Blocked",
-    icon: "mdi-block-helper",
+    icon: "user-forbid-line",
     badge: () => userStore.blocked.length
   },
   {
     title: "Add Friend",
-    icon: "mdi-account-plus"
+    icon: "user-add-line"
   }
 ]);
 

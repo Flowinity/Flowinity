@@ -86,7 +86,7 @@ export default defineComponent({
           res.icon = "mdi-message";
           break;
         case AuditLogCategory.PinMessage:
-          res.icon = "mdi-pin";
+          res.icon = "pushpin";
           break;
         case AuditLogCategory.Rank:
           res.icon = "mdi-lock";
@@ -101,7 +101,7 @@ export default defineComponent({
       switch (action) {
         case AuditLogActionType.Add:
           res.color = "success";
-          res.smallIcon = "mdi-plus";
+          res.smallIcon = "plus";
           break;
         case AuditLogActionType.Modify:
           res.color = "warning";

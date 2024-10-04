@@ -97,7 +97,7 @@
               )
             "
           >
-            <v-icon>mdi-content-copy</v-icon>
+            <v-icon>file-copy-line</v-icon>
           </v-btn>
         </p>
         <i

@@ -63,7 +63,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <v-icon class="mr-1">mdi-arrow-left</v-icon>
+          <v-icon class="mr-1">arrow-left-s-line</v-icon>
           Roles
         </v-list-item>
         <UserSidebarOptions
@@ -100,7 +100,7 @@
           class="mr-2"
           icon
         >
-          <v-icon>mdi-pin</v-icon>
+          <v-icon>pushpin</v-icon>
         </v-btn>
         <v-btn
           aria-label="Toggle Communications Search"
@@ -108,7 +108,7 @@
           icon
           @click="$chat.search.value = !$chat.search.value"
         >
-          <v-icon>mdi-magnify</v-icon>
+          <v-icon>search-line</v-icon>
         </v-btn>
         <v-btn
           aria-label="Toggle Communications Settings"
@@ -119,7 +119,7 @@
             chat ? ($chat.dialogs.groupSettings.itemId = chat.id) : '';
           "
         >
-          <v-icon>mdi-cog</v-icon>
+          <v-icon>settings-5-line</v-icon>
         </v-btn>
         <v-spacer />
       </v-card-actions>

@@ -83,7 +83,7 @@
                       >
                         Settings
                       </v-tooltip>
-                      <v-icon>mdi-cog</v-icon>
+                      <v-icon>settings-5-line</v-icon>
                     </v-btn>
                     <v-btn
                       v-if="
@@ -714,8 +714,6 @@ export default defineComponent({
     layout: {
       handler: function (val) {
         if (this.user?.id !== this.$user.user?.id) return;
-        this.$user.user.profileLayout = val;
-        this.$user.save();
       },
       deep: true
     }

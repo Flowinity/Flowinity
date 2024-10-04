@@ -31,7 +31,7 @@
               "
               @click="deleteRank(contextRank?.id)"
             >
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>close-line</v-icon>
               {{ $t("generic.delete") }}
             </v-list-item>
           </v-list>
@@ -65,14 +65,14 @@
               >
                 mdi-lock
               </v-icon>
-              <v-icon v-else class="drag-handle">mdi-drag</v-icon>
+              <v-icon v-else class="drag-handle">draggable</v-icon>
             </div>
             {{ rank.name }}
           </div>
         </v-tab>
       </VueDraggable>
       <v-btn @click="createRank = true">
-        <v-icon class="mr-2">mdi-plus</v-icon>
+        <v-icon class="mr-2">add-line</v-icon>
         {{ $t("chats.settings.ranks.manage.create") }}
       </v-btn>
     </v-tabs>

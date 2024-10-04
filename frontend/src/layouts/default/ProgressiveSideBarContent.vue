@@ -52,7 +52,7 @@
         </template>
         <v-list-item-title>{{ menu.name }}</v-list-item-title>
         <template #append v-if="menu.menu?.length">
-          <v-icon>mdi-arrow-right</v-icon>
+          <v-icon>arrow-right-s-line</v-icon>
         </template>
         <template #append v-else>
           <component :is="menu.append" />

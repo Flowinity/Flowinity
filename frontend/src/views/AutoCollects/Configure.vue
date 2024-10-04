@@ -127,7 +127,7 @@
                     variant="outlined"
                     @click="subrule.rules.push(defaultSubRule())"
                   >
-                    <v-icon size="30" style="height: 100%">mdi-plus</v-icon>
+                    <v-icon size="30" style="height: 100%">add-line</v-icon>
                     {{ $t("autoCollects.configure.createSubSubRule") }}
                   </v-card>
                 </v-sheet>
@@ -147,7 +147,7 @@
                     })
                   "
                 >
-                  <v-icon size="30" style="height: 100%">mdi-plus</v-icon>
+                  <v-icon size="30" style="height: 100%">add-line</v-icon>
                   {{ $t("autoCollects.configure.createSubRule") }}
                 </v-card>
               </v-sheet>
@@ -182,7 +182,7 @@
             @click="createRule()"
           >
             <v-icon size="50" style="width: 100%; height: 100%">
-              mdi-plus
+              add-line
             </v-icon>
           </v-card>
         </v-sheet>

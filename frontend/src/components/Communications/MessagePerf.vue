@@ -134,7 +134,7 @@
                 mdi-account-minus
               </v-icon>
               <v-icon v-else-if="message.type === MessageType.Pin" size="32">
-                mdi-pin
+                pushpin
               </v-icon>
               <v-icon v-else class="mr-1" size="32">mdi-information</v-icon>
             </div>

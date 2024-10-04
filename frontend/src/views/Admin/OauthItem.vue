@@ -169,11 +169,11 @@
           </v-card-text>
           <v-card-text>
             <v-btn color="blue" @click="$functions.copy(app.secret)">
-              <v-icon class="mr-1">mdi-content-copy</v-icon>
+              <v-icon class="mr-1">file-copy-line</v-icon>
               Copy secret
             </v-btn>
             <v-btn class="ml-1" color="blue" @click="$functions.copy(app.id)">
-              <v-icon class="mr-1">mdi-content-copy</v-icon>
+              <v-icon class="mr-1">file-copy-line</v-icon>
               Copy client ID
             </v-btn>
             <v-btn class="ml-1" color="red" @click="resetSecret">
@@ -181,7 +181,7 @@
               Reset secret
             </v-btn>
             <v-btn class="ml-1" color="red" @click="deleteConfirm = true">
-              <v-icon class="mr-1">mdi-delete</v-icon>
+              <v-icon class="mr-1">close-line</v-icon>
               Delete
             </v-btn>
             <br />

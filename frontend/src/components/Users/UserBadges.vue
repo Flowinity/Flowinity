@@ -8,26 +8,26 @@
     >
       <!-- Permission badges -->
       <HoverChip
-        v-if="user.admin || user.administrator"
+        dbg-if="user.admin || user.administrator"
         v-ripple
         :small="true"
         class="user-badge"
         color="#0190ea"
-        icon="ri-shield"
+        icon="shield-check-fill"
         :text="`${$app.site.name} Administrator`"
       />
       <HoverChip
-        v-if="user.moderator"
+        dbg-if="user.moderator"
         v-ripple
         :small="true"
         class="user-badge"
         color="success"
-        icon="mdi-shield"
+        icon="shield-check-fill"
         :text="`${$app.site.name} Moderator`"
       />
       <!-- Plan/joke badges -->
       <HoverChip
-        v-if="!user.plan?.internalName.includes('FREE')"
+        dbg-if="!user.plan?.internalName.includes('FREE')"
         v-ripple
         :color="primaryColor || user.plan?.color"
         :short-text="user.plan?.name"
@@ -37,101 +37,101 @@
         text-color="black"
       />
       <HoverChip
-        v-if="user.xp > 0"
+        dbg-if="user.xp > 0"
         v-ripple
         :small="true"
         class="user-badge"
         color="primary"
-        icon="mdi-star"
+        icon="star-fill"
         :text="'$' + user.xp + ' donated'"
         :short-text="'$' + user.xp"
         text-color="black"
       />
-      <template v-if="$experiments.experiments.NATIVE_BADGES">
+      <div dbg-if="$experiments.experiments.NATIVE_BADGES">
         <!-- Rank tiers -->
         <HoverChip
-          v-if="rank === 'god'"
+          dbg-if="rank === 'god'"
           v-ripple
           :small="true"
           class="user-badge"
           color="primary"
-          icon="mdi-crown"
+          icon="vip-crown-fill"
           :text="`${$app.site.name} God`"
           title="You're Better than the rest™."
         />
         <HoverChip
-          v-if="rank === 'champion'"
+          dbg-if="rank === 'champion'"
           v-ripple
           :small="true"
           class="user-badge"
           color="gold"
-          icon="mdi-compass"
+          icon="compass-fill"
           :text="`${$app.site.name} Champion`"
           title="Champion deez nuts."
         />
         <HoverChip
-          v-if="rank === 'legend'"
+          dbg-if="rank === 'legend'"
           v-ripple
           :small="true"
           class="user-badge"
           color="purple"
-          icon="mdi-chess-knight"
+          icon="trophy-fill"
           title="You're a legend."
           :text="`${$app.site.name} Legend`"
         />
         <HoverChip
-          v-if="rank === 'medium'"
+          dbg-if="rank === 'medium'"
           v-ripple
           :small="true"
           class="user-badge"
           color="#1ac62b"
-          icon="mdi-microsoft-xbox-controller-battery-medium"
+          icon="star-half-line"
           title="You're medium."
           :text="`${$app.site.name} Mediumist`"
         />
         <HoverChip
-          v-if="rank === 'intermediate'"
+          dbg-if="rank === 'intermediate'"
           v-ripple
           :small="true"
           class="user-badge"
           color="cyan"
-          icon="mdi-target-account"
+          icon="focus-2-line"
           title="You're getting Better™."
           :text="`${$app.site.name} Intermediate`"
         />
         <HoverChip
-          v-if="rank === 'noob'"
+          dbg-if="rank === 'noob'"
           v-ripple
           :small="true"
           class="user-badge"
           color="grey"
-          icon="mdi-chess-pawn"
+          icon="slow-down-line"
           title="Noob. Get Better™."
           :text="`${$app.site.name} Noob`"
         />
         <!-- God, #0190ea/primary -->
         <HoverChip
-          v-if="user.stats?.pulse >= 100"
+          dbg-if="user.stats?.pulse >= 100"
           v-ripple
           :small="true"
           class="user-badge"
           color="#0190ea"
-          icon="mdi-clock"
+          icon="time-fill"
           :text="`Chronic ${$app.site.name} Addiction Condition Disorder (CFACD)`"
           :title="`Have 100h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="user.stats?.uploads >= 100000"
+          dbg-if="user.stats?.uploads >= 100000"
           v-ripple
           :small="true"
           class="user-badge"
           color="#0190ea"
-          icon="mdi-account-arrow-up"
+          icon="upload-line"
           text="Chronic Screenshot Addiction Condition Disorder (CSACD)"
           title="Upload 100K+ items."
         />
         <HoverChip
-          v-if="
+          dbg-if="
             user.stats?.uploads >= 10000 &&
             user.stats?.collectionItems / user.stats?.uploads >= 0.99
           "
@@ -144,7 +144,7 @@
           title="Have a collectivized to upload percentage of 100% or more."
         />
         <HoverChip
-          v-if="user.stats?.collections >= 100"
+          dbg-if="user.stats?.collections >= 100"
           v-ripple
           :small="true"
           class="user-badge"
@@ -155,7 +155,7 @@
         />
         <!-- Champion, #ffd700/gold -->
         <HoverChip
-          v-if="user.stats?.uploads >= 50000 && user.stats?.uploads < 100000"
+          dbg-if="user.stats?.uploads >= 50000 && user.stats?.uploads < 100000"
           v-ripple
           :small="true"
           class="user-badge"
@@ -165,7 +165,7 @@
           title="Upload 50K+ items."
         />
         <HoverChip
-          v-if="user.stats?.pulse >= 72 && user.stats?.pulse < 100"
+          dbg-if="user.stats?.pulse >= 72 && user.stats?.pulse < 100"
           v-ripple
           :small="true"
           class="user-badge"
@@ -175,7 +175,7 @@
           :title="`Have 72h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="
+          dbg-if="
             user.stats?.uploads >= 10000 &&
             user.stats?.collectionItems / user.stats?.uploads >= 0.9 &&
             user.stats?.collectionItems / user.stats?.uploads < 0.95
@@ -189,7 +189,7 @@
           title="Have a collectivized to upload percentage of 90% or more."
         />
         <HoverChip
-          v-if="user.stats?.collections >= 25 && user.stats?.collections < 100"
+          dbg-if="user.stats?.collections >= 25 && user.stats?.collections < 100"
           v-ripple
           :small="true"
           class="user-badge"
@@ -200,7 +200,7 @@
         />
         <!-- Legend tier, #673ab7/purple -->
         <HoverChip
-          v-if="user.stats?.uploads >= 10000 && user.stats?.uploads < 50000"
+          dbg-if="user.stats?.uploads >= 10000 && user.stats?.uploads < 50000"
           v-ripple
           :small="true"
           class="user-badge"
@@ -210,7 +210,7 @@
           title="Upload 10K+ items."
         />
         <HoverChip
-          v-if="user.stats?.pulse >= 69 && user.stats?.pulse < 72"
+          dbg-if="user.stats?.pulse >= 69 && user.stats?.pulse < 72"
           v-ripple
           :small="true"
           class="user-badge"
@@ -220,7 +220,7 @@
           :title="`Have 69h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="
+          dbg-if="
             user.stats?.uploads >= 1000 &&
             user.stats?.collectionItems / user.stats?.uploads >= 0.8 &&
             (user.stats?.collectionItems / user.stats?.uploads < 0.9 ||
@@ -235,7 +235,7 @@
           title="Have a collectivized to upload percentage of 80% or more."
         />
         <HoverChip
-          v-if="user.stats?.collections >= 20 && user.stats?.collections < 25"
+          dbg-if="user.stats?.collections >= 20 && user.stats?.collections < 25"
           v-ripple
           :small="true"
           class="user-badge"
@@ -246,7 +246,7 @@
         />
         <!-- Mediumist tier, #1ac62b/Thomas lime -->
         <HoverChip
-          v-if="user.stats?.uploads >= 4154 && user.stats?.uploads < 10000"
+          dbg-if="user.stats?.uploads >= 4154 && user.stats?.uploads < 10000"
           v-ripple
           :small="true"
           class="user-badge"
@@ -256,7 +256,7 @@
           title="Upload 4154+ items."
         />
         <HoverChip
-          v-if="user.stats?.pulse >= 24 && user.stats?.pulse < 69"
+          dbg-if="user.stats?.pulse >= 24 && user.stats?.pulse < 69"
           v-ripple
           :small="true"
           class="user-badge"
@@ -266,7 +266,7 @@
           :title="`Have 24h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="
+          dbg-if="
             user.stats?.uploads >= 1000 &&
             user.stats?.collectionItems / user.stats?.uploads >= 0.69 &&
             user.stats?.collectionItems / user.stats?.uploads < 0.8
@@ -280,7 +280,7 @@
           title="Have a collectivized to upload percentage of 69% or more."
         />
         <HoverChip
-          v-if="user.stats?.collections >= 15 && user.stats?.collections < 20"
+          dbg-if="user.stats?.collections >= 15 && user.stats?.collections < 20"
           v-ripple
           :small="true"
           class="user-badge"
@@ -291,7 +291,7 @@
         />
         <!-- Mediumist, #00bcd4/cyan -->
         <HoverChip
-          v-if="user.stats?.uploads >= 1000 && user.stats?.uploads < 4154"
+          dbg-if="user.stats?.uploads >= 1000 && user.stats?.uploads < 4154"
           v-ripple
           :small="true"
           class="user-badge"
@@ -301,7 +301,7 @@
           title="Upload 1K+ items."
         />
         <HoverChip
-          v-if="user.stats?.pulse >= 12 && user.stats?.pulse < 24"
+          dbg-if="user.stats?.pulse >= 12 && user.stats?.pulse < 24"
           v-ripple
           :small="true"
           class="user-badge"
@@ -311,7 +311,7 @@
           :title="`Have 12h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="
+          dbg-if="
             user.stats?.uploads >= 1000 &&
             user.stats?.collectionItems / user.stats?.uploads >= 0.4154 &&
             user.stats?.collectionItems / user.stats?.uploads < 0.69
@@ -325,7 +325,7 @@
           title="Have a collectivized to upload percentage of 41.54% or more."
         />
         <HoverChip
-          v-if="user.stats?.collections >= 10 && user.stats?.collections < 15"
+          dbg-if="user.stats?.collections >= 10 && user.stats?.collections < 15"
           v-ripple
           :small="true"
           class="user-badge"
@@ -336,7 +336,7 @@
         />
         <!-- Noob, grey -->
         <HoverChip
-          v-if="user.stats?.uploads >= 500 && user.stats?.uploads < 1000"
+          dbg-if="user.stats?.uploads >= 500 && user.stats?.uploads < 1000"
           v-ripple
           :small="true"
           class="user-badge"
@@ -346,7 +346,7 @@
           title="Upload 500+ items."
         />
         <HoverChip
-          v-if="user.stats?.pulse >= 8 && user.stats?.pulse < 12"
+          dbg-if="user.stats?.pulse >= 8 && user.stats?.pulse < 12"
           v-ripple
           :small="true"
           class="user-badge"
@@ -356,7 +356,7 @@
           :title="`Have 8h+ in ${$app.site.name}.`"
         />
         <HoverChip
-          v-if="user.stats?.collections >= 5 && user.stats?.collections < 10"
+          dbg-if="user.stats?.collections >= 5 && user.stats?.collections < 10"
           v-ripple
           :small="true"
           class="user-badge"
@@ -368,9 +368,9 @@
 
         <!-- Other -->
         <HoverChip
-          v-if="age >= 1"
+          dbg-if="age >= 1"
           v-ripple
-          :icon="'mdi-numeric-' + age"
+          :icon="'number-' + age"
           :small="true"
           :text="age + ' year old account'"
           :title="`${user.username}'s account is ${age} years old.`"
@@ -378,7 +378,7 @@
           color="teal"
         />
         <HoverChip
-          v-if="cakeWeek && age >= 1"
+          dbg-if="cakeWeek && age >= 1"
           v-ripple
           :small="true"
           :title="`${user.username}'s account was created this week ${age} years ago.`"
@@ -387,8 +387,8 @@
           icon="mdi-cake"
           text="Cake Week"
         />
-      </template>
-      <template v-if="$experiments.experiments.BADGES">
+      </div>
+      <template dbg-if="$experiments.experiments.BADGES">
         <HoverChip
           v-for="badge in user.badges"
           :key="badge.id"
@@ -404,7 +404,7 @@
         />
       </template>
       <HoverChip
-        v-if="user.noFriends"
+        dbg-if="user.noFriends"
         v-ripple
         :small="true"
         class="user-badge"
@@ -414,7 +414,7 @@
         title="Get Better ™ 😟"
       />
       <HoverChip
-        v-if="
+        dbg-if="
           !$friends.friends.find((f) => f.friendId === user.id) &&
           user.id !== $user.user?.id
         "

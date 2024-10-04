@@ -426,12 +426,12 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           },
           {
             icon: h(VIcon, {
-              icon: "mdi-plus"
+              icon: "add-line"
             }),
             name: "Flowinity Pro",
             path: "/settings/subscriptions",
             selectedIcon: h(VIcon, {
-              icon: "mdi-plus"
+              icon: "add-line"
             })
           },
           {

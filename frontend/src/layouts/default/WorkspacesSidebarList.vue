@@ -226,7 +226,7 @@
         $router.push(`/workspaces/notes/${$route.params.id}`);
       "
     >
-      <v-icon>mdi-arrow-left</v-icon>
+      <v-icon>arrow-left-s-line</v-icon>
       Leave version history
     </v-card-text>
     <v-card-text
@@ -275,10 +275,10 @@
             v-if="$workspaces.workspace"
             @click.stop="createFolder.dialog = true"
           >
-            <v-icon>mdi-plus</v-icon>
+            <v-icon>add-line</v-icon>
           </v-list-item-action>
           <v-list-item-action>
-            <v-icon>mdi-menu-down</v-icon>
+            <v-icon>arrow-down-s-line</v-icon>
           </v-list-item-action>
         </template>
       </v-list-item>

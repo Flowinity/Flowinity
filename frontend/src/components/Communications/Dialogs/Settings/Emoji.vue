@@ -27,7 +27,7 @@
         </template>
         <template #append>
           <v-btn icon size="small" @click="deleteEmoji(emoji.id)">
-            <v-icon>mdi-delete</v-icon>
+            <v-icon>close-line</v-icon>
           </v-btn>
         </template>
         <v-list-item-title

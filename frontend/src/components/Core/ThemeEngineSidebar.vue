@@ -22,7 +22,7 @@
         </v-chip>
       </v-toolbar-title>
       <v-btn icon @click="reset">
-        <v-icon>mdi-restart</v-icon>
+        <v-icon>restart-line</v-icon>
         <v-tooltip activator="parent" location="top">
           {{ $t("themeEditor.reset") }}
         </v-tooltip>

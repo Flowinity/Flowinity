@@ -140,7 +140,7 @@
                 <v-tooltip activator="parent" location="bottom">
                   {{ $t("gallery.randomAttachment") }}
                 </v-tooltip>
-                <v-icon>mdi-dice-multiple</v-icon>
+                <v-icon><MdiDice /></v-icon>
               </v-btn>
               <v-btn icon size="small" @click="selectAll()">
                 <v-tooltip activator="parent" location="bottom">
@@ -180,7 +180,9 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.randomAttachment") }}
               </v-tooltip>
-              <v-icon>mdi-dice-multiple</v-icon>
+              <v-icon>
+                <MdiDice />
+              </v-icon>
             </v-btn>
             <v-btn
               icon
@@ -290,9 +292,11 @@ import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import RiImageCloseLine from "@/components/Icons/v5/ri-image-close-line.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import RiCheckLine from "@/components/Icons/v5/ri-check-line.vue";
+import MdiDice from "@/components/Icons/v5/MdiDice.vue";
 
 export default defineComponent({
   components: {
+    MdiDice,
     RiCheckboxMultipleFill,
     RiSearchLine,
     RiCheckLine,

@@ -28,7 +28,7 @@
             style="position: absolute; bottom: 20px; left: 50%"
             @click="copy(image.attachment.attachment)"
           >
-            <v-icon>mdi-content-copy</v-icon>
+            <v-icon>file-copy-line</v-icon>
           </v-chip>
         </v-carousel-item>
       </v-carousel>

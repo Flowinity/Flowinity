@@ -247,10 +247,10 @@
         <v-icon>
           {{
             volume > 70
-              ? "mdi-volume-high"
+              ? "volume-up-line"
               : volume > 0
-              ? "mdi-volume-medium"
-              : "mdi-volume-off"
+              ? "volume-down-line"
+              : "volume-mute-line"
           }}
         </v-icon>
       </template>

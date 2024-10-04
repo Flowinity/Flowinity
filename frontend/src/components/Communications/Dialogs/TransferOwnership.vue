@@ -14,7 +14,7 @@
       </v-card-title>
       <div class="d-flex justify-center">
         <UserAvatar :chat="chat" size="70" />
-        <v-icon size="70">mdi-arrow-right</v-icon>
+        <v-icon size="70">arrow-right-s-line</v-icon>
         <UserAvatar :user="user" size="70" />
       </div>
       <v-card-subtitle class="initial my-2">

@@ -12,7 +12,7 @@
           $functions.copy(`${$app.site.hostnameWithProtocol}/invite/${item.id}`)
         "
       >
-        <v-icon>mdi-content-copy</v-icon>
+        <v-icon>file-copy-line</v-icon>
       </v-btn>
     </template>
     <template #[`item.userId`]="{ item }: any">

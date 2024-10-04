@@ -204,7 +204,7 @@
         "
         @click="jumpToBottom"
       >
-        <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
+        <v-icon class="mr-1 ml-1" size="17">arrow-down-s-line</v-icon>
         {{ $t("chats.jumpToBottom") }}
       </v-toolbar>
       <v-toolbar
@@ -945,7 +945,7 @@ async function sendMessage() {
   chatStore.setDraft(chatStore.selectedChatId.toString(), "");
 
   try {
-    await chatStore.sendMessage(content, attachments, replyId.value);
+    await chatStore.sendMessage(content, attachments, tempMessage.replyId);
   } catch (e) {
     await messagesStore.updateMessage({
       ...tempMessage,

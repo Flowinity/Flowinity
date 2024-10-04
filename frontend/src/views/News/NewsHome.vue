@@ -18,7 +18,7 @@
           label="Search"
           outlined
           dense
-          append-inner-icon="mdi-magnify"
+          append-inner-icon="search-line"
           class="rounded-xl"
           @keydown.enter="refresh"
           @click:append-inner="refresh"

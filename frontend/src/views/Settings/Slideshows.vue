@@ -80,7 +80,7 @@
           variant="outlined"
           @click="createSlideshow()"
         >
-          <v-icon size="50" style="width: 100%; height: 100%">mdi-plus</v-icon>
+          <v-icon size="50" style="width: 100%; height: 100%">add-line</v-icon>
         </v-card>
       </v-sheet>
     </v-container>
