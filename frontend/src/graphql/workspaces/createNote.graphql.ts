@@ -3,6 +3,11 @@ import { gql } from "@apollo/client/core";
 const CreateNoteMutation = gql`
   mutation CreateNote($input: CreateNoteInput!) {
     createNote(input: $input) {
+      permissions {
+        modify
+        read
+        configure
+      }
       id
       createdAt
       updatedAt
@@ -18,11 +23,12 @@ const CreateNoteMutation = gql`
         id
         noteId
         userId
-      }
-      permissions {
-        modify
-        read
-        configure
+        createdAt
+        data {
+          version
+          blocks
+          time
+        }
       }
     }
   }

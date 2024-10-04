@@ -385,7 +385,11 @@ import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import { NoteDataV2, NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import ShareWorkspace from "@/components/Workspaces/Dialogs/ShareWorkspace.vue";
-import { CreateWorkspaceDocument, NoteDocument } from "@/gql/graphql";
+import {
+  CreateNoteDocument,
+  CreateWorkspaceDocument,
+  NoteDocument
+} from "@/gql/graphql";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
@@ -613,21 +617,12 @@ export default defineComponent({
       this.contextMenu.dialog = true;
     },
     async doCreateNote(name: string, internal: boolean = false) {
+      console.log(this.createNote);
       this.createNote.loading = true;
-      const {
-        data: { createNote }
-      } = await this.$apollo.mutate({
-        mutation: NoteDocument,
-        variables: {
-          input: {
-            name,
-            workspaceFolderId: this.createNote.folderId
-          }
-        }
-      });
-      this.$workspaces.workspace.folders
-        .find((f) => f.id === this.createNote.folderId)
-        ?.children.push(createNote);
+      const createNote = await this.$workspaces.createNote(
+        name,
+        this.createNote.folderId
+      );
       this.createNote.dialog = false;
       this.createNote.loading = false;
       if (internal) return createNote;

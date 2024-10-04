@@ -2,6 +2,7 @@
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import graphql from "@rollup/plugin-graphql";
+import Icons from "unplugin-icons/vite";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -29,6 +30,9 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
+    Icons({
+      autoInstall: true
+    }),
     graphql(),
     //@ts-ignore
     ViteVersion.default(),

@@ -13,7 +13,7 @@
         :small="true"
         class="user-badge"
         color="#0190ea"
-        icon="mdi-shield"
+        icon="ri-shield"
         :text="`${$app.site.name} Administrator`"
       />
       <HoverChip

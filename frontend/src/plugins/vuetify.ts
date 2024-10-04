@@ -23,6 +23,7 @@ import {
   VTreeviewGroup
 } from "vuetify/labs/components";
 import { aliases, remixIcon } from "@/plugins/vuetify-iconset";
+import { aliases as mdiAliases, mdi } from "vuetify/iconsets/mdi";
 
 export class DefaultThemes {
   themes: any;
@@ -163,10 +164,14 @@ export default createVuetify({
     mobileBreakpoint: "xs"
   },
   icons: {
-    aliases,
+    aliases: {
+      ...aliases,
+      ...mdiAliases
+    },
     defaultSet: "mdi",
     sets: {
-      ri: remixIcon
+      ri: remixIcon,
+      mdi
     }
   },
   defaults: {

@@ -147,7 +147,9 @@ import {
   NoteCollabPosition,
   UpdateNoteEventType,
   WorkspaceNote,
-  SaveNoteCollabPositionDocument
+  SaveNoteCollabPositionDocument,
+  OnUpdateNoteDocument,
+  OnNoteCollabPositionDocument
 } from "@/gql/graphql";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 import { isNumeric } from "@/plugins/isNumeric";
@@ -282,7 +284,7 @@ export default defineComponent({
         : this.$route.params.id;
       this.unsubscribeFromNote();
       const observer = useApolloClient().client.subscribe({
-        query: UpdateNoteSubscription,
+        query: OnUpdateNoteDocument,
         variables: {
           id: typeof id === "number" ? id : null,
           shareLink: typeof id === "string" ? id : null
@@ -335,7 +337,7 @@ export default defineComponent({
         }
       });
       const observerPosition = useApolloClient().client.subscribe({
-        query: NoteCollabPositionSubscription,
+        query: OnNoteCollabPositionDocument,
         variables: {
           id: typeof id === "number" ? id : null,
           shareLink: typeof id === "string" ? id : null
