@@ -9,13 +9,16 @@ import {
   MessagesDocument,
   NewMessageDocument,
   StandardMessageFragmentDoc,
-  UserStoredStatus
+  UserStoredStatus,
+  CancelTypingEventDocument,
+  TypingEventDocument
 } from "@/gql/graphql";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Platform, useAppStore } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import functions from "@/plugins/functions";
 import { useFragment } from "@/gql";
+import { gql } from "@apollo/client/core";
 
 export default function setup() {
   const chatStore = useChatStore();
@@ -79,6 +82,26 @@ export default function setup() {
       });
     }
   });
+
+  const typing = useSubscription(TypingEventDocument);
+  const cancelTyping = useSubscription(CancelTypingEventDocument);
+
+  typing.onResult(({ data: { onTyping } }) => {
+    // update the chat with the typing user
+    const chat = chatStore.chats.find((c) => c.id === onTyping.chatId);
+    cache.modify({
+      id: `Chat:${onTyping.chatId}`,
+      fields: {
+        typing: () => [
+          ...(chat?.typing || []),
+          { userId: onTyping.userId, expires: onTyping.expires }
+        ]
+      }
+    });
+    // TODO: Typing socket
+    chatStore.getChats();
+  });
+
   //
   // const typing = useSubscription(TypingEventDocument);
   // const cancelTyping = useSubscription(CancelTypingEventDocument);

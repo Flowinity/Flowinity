@@ -5,9 +5,7 @@ const TypingSubscription = gql`
     onTyping {
       chatId
       expires
-      user {
-        id
-      }
+      userId
     }
   }
 `;
@@ -17,9 +15,7 @@ const CancelTypingSubscription = gql`
     onCancelTyping {
       chatId
       expires
-      user {
-        id
-      }
+      userId
     }
   }
 `;

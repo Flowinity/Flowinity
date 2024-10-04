@@ -572,4 +572,12 @@ export class ChatResolver {
   ): Promise<ChatTypingEvent> {
     return data
   }
+
+  // TODO: Implement this field resolver
+  @FieldResolver(() => [ChatTypingEvent], {
+    name: "typing"
+  })
+  async typers(@Root() chat: Chat, @Ctx() ctx: Context) {
+    return []
+  }
 }

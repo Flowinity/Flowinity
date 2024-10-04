@@ -41,9 +41,11 @@
                     {{ app.name }}
                     <span v-if="app.verified">
                       <v-tooltip location="top" activator="parent">
-                        Created by the TPU team
+                        Created by the Flowinity team
                       </v-tooltip>
-                      <v-icon color="grey">mdi-check-circle</v-icon>
+                      <v-icon class="text-medium-emphasis" size="20">
+                        checkbox-circle-fill
+                      </v-icon>
                     </span>
                   </v-card-title>
                   <v-card-subtitle>
@@ -177,7 +179,7 @@
               Copy client ID
             </v-btn>
             <v-btn class="ml-1" color="red" @click="resetSecret">
-              <v-icon class="mr-1">mdi-sync</v-icon>
+              <v-icon class="mr-1">reset-right-line</v-icon>
               Reset secret
             </v-btn>
             <v-btn class="ml-1" color="red" @click="deleteConfirm = true">

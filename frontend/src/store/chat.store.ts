@@ -11,6 +11,7 @@ import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
 import {
   AddChatUsersDocument,
+  CancelTypingDocument,
   Chat,
   ChatDocument,
   ChatEmoji,
@@ -180,15 +181,15 @@ export const useChatStore = defineStore("chat", () => {
     const user = useUserStore();
     const friends = useFriendsStore();
     if (!selectedChat.value) return "";
-    if (!selectedChat.value.typers?.length) return "";
-    if (selectedChat.value?.typers?.length > 3) {
-      return `${selectedChat.value.typers.length} people are typing...`;
+    if (!selectedChat.value.typing?.length) return "";
+    if (selectedChat.value?.typing?.length > 3) {
+      return `${selectedChat.value.typing.length} people are typing...`;
     }
 
     // filter out the current user and return the usernames
-    const typers = selectedChat.value.typers
-      .filter((typer: Typing) => typer.userId !== user.user?.id)
-      .map((typer: Typing) => {
+    const typers = selectedChat.value.typing
+      .filter((typer) => typer.userId !== user.user?.id)
+      .map((typer) => {
         return friends.getName(typer.userId);
       });
 
@@ -649,7 +650,7 @@ export const useChatStore = defineStore("chat", () => {
 
   async function cancelTyping() {
     await useApolloClient().client.mutate({
-      mutation: TypingDocument,
+      mutation: CancelTypingDocument,
       variables: {
         input: selectedChatId.value
       }

@@ -187,6 +187,31 @@
           <RiDownloadCloud2Fill />
         </super-bar-item>
         <v-btn
+          v-if="userStore.user?.subscription?.metadata?.hours"
+          color="gold"
+          variant="tonal"
+          icon
+          size="40"
+          @click="appStore.dialogs.gold.value = true"
+        >
+          <v-progress-circular
+            color="gold"
+            style="font-size: 10px"
+            size="40"
+            :model-value="calculateJitsi"
+          >
+            {{
+              Math.round($user.user?.subscription?.metadata?.hours * 10) / 10
+            }}h
+          </v-progress-circular>
+          <v-tooltip activator="parent" location="right">
+            {{ calculateJitsi }}% ({{
+              Math.round($user.user?.subscription?.metadata?.hours * 100) / 100
+            }}h/8h)
+          </v-tooltip>
+        </v-btn>
+
+        <v-btn
           :color="calculateColorQuota"
           variant="tonal"
           icon
@@ -351,5 +376,11 @@ const calculateColorQuota = computed(() => {
   } else {
     return "green";
   }
+});
+
+const calculateJitsi = computed(() => {
+  return (
+    Math.round((userStore.user?.subscription?.metadata?.hours / 8) * 100) || 0
+  );
 });
 </script>

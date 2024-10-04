@@ -2383,6 +2383,30 @@
             "deprecationReason": null
           },
           {
+            "name": "typing",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ChatTypingEvent",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "unread",
             "description": null,
             "args": [],
@@ -3564,6 +3588,22 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "PartialUserFriend",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "userId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -15366,8 +15406,8 @@
                 "ofType": null
               }
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "This field is no longer used after migration from Colubrina to Flowinity."
           },
           {
             "name": "moderator",
@@ -15746,8 +15786,8 @@
                 "ofType": null
               }
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "This field is no longer used after migration from Colubrina to Flowinity."
           },
           {
             "name": "moderator",
@@ -15791,15 +15831,15 @@
           },
           {
             "name": "nameColor",
-            "description": null,
+            "description": "The user's name color in Communications (v3).",
             "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Replaced by ranks"
           },
           {
             "name": "nickname",
@@ -23151,7 +23191,7 @@
           },
           {
             "name": "nameColor",
-            "description": "The user's name color in Communications.",
+            "description": "The user's name color in Communications (v3).",
             "args": [],
             "type": {
               "kind": "SCALAR",

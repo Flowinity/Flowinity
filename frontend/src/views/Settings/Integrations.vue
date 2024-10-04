@@ -111,10 +111,10 @@
           {{ app.name }}
           <span v-if="app.verified">
             <v-tooltip location="top" activator="parent">
-              Created by the TPU team
+              Created by the Flowinity team
             </v-tooltip>
             <v-icon class="text-medium-emphasis" size="20">
-              mdi-check-circle
+              checkbox-circle-fill
             </v-icon>
           </span>
         </v-card-title>
@@ -129,7 +129,9 @@
           style="opacity: 1"
         >
           <template #prepend>
-            <v-icon color="green" class="ml-1 mr-4">mdi-check-circle</v-icon>
+            <v-icon color="green" class="ml-1 mr-4">
+              checkbox-circle-fill
+            </v-icon>
           </template>
           <v-list-item-title
             style="text-overflow: unset; white-space: normal"

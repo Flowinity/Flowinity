@@ -36,9 +36,11 @@
             <template v-else>Add {{ app.bot.username }} to your chat.</template>
             <span v-if="app.verified">
               <v-tooltip location="top" activator="parent">
-                Created by the TPU team
+                Created by the Flowinity team
               </v-tooltip>
-              <v-icon>mdi-check-circle</v-icon>
+              <v-icon class="text-medium-emphasis" size="20">
+                checkbox-circle-fill
+              </v-icon>
             </span>
           </p>
           <p class="text-center text-grey">
@@ -64,7 +66,7 @@
               >
                 <template #prepend>
                   <v-icon color="green" class="ml-4 mr-1">
-                    mdi-check-circle
+                    checkbox-circle-fill
                   </v-icon>
                 </template>
                 <v-list-item-title
@@ -94,7 +96,7 @@
               >
                 <template #prepend>
                   <v-icon color="green" class="ml-4 mr-1">
-                    mdi-check-circle
+                    checkbox-circle-fill
                   </v-icon>
                 </template>
                 <v-list-item-title

@@ -19,6 +19,10 @@ const ChatsQuery = gql`
       recipient {
         id
       }
+      typing {
+        expires
+        userId
+      }
       association {
         id
         hidden

@@ -499,20 +499,23 @@ watch(
   }
 );
 
-watch(message, () => {
-  const userStatus = userStore.user.storedStatus;
-  if (userStatus === UserStoredStatus.Invisible) return;
+watch(
+  () => message.value,
+  () => {
+    const userStatus = userStore.user.storedStatus;
+    if (userStatus === UserStoredStatus.Invisible) return;
 
-  if (message.value.length > 0) {
-    if (!typingStatus.rateLimit || typingStatus.rateLimit < Date.now()) {
-      // useSockets().chat.emit("typing", chat.value?.association?.id);
-      typingStatus.rateLimit = Date.now() + 2000;
+    if (message.value.length > 0) {
+      if (!typingStatus.rateLimit || typingStatus.rateLimit < Date.now()) {
+        chatStore.typing();
+        typingStatus.rateLimit = Date.now() + 2000;
+      }
+    } else {
+      chatStore.cancelTyping();
+      typingStatus.rateLimit = null;
     }
-  } else {
-    // useSockets().chat.emit("cancelTyping", chat.value?.association?.id);
-    typingStatus.rateLimit = null;
   }
-});
+);
 
 watch(replyId, () => {
   focusInput();

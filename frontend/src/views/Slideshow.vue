@@ -9,12 +9,14 @@
         hide-delimiters
         show-arrows="hover"
         v-bind="props"
+        eager
       >
         <v-carousel-item
           v-for="image in slideshow"
           :key="image.id"
           :src="`${$app.domain}${image.attachment.attachment}`"
           contain
+          eager
         >
           <template #placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
@@ -60,7 +62,7 @@ export default defineComponent({
   },
   watch: {
     model() {
-      if (this.model === this.slideshow.length - 3) {
+      if (this.model === this.slideshow.length - 5) {
         this.getSlideshow();
       }
     }
@@ -77,7 +79,11 @@ export default defineComponent({
     },
     async getSlideshow() {
       const { data } = await this.axios.get(`/slideshows/${this.id}`);
-      this.slideshow = data;
+      this.slideshow.push(...data);
+      if (this.slideshow.length > 25) {
+        this.slideshow.splice(0, 5);
+        this.model = this.model + 5;
+      }
     },
     async getSlideshowConfig() {
       const { data } = await this.axios.get(`/slideshows/${this.id}/config`);

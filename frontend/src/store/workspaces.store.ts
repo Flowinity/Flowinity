@@ -1,8 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { Workspace } from "@/models/workspace";
-import { Note } from "@/models/note";
 import { useRoute } from "vue-router";
 import { isNumeric } from "@/plugins/isNumeric";
 import {
@@ -15,7 +13,9 @@ import {
   UpdateNoteEventType,
   WorkspaceNote,
   WorkspacesDocument,
-  WorkspacesQuery
+  WorkspacesQuery,
+  Workspace,
+  Note
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { BlockAPI } from "@flowinity/editorjs";
@@ -131,7 +131,7 @@ export const useWorkspacesStore = defineStore("workspaces", () => {
       variables: {
         input: {
           blockId: data?.id,
-          id: parseInt(useRoute().params.id),
+          id: parseInt(<string>route.params.id),
           data: data,
           type: type
         } as UpdateNoteEventInput
@@ -146,7 +146,7 @@ export const useWorkspacesStore = defineStore("workspaces", () => {
   });
   const recentOverall = computed(() => {
     const notes: Note[] = recent.value
-      .map((workspace) => workspace.folders.map((folder) => folder.notes))
+      .map((workspace) => workspace.folders.map((folder) => folder.children))
       .flat(2)
       .sort((a, b) => {
         if (a.updatedAt > b.updatedAt) return -1;

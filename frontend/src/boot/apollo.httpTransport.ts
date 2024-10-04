@@ -225,9 +225,18 @@ export default function apolloFlowinity(app: App) {
               }
             }
           }
+        },
+        Chat: {
+          fields: {
+            typing: {
+              merge(_, incoming) {
+                return incoming;
+              }
+            }
+          }
         }
       }
     }),
-    connectToDevTools: true
+    connectToDevTools: import.meta.env.DEV
   });
 }
