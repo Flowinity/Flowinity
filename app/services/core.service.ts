@@ -432,7 +432,7 @@ export class CoreService {
         if (
           experimentsCopy.meta[
             key as keyof typeof experimentsCopy.meta
-          ].versions?.includes(majorVersion)
+          ]?.versions?.includes(majorVersion)
         ) {
           continue
         }

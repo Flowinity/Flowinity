@@ -66,7 +66,6 @@ export class MessageResolver {
     @Arg("input") input: SendMessageInput,
     @Ctx() ctx: Context
   ): Promise<Message> {
-    if (input.content === "ForceError") throw new GqlError("BLOCKED")
     if (input.embeds?.length && !ctx.user?.bot)
       throw new GraphQLError("You need to be a bot to use embeds.")
     return await this.chatService.sendMessage(
