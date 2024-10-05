@@ -351,9 +351,8 @@ export class UserControllerV3 {
     let svgString2 = svg.toString()
     if (
       user &&
-      !user?.themeEngine &&
+      user.themeEngine &&
       user.plan.internalName === "GOLD" &&
-      !config.officialInstance &&
       (user.themeEngine?.theme?.dark?.colors?.logo1?.toLowerCase() !==
         "#096fea" ||
         user.themeEngine?.theme?.dark?.colors?.logo2?.toLowerCase() !==
