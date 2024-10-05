@@ -25,7 +25,7 @@ import { ExperimentType } from "@app/classes/graphql/core/experiments"
 import { isNumeric } from "@app/lib/isNumeric"
 import {
   Experiments,
-  experiments,
+  getExperiments,
   ExperimentsLegacy
 } from "@app/lib/experiments"
 
@@ -397,56 +397,56 @@ export class CoreService {
     majorVersion: number | undefined = undefined,
     wantedExperiments: string[] | undefined = undefined
   ): Promise<Record<ExperimentsLegacy, any>> {
-    const experimentsCopy = { ...experiments }
+    const experiments = getExperiments()
 
-    experimentsCopy.COMMUNICATIONS = config?.features?.communications ?? true
-    experimentsCopy.INTERACTIVE_NOTES = config?.features?.workspaces ?? true
-    experimentsCopy.OFFICIAL_INSTANCE = config?.officialInstance
-    experimentsCopy.FLOWINITY = config?.officialInstance ?? false
+    experiments.COMMUNICATIONS = config?.features?.communications ?? true
+    experiments.INTERACTIVE_NOTES = config?.features?.workspaces ?? true
+    experiments.OFFICIAL_INSTANCE = config?.officialInstance
+    experiments.FLOWINITY = config?.officialInstance ?? false
 
     if (dev || config.release === "dev") {
-      experimentsCopy.NEW_BRANDING = true
-      experimentsCopy.CHAT_CACHING = 10
+      experiments.NEW_BRANDING = true
+      experiments.CHAT_CACHING = 10
       // experiments.PROGRESSIVE_UI = true
-      experimentsCopy.CHAT_GUIDED_WIZARD = true
-      experimentsCopy.NOTE_COLLAB = true
+      experiments.CHAT_GUIDED_WIZARD = true
+      experiments.NOTE_COLLAB = true
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
-      experimentsCopy.DEBUG_FAVICON = true
+      experiments.DEBUG_FAVICON = true
       // experiments.FLOWINITY = true
-      experimentsCopy.ACCOUNT_DEV_ELIGIBLE = true
-      experimentsCopy.SURVEYS = true
-      experimentsCopy.WEBMAIL = true
-      experimentsCopy.EARLY_ACCESS = true
-      experimentsCopy.CAN_ENABLE_PROGRESSIVE_UI = true
+      experiments.ACCOUNT_DEV_ELIGIBLE = true
+      experiments.SURVEYS = true
+      experiments.WEBMAIL = true
+      experiments.EARLY_ACCESS = true
+      experiments.CAN_ENABLE_PROGRESSIVE_UI = true
     } else if (gold) {
-      experimentsCopy.EARLY_ACCESS = true
-      experimentsCopy.CAN_ENABLE_PROGRESSIVE_UI = true
+      experiments.EARLY_ACCESS = true
+      experiments.CAN_ENABLE_PROGRESSIVE_UI = true
     }
 
     // only return experiments that are available for the major version
     if (majorVersion && !wantedExperiments) {
-      for (const key in experimentsCopy) {
+      for (const key in experiments) {
         if (key === "meta") continue
         if (
-          experimentsCopy.meta[
-            key as keyof typeof experimentsCopy.meta
+          experiments.meta[
+            key as keyof typeof experiments.meta
           ]?.versions?.includes(majorVersion)
         ) {
           continue
         }
-        delete experimentsCopy[key as keyof typeof experimentsCopy]
-        delete experimentsCopy.meta[key as keyof typeof experimentsCopy.meta]
+        delete experiments[key as keyof typeof experiments]
+        delete experiments.meta[key as keyof typeof experiments.meta]
       }
     }
 
     if (wantedExperiments) {
-      for (const key in experimentsCopy) {
+      for (const key in experiments) {
         if (key === "meta") continue
         if (!wantedExperiments.includes(key)) {
-          delete experimentsCopy[key as keyof typeof experimentsCopy]
-          delete experimentsCopy.meta[key as keyof typeof experimentsCopy.meta]
+          delete experiments[key as keyof typeof experiments]
+          delete experiments.meta[key as keyof typeof experiments.meta]
         }
       }
     }
@@ -454,7 +454,7 @@ export class CoreService {
     if (config.finishedSetup) {
       const global:
         | {
-            id: keyof typeof experimentsCopy
+            id: keyof typeof experiments
             value: never
             force: boolean
             userId: number
@@ -462,15 +462,15 @@ export class CoreService {
         | null = await redis.json.get("experimentOverridesGlobal")
       if (global) {
         for (const override of global) {
-          if (experimentsCopy[override.id] !== undefined) {
-            experimentsCopy[override.id] = override.value
-            experimentsCopy.meta[override.id].force = override.force
-            experimentsCopy.meta[override.id].override = true
+          if (experiments[override.id] !== undefined) {
+            experiments[override.id] = override.value
+            experiments.meta[override.id].force = override.force
+            experiments.meta[override.id].override = true
           }
         }
       }
     }
-    return experimentsCopy
+    return experiments
   }
 
   async getExperimentsV4(
