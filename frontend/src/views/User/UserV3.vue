@@ -92,7 +92,10 @@
                       "
                       icon
                       size="small"
-                      @click="config.editMode = !config.editMode"
+                      @click="
+                        config.editMode = !config.editMode;
+                        updateLayout();
+                      "
                     >
                       <v-tooltip
                         :eager="false"
@@ -710,14 +713,6 @@ export default defineComponent({
       if (!val) return;
       this.config.editMode = false;
       this.getUser();
-    },
-    layout: {
-      handler: function (val) {
-        if (this.user?.id !== this.$user.user?.id) return;
-        this.$user.user.profileLayout = val;
-        this.$user.save();
-      },
-      deep: true
     }
   },
   mounted() {
@@ -728,6 +723,10 @@ export default defineComponent({
     this.setTheme(true);
   },
   methods: {
+    updateLayout() {
+      this.$user.user.profileLayout = this.layout;
+      this.$user.save();
+    },
     calculatePercentage(value) {
       const rounded = Math.ceil(value / 50) * 50;
       return (rounded / 100) * 100;

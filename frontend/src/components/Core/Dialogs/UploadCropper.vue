@@ -14,7 +14,7 @@
         :label="$t('dialogs.uploadCropper.label')"
       />
       <vue-cropper
-        v-if="result && file[0]?.type !== 'image/gif'"
+        v-if="result && file?.type !== 'image/gif'"
         id="banner-editor"
         :key="key"
         ref="cropper"
@@ -28,7 +28,7 @@
       <v-btn
         v-if="result"
         @click="
-          $emit('finish', file[0]);
+          $emit('finish', file);
           $emit('update:modelValue', false);
         "
       >
@@ -41,7 +41,8 @@
       <v-btn
         @click="
           $emit('update:modelValue', false);
-          file = [];
+          file = undefined;
+          result = undefined;
         "
       >
         {{ $t("generic.cancel") }}
@@ -87,7 +88,7 @@ export default defineComponent({
   emits: ["update:modelValue", "finish", "remove"],
   data() {
     return {
-      file: [] as File[],
+      file: undefined as File | undefined,
       result: undefined as string | undefined,
       loading: false,
       key: 0
@@ -95,33 +96,33 @@ export default defineComponent({
   },
   watch: {
     async file() {
-      if (!this.file.length) return;
+      if (!this.file) return;
       this.result = undefined;
       await this.fileReader();
       this.key++;
     },
     modelValue() {
-      this.file = [];
+      this.file = undefined;
       this.result = undefined;
     }
   },
   methods: {
     async fileReader() {
+      if (!this.file) return;
       const reader = new FileReader();
       reader.onload = () => {
         this.result = reader.result as string;
         return this.result;
       };
-      await reader.readAsDataURL(this.file[0] as File);
+      reader.readAsDataURL(this.file);
     },
     async save() {
-      if (!this.file.length) return;
-      if (this.file[0].type === "image/gif") {
+      if (!this.file) return;
+      if (!this.$refs.cropper) {
         this.$emit("finish", this.file[0]);
         this.$emit("update:modelValue", false);
         return;
       }
-      // get the img in the banner-editor id div
       const file = this.$functions.base64ToFile(
         //@ts-ignore
         this.$refs.cropper.getCroppedCanvas().toDataURL("image/png"),

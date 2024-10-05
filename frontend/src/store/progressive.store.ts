@@ -10,6 +10,7 @@ import {
   RiAddLine,
   RiAppleFill,
   RiAppleLine,
+  RiArticleFill,
   RiArticleLine,
   RiAuctionFill,
   RiAuctionLine,
@@ -276,7 +277,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               icon: markRaw(RiArticleLine),
               name: "News",
               path: "/news",
-              selectedIcon: markRaw(RiArticleLine)
+              selectedIcon: markRaw(RiArticleFill)
             }
           ],
           [RailMode.GALLERY]: [

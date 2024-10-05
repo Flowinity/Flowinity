@@ -216,6 +216,7 @@ export default async function setup(app) {
     if (index === -1) return;
     chat.chats[index] = {
       ...chat.chats[index],
+      ...data,
       association: {
         ...chat.chats[index].association,
         ...data.association
