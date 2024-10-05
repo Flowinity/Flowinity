@@ -153,7 +153,7 @@
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { ExperimentOverride } from "@/gql/graphql";
 
 export default defineComponent({

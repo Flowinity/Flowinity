@@ -21,6 +21,7 @@ import { useMessagesStore } from "@/store/message.store";
 import { ElectronAPI } from "@electron-toolkit/preload";
 import EditorJS, { BlockAPI, EditorConfig } from "@flowinity/editorjs";
 import { useProgressiveUIStore } from "@/store/progressive.store";
+import { VueI18n } from "vue-i18n";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -46,6 +47,8 @@ declare module "@vue/runtime-core" {
     $admin: ReturnType<typeof useAdminStore>;
     axios: Axios;
     $apollo: ApolloClient<NormalizedCacheObject>;
+    $t: VueI18n["t"];
+    $vuetify: any;
     $sockets: {
       chat: Socket;
       pulse: Socket;

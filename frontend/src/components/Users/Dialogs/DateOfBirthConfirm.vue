@@ -35,7 +35,7 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { ref } from "vue";
 import DatePickerInput from "@/components/Core/DatePickerInput.vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 const props = defineProps({
   modelValue: {

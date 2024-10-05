@@ -2428,7 +2428,7 @@ export type SubscriptionMessageInput = {
 
 export type SubscriptionMetadata = {
   __typename?: 'SubscriptionMetadata';
-  hours: Scalars['Int']['output'];
+  hours: Scalars['Float']['output'];
 };
 
 export type TpuSubscription = {

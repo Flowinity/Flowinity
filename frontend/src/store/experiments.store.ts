@@ -6,7 +6,7 @@ import {
 } from "@/graphql/core/experiments.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ref, watch } from "vue";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { ExperimentOverrideInput } from "@/gql/graphql";
 
 export interface ExperimentsState {

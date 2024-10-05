@@ -6,7 +6,7 @@ import {
 } from "@/graphql/collections/subscriptions/updateCollection.graphql";
 import { useRoute, useRouter } from "vue-router";
 import { useCollectionsStore } from "@/store/collections.store";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { App } from "vue";
 
 export default function setup(app: App) {

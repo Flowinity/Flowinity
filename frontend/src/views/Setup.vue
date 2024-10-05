@@ -503,7 +503,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 import NotFound from "@/views/Errors/404.vue";
 

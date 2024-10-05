@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 export const UserLightCollectionsQuery = gql`
   query UserLightCollectionsQuery($input: UserCollectionsInput!) {

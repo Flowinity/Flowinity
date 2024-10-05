@@ -11,8 +11,8 @@
         rightText && !normalGradient
           ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
           : title
-            ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
-            : undefined
+          ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
+          : undefined
       "
       :src="image"
       class="white--text align-end"
@@ -25,21 +25,40 @@
         </v-row>
       </template>
       <slot />
-      <v-card-title v-if="title">
+      <v-card-title v-if="title || $slots['title']">
         {{ title }}
-        <small v-if="subtitle" class="float-end">
+        <slot name="title" />
+        <p
+          v-if="
+            !secondaryText &&
+            !$slots['secondary-text'] &&
+            subtitle &&
+            $slots['subtitle']
+          "
+          class="float-end"
+        >
           {{ subtitle }}
-        </small>
+          <slot name="subtitle" />
+        </p>
       </v-card-title>
-      <v-card-text v-if="secondaryText" class="mt-n2">
+      <v-card-text
+        v-if="secondaryText || $slots['secondary-text']"
+        class="mt-n2"
+      >
         {{ secondaryText }}
+        <slot name="secondary-text" />
+        <p v-if="subtitle || $slots['subtitle']" class="float-end">
+          {{ subtitle }}
+          <slot name="subtitle" />
+        </p>
       </v-card-text>
       <v-card-text
-        v-if="rightText"
+        v-if="rightText || $slots['right-text']"
         :style="blackText ? 'color: black !important;' : 'color: white'"
         style="position: absolute; top: 0; right: 0; font-size: 18px"
       >
         {{ rightText }}
+        <slot name="right-text" />
       </v-card-text>
     </v-img>
   </v-card>

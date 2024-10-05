@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 export const UpdateChatMutation = gql`
   mutation UpdateChat($input: UpdateChatInput!) {

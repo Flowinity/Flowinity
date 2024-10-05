@@ -679,6 +679,7 @@ export default defineComponent({
             }
           },
           table: {
+            //@ts-ignore
             class: Table,
             inlineToolbar: true,
             config: {

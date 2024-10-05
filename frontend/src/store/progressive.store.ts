@@ -274,8 +274,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             },
             {
               icon: markRaw(RiArticleLine),
-              name: "Blog",
-              externalPath: "https://troplo.com/news",
+              name: "News",
+              path: "/news",
               selectedIcon: markRaw(RiArticleLine)
             }
           ],

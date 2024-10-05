@@ -21,6 +21,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
 import { CoreStateQuery } from "@/graphql/core/stateOnly.graphql";
+import { RiNewsFill } from "@remixicon/vue";
 
 export enum Platform {
   WEB = "WEB",
@@ -323,6 +324,13 @@ export const useAppStore = defineStore("app", {
         scope: "",
         icon: "mdi-new-box",
         experimentsRequired: ["CAN_ENABLE_PROGRESSIVE_UI"]
+      });
+      items.push({
+        id: 31,
+        name: i18n.t("core.sidebar.news"),
+        path: "/news",
+        scope: "",
+        icon: h(RiNewsFill)
       });
       /*
       if (state.site.officialInstance) {

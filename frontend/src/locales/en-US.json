@@ -36,7 +36,9 @@
       "adminSeparator": "Admin",
       "secretMenu": "Secret Menu",
       "tryProgressive": "Try the new look",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "quota": "{used} / {quota} storage used",
+      "news": "News"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",

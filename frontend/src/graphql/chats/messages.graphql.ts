@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 import { PagerFragment } from "../fragments/pager.graphql";
 
 export const StandardEmbedFragment = gql`

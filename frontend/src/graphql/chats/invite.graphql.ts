@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client/core";
 
 export const ChatInviteQuery = gql`
   query ChatInvite($input: InviteInput!) {
