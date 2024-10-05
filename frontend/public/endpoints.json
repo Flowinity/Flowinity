@@ -1,0 +1,23 @@
+{
+  "gql": [
+    {
+      "url": "https://api.flowinity.com/graphql",
+      "region": "au-melbourne",
+      "priority": 1
+    }
+  ],
+  "api": [
+    {
+      "url": "https://api.flowinity.com/v3",
+      "region": "au-melbourne",
+      "priority": 1
+    }
+  ],
+  "gateway": [
+    {
+      "url": "wss://api.flowinity.com",
+      "region": "au-melbourne",
+      "priority": 1
+    }
+  ]
+}
