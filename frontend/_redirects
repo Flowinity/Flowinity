@@ -1,0 +1,2 @@
+/api/v3 https://api.flowinity.com/v3 307
+/api/v3/* https://api.flowinity.com/v3/:splat 307
