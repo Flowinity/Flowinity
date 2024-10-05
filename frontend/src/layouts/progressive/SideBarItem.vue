@@ -93,6 +93,7 @@ function openContextMenu(event: MouseEvent) {
       @click.prevent.stop="handleClick"
       v-ripple
       tabindex="0"
+      style="border-radius: 100px"
       @keydown.enter="
         //@ts-ignore
         $event.target?.click()

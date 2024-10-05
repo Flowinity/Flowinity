@@ -828,7 +828,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           },
           {
             icon: markRaw(RiChat1Line),
-            name: "Comms",
+            name: "Communications",
             id: RailMode.CHAT,
             path: "/communications",
             selectedIcon: markRaw(RiChat1Fill),

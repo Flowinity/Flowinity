@@ -82,6 +82,7 @@
             mode="out-in"
             tag="div"
             class="flex"
+            v-if="userStore.user || uiStore.currentNavItem?.item?.path !== '/'"
           >
             <div
               v-for="(rail, index) in items"

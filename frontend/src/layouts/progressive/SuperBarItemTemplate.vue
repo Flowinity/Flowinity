@@ -2,8 +2,10 @@
   <super-bar-item
     :selected="uiStore.navigationMode === item.id"
     @click="
-      item.scopesRequired &&
-      !functions.checkScope(item.scopesRequired, $user.user?.scopes)
+      item.click
+        ? item.click()
+        : item.scopesRequired &&
+          !functions.checkScope(item.scopesRequired, $user.user?.scopes)
         ? () => {}
         : (uiStore.navigationMode = item.id)
     "
@@ -13,9 +15,11 @@
       !functions.checkScope(item.scopesRequired, $user.user?.scopes)
     "
     @dblclick="
-      (item.scopesRequired &&
-        !functions.checkScope(item.scopesRequired, $user.user?.scopes)) ||
-      !uiStore.lastRailRoutes[item.id.toString()]
+      item.click
+        ? () => {}
+        : (item.scopesRequired &&
+            !functions.checkScope(item.scopesRequired, $user.user?.scopes)) ||
+          !uiStore.lastRailRoutes[item.id.toString()]
         ? () => {}
         : $router.push(uiStore.lastRailRoutes[item.id.toString()])
     "

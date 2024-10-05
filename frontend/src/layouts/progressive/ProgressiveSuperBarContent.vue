@@ -1,6 +1,8 @@
 <template>
   <div class="justify-between superbar flex flex-col h-full overflow-y-auto">
-    <div class="flex flex-col flex-grow overflow-y-auto items-center">
+    <div
+      class="flex flex-col flex-grow overflow-y-auto items-center superbar-content"
+    >
       <div class="flex flex-col gap-y-4">
         <div
           class="flex cursor-pointer select-none pt-0 border-b-2 flowinity-border relative justify-center"
@@ -135,7 +137,7 @@
         />
       </div>
       <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
-        <div class="divide-outline-dark border flowinity-border w-full" />
+        <div class="border-b-2 w-full flowinity-border" />
         <div class="flex flex-col gap-y-2 my-3">
           <super-bar-item
             v-for="item in chatStore.chats.slice(0, 3)"
@@ -154,12 +156,13 @@
             />
           </super-bar-item>
           <super-bar-item-template
-            v-if="$experiments.experiments.WIDGETS"
             :item="{
-              id: RailMode.HOME,
-              name: 'Create a shortcut',
+              name: 'New Chat',
               icon: RiAddLine,
-              selectedIcon: RiAddLine
+              selectedIcon: RiAddLine,
+              click: () => {
+                appStore.dialogs.createChat = true;
+              }
             }"
             :highlighted="true"
             id="superbar-widgets"
@@ -187,19 +190,53 @@
           <RiDownloadCloud2Fill />
         </super-bar-item>
         <v-btn
+          v-if="userStore.user?.subscription?.metadata?.hours"
+          color="gold"
+          variant="tonal"
+          icon
+          size="40"
+          @click="appStore.dialogs.gold.value = true"
+        >
+          <v-progress-circular
+            color="gold"
+            style="font-size: 10px"
+            size="40"
+            :model-value="calculateJitsi"
+          >
+            {{
+              Math.round($user.user?.subscription?.metadata?.hours * 10) / 10
+            }}h
+          </v-progress-circular>
+          <v-tooltip activator="parent" location="right">
+            {{ calculateJitsi }}% ({{
+              Math.round($user.user?.subscription?.metadata?.hours * 100) / 100
+            }}h/8h)
+          </v-tooltip>
+        </v-btn>
+
+        <v-btn
           :color="calculateColorQuota"
           variant="tonal"
           icon
+          size="40"
           @click="appStore.dialogs.gold.value = true"
         >
           <v-progress-circular
             :color="calculateColorQuota"
-            size="48"
-            style="font-size: 12px"
+            style="font-size: 10px"
+            size="40"
             :model-value="calculateQuota"
           >
             {{ calculateQuota }}%
           </v-progress-circular>
+          <v-tooltip activator="parent" location="right">
+            {{
+              $t("core.sidebar.quota", {
+                used: functions.fileSize(userStore.user?.quota),
+                quota: functions.fileSize(userStore.user?.plan?.quotaMax)
+              })
+            }}
+          </v-tooltip>
         </v-btn>
         <super-bar-item-template
           v-for="item in uiStore.navigation.railOptions.filter(
@@ -293,6 +330,7 @@ import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue"
 import Notifications from "@/components/Core/Notifications.vue";
 import SuperBarItemTemplate from "@/layouts/progressive/SuperBarItemTemplate.vue";
 import { IpcChannels } from "@/electron-types/ipc";
+import functions from "../../plugins/functions";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
@@ -342,5 +380,11 @@ const calculateColorQuota = computed(() => {
   } else {
     return "green";
   }
+});
+
+const calculateJitsi = computed(() => {
+  return (
+    Math.round((userStore.user?.subscription?.metadata?.hours / 8) * 100) || 0
+  );
 });
 </script>

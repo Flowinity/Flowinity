@@ -74,7 +74,7 @@
         <div :key="uiStore.currentRail?.id" class="flex items-center">
           <component :is="uiStore.currentRail?.icon" class="w-8 ml-4" />
           <p class="text-xl font-semibold ml-4">
-            {{ uiStore.currentRail.name }}
+            {{ uiStore.currentRail?.name }}
           </p>
         </div>
       </accessible-transition>

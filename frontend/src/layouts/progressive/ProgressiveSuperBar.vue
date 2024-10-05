@@ -24,7 +24,8 @@ import ProgressiveSuperBarContent from "@/layouts/progressive/ProgressiveSuperBa
 </script>
 
 <style>
-.superbar {
+.superbar,
+.superbar-content {
   scrollbar-width: none;
 }
 .superbar::-webkit-scrollbar {
@@ -32,7 +33,8 @@ import ProgressiveSuperBarContent from "@/layouts/progressive/ProgressiveSuperBa
 }
 
 .superbar .v-navigation-drawer__content,
-.superbar {
+.superbar,
+.superbar-content {
   overflow-x: hidden !important;
   overflow-y: inherit !important;
 }
