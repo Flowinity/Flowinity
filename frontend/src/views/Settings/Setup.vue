@@ -111,6 +111,15 @@
     </v-alert>
   </template>
   <template v-if="platform === 'Linux' || platform === 'Mac'">
+    <v-alert
+      v-if="platform === 'Linux'"
+      type="info"
+      variant="tonal"
+      class="mx-4 my-4"
+    >
+      Flowshot is the recommended software for taking screenshots on Linux with
+      {{ appStore.site.name }}.
+    </v-alert>
     <v-card-title>
       {{ $t("settings.setup.flowshot") }}
     </v-card-title>
@@ -199,94 +208,92 @@
   </template>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { ref, onMounted, computed } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import functions from "@/plugins/functions";
+import { useAppStore } from "@/store/app.store";
+import { useEndpointsStore } from "@/store/endpoints.store";
+import axios from "@/plugins/axios";
+import { useUserStore } from "@/store/user.store";
 
-export default defineComponent({
-  components: { HoverChip },
-  data() {
-    return {
-      selected: "",
-      items: [],
-      platform: "Windows"
-    };
-  },
-  mounted() {
-    this.getAPIKeys();
-    this.platform = functions.getPlatform();
-  },
-  methods: {
-    config(type: "sharex" | "sharenix" = "sharex") {
-      let data = {
-        Version: "13.5.0",
-        Name: this.$app.site.name,
-        DestinationType: "ImageUploader, TextUploader, FileUploader",
-        RequestURL:
-          this.$app.site.hostnameWithProtocol +
-          "/api/" +
-          this.$app.apiVersion +
-          "/gallery",
-        Body: "MultipartFormData",
-        Headers: {
-          Authorization: this.selected
-        },
-        FileFormName: "attachment",
-        URL: "$json:url$"
-      } as {
-        Version: string;
-        Name: string;
-        DestinationType: string;
-        RequestURL: string;
-        Body: string;
-        Headers: {
-          Authorization: string;
-        };
-        FileFormName: string;
-        URL: string;
-        RequestMethod?: string;
-        RequestType?: string;
-      };
-      if (type === "sharenix") {
-        data.RequestType = "POST";
-      } else {
-        data.RequestMethod = "POST";
-      }
-      return data;
-    },
-    async getAPIKeys() {
-      const { data } = await this.axios.get("/security/keys");
-      this.items = data;
-    },
-    saveFile(type: "sharex" | "sharenix" = "sharex") {
-      console.log(2);
-      let data = null;
-      if (type === "sharex") {
-        data = JSON.stringify(this.config(type));
-      } else {
-        data = JSON.stringify({
-          DefaultFileUploader: this.$app.site.name,
-          DefaultImageUploader: this.$app.site.name,
+const selected = ref("");
+const items = ref([]);
+const platform = ref("Windows");
+const appStore = useAppStore();
+const endpointsStore = useEndpointsStore();
+const userStore = useUserStore();
 
-          Services: [this.config(type)]
-        });
-      }
-      const blob = new Blob([data], { type: "text/plain" });
-      const e = document.createEvent("MouseEvents"),
-        a = document.createElement("a");
-      const ext = type === "sharex" ? ".sxcu" : ".json";
-      a.download =
-        this.$user.user?.username + " - " + this.$app.site.name + ext;
-      //@ts-ignore
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-      e.initEvent("click", true, false);
-      a.dispatchEvent(e);
-    }
+const endpoint = computed(() => {
+  const e = endpointsStore.selected.api.url;
+  if (e.startsWith("/")) {
+    return appStore.site.hostnameWithProtocol + e;
   }
+  return e;
+});
+
+function config(type: "sharex" | "sharenix" = "sharex") {
+  let data = {
+    Version: "13.5.0",
+    Name: appStore.site.name,
+    DestinationType: "ImageUploader, TextUploader, FileUploader",
+    RequestURL: endpoint.value + "/gallery",
+    Body: "MultipartFormData",
+    Headers: {
+      Authorization: selected.value
+    },
+    FileFormName: "attachment",
+    URL: "$json:url$"
+  } as {
+    Version: string;
+    Name: string;
+    DestinationType: string;
+    RequestURL: string;
+    Body: string;
+    Headers: {
+      Authorization: string;
+    };
+    FileFormName: string;
+    URL: string;
+    RequestMethod?: string;
+    RequestType?: string;
+  };
+  if (type === "sharenix") {
+    data.RequestType = "POST";
+  } else {
+    data.RequestMethod = "POST";
+  }
+  return data;
+}
+
+async function getAPIKeys() {
+  const { data } = await axios().get("/security/keys");
+  items.value = data;
+}
+
+function saveFile(type: "sharex" | "sharenix" = "sharex") {
+  let data;
+  if (type === "sharex") {
+    data = JSON.stringify(config(type));
+  } else {
+    data = JSON.stringify({
+      DefaultFileUploader: appStore.site.name,
+      DefaultImageUploader: appStore.site.name,
+
+      Services: [config(type)]
+    });
+  }
+  const blob = new Blob([data], { type: "text/plain" });
+  const a = document.createElement("a");
+  const ext = type === "sharex" ? ".sxcu" : ".json";
+  a.download = userStore.user?.username + " - " + appStore.site.name + ext;
+  a.href = window.URL.createObjectURL(blob);
+  a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+  a.click();
+}
+
+onMounted(() => {
+  getAPIKeys();
+  platform.value = functions.getPlatform();
 });
 </script>
-<script setup lang="ts"></script>
-<script setup lang="ts"></script>
-<script setup lang="ts"></script>
