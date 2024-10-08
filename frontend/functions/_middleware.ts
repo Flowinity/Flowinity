@@ -24,6 +24,27 @@ const routes: Route[] = [
     },
     {
         from: {
+          pattern: "/graphql",
+          alsoMatchWWWSubdomain: true,
+        },
+        to: { url: "https://api.flowinity.com/graphql" },
+    },
+    {
+        from: {
+          pattern: "/gateway/*",
+          alsoMatchWWWSubdomain: true,
+        },
+        to: { url: "https://api.flowinity.com/graphql" },
+    },
+    {
+        from: {
+          pattern: "/gateway",
+          alsoMatchWWWSubdomain: true,
+        },
+        to: { url: "https://api.flowinity.com/graphql" },
+    },
+    {
+        from: {
           pattern: "/.well-known/*",
           alsoMatchWWWSubdomain: true,
         },
