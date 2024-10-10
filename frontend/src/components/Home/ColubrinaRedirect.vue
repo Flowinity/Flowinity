@@ -5,7 +5,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
-      <v-img class="mx-4" src="https://i.troplo.com/i/2c076b9c7b17.png" />
+      <v-img class="mx-4" src="https://i.flowinity.com/i/2c076b9c7b17.png" />
       <v-card-title class="text-center justify-center">
         Colubrina is now Flowinity.
       </v-card-title>
