@@ -492,7 +492,7 @@ async function getUserDomain(userId: number): Promise<string> {
     ]
   })
 
-  return user?.domain?.domain + "/i/" || "https://i.troplo.com/i/"
+  return user?.domain?.domain + "/i/" || "https://i.flowinity.com/i/"
 }
 
 async function processXP(
