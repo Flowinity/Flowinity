@@ -76,7 +76,7 @@ export default defineComponent({
     },
     image: {
       type: String,
-      default: "https://i.troplo.com/i/a050d6f271c3.png"
+      default: "https://i.flowinity.com/i/a050d6f271c3.png"
     },
     title: {
       type: String,
