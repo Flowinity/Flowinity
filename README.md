@@ -1,4 +1,4 @@
-![PrivateUploader Banner](https://i.troplo.com/i/cc7ba831c18a.png)
+![PrivateUploader Banner](https://i.flowinity.com/i/cc7ba831c18a.png)
 
 # Flowinity (formerly PrivateUploader) [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
 
@@ -12,24 +12,24 @@ Collections.
 Additionally, Flowinity has only recently become an open source project, so
 documentation and resources are lacking initially, but will improve over time.
 
-![PrivateUploader Features](https://i.troplo.com/i/086834402e31.png)
+![PrivateUploader Features](https://i.flowinity.com/i/086834402e31.png)
 
 ## Don't want to host your own server?
 
 You can use the official public instance of Flowinity at
-[https://flowinity.com](https://privateuploader.com) (previously
+[https://flowinity.com](https://www.flowinity.com) (previously
 [https://privateuploader.com](https://privateuploader.com)).
 
 <details>
   <summary><h2>Screenshots (Click to expand)</h2></summary>
 
 View the full collection on
-[Flowinity](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
+[Flowinity](https://www.flowinity.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
 
-![Gallery](https://i.troplo.com/i/d68241bda319.png)
-![Collection Page](https://i.troplo.com/i/a1fb3e1af098.png)
-![User Profile](https://i.troplo.com/i/4d0adcf1c4a4.png)
-![Insights](https://i.troplo.com/i/ab6170f5d976.png)
+![Gallery](https://i.flowinity.com/i/d68241bda319.png)
+![Collection Page](https://i.flowinity.com/i/a1fb3e1af098.png)
+![User Profile](https://i.flowinity.com/i/4d0adcf1c4a4.png)
+![Insights](https://i.flowinity.com/i/ab6170f5d976.png)
 
 </details>
 
@@ -77,8 +77,8 @@ these instructions will differ depending on what init system you use.
 4. Follow the setup wizard on http://localhost:34582
 5. You must change the MariaDB server hostname to `mariadb` and the redis
 hostname to `redis` in the setup wizard. (seen below):
-![Setup Wizard](https://i.troplo.com/i/87987421cfa1.png)
-![Setup Wizard](https://i.troplo.com/i/582d2fd8d1a7.png)
+![Setup Wizard](https://i.flowinity.com/i/87987421cfa1.png)
+![Setup Wizard](https://i.flowinity.com/i/582d2fd8d1a7.png)
 </details>
 
 <details>
