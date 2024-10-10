@@ -61,7 +61,7 @@ export class FileControllerV3 {
           fs.constants.F_OK
         )
       } catch {
-        res.redirect("https://i.troplo.com/i/" + attachment)
+        res.redirect("https://i.flowinity.com/i/" + attachment)
         return res
       }
     }
