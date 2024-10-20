@@ -39,3 +39,4 @@ yarn-error.log
 coverage/
 app/storage
 .DS_Store
+.env

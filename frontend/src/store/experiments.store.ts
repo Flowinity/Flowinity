@@ -247,17 +247,18 @@ export const useExperimentsStore = defineStore("experiments", () => {
     return adminGetExperimentOverrides;
   }
 
-  async function deleteEmergencyOverride(id: string) {
+  async function deleteEmergencyOverride(id: string, userId?: number) {
     await useApolloClient().client.mutate({
       mutation: gql`
-        mutation AdminDeleteExperimentOverride($id: String!) {
-          adminDeleteExperimentOverride(id: $id) {
+        mutation AdminDeleteExperimentOverride($id: String!, $userId: Int) {
+          adminDeleteExperimentOverride(id: $id, userId: $userId) {
             success
           }
         }
       `,
       variables: {
-        id
+        id,
+        userId
       }
     });
   }

@@ -27,13 +27,15 @@ import { pubSub } from "@app/lib/graphql/pubsub"
 import { Upload } from "@app/models/upload.model"
 import { NextFunction, Response } from "express"
 import { AwsService } from "@app/services/aws.service"
+import { Plan } from "@app/models/plan.model"
 
 async function checkUserQuota(
   req: RequestAuthSystem,
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.body)
+  //@ts-ignore
+  req.timetest = new Date().getTime()
   function e(error: keyof typeof Errors = "QUOTA_EXCEEDED", custom?: any) {
     return res.status(400).json({
       errors: [custom ? custom : { name: error, ...Errors[error] }]
@@ -48,15 +50,30 @@ async function checkUserQuota(
   if (!req.user) {
     return e("UNAUTHORIZED")
   }
-  if (req.user.quota >= req.user.plan.quotaMax) {
+
+  const user = await User.findByPk(req.user.id, {
+    attributes: ["quota"],
+    include: [
+      {
+        model: Plan,
+        attributes: ["quotaMax"]
+      }
+    ]
+  })
+  if (!user || !user.plan) {
+    return e("UNKNOWN")
+  }
+  if (user.quota >= user.plan.quotaMax) {
     return e()
   }
 
   // Ensure the file isn't larger than the user's quota
   const size = parseInt(req.headers["content-length"] as string)
-  if (size > req.user.plan.quotaMax - req.user.quota) {
+  if (size > user.plan.quotaMax - user.quota) {
     return e()
   }
+  //@ts-ignore
+  console.log("Time taken to check quota", new Date().getTime() - req.timetest)
   return next()
 }
 
@@ -126,6 +143,13 @@ export class GalleryControllerV3 {
     @Req() req: RequestAuth
   ) {
     if (!attachment) throw Errors.NO_FILE
+    console.log(
+      "Upload took",
+      //@ts-ignore
+      new Date().getTime() - req.timetest,
+      "ms",
+      attachment.size
+    )
     const upload = await this.galleryService.createUpload(
       req.user.id,
       attachment,
@@ -171,6 +195,12 @@ export class GalleryControllerV3 {
     @Req() req: RequestAuth
   ) {
     let files = []
+    console.log(
+      "Upload took",
+      //@ts-ignore
+      new Date().getTime() - req.timetest,
+      "ms"
+    )
     for (const attachment of attachments) {
       const upload = await this.galleryService.createUpload(
         req.user.id,

@@ -200,7 +200,8 @@ const config = {
         changeOrigin: true
       },
       "/metrics": "http://localhost:34583",
-      "/ok": "http://localhost:34583"
+      "/ok": "http://localhost:34583",
+      "/.well-known": "http://localhost:34582"
     },
     https: undefined,
     warmup: {

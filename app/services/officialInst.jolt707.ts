@@ -265,6 +265,21 @@ export class OfficialInstJolt707 {
             const subscription = await Subscription.findOne({
               where: {
                 userId: user.id
+            await Subscription.update(
+              {
+                cancelled: true,
+                metadata: {
+                  active: false,
+                  hours: nesyLength,
+                  message: `You don't have 14 hours of Speaker Stats in the past 14 days, your TPU Gold will expire in 1 day. You only have ${Math.round(
+                    nesyLength
+                  )} hours.`
+                }
+              },
+              {
+                where: {
+                  userId: 6
+                }
               }
             })
             if (!subscription) {

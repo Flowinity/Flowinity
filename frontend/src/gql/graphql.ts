@@ -1385,6 +1385,7 @@ export type MutationAdminClearCacheArgs = {
 
 export type MutationAdminDeleteExperimentOverrideArgs = {
   id: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

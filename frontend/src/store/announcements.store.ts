@@ -2,7 +2,9 @@ import { defineStore } from "pinia";
 import {
   AnnouncementsDocument,
   type AnnouncementsInput,
-  type AnnouncementsQuery
+  type AnnouncementsQuery,
+  type AnnouncementQuery,
+  AnnouncementDocument
 } from "@/troploservices-gql/graphql";
 import { nextTick, ref, watch } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
@@ -10,6 +12,10 @@ import { useDisplay } from "vuetify";
 
 export const useAnnouncementsStore = defineStore("announcements", () => {
   const banners = ref<AnnouncementsQuery["announcements"]["items"]>([]);
+  const announcements = ref<AnnouncementsQuery["announcements"]["items"]>([]);
+  const mainPageAnnouncement = ref<AnnouncementQuery["announcement"] | null>(
+    null
+  );
   const apolloClient = useApolloClient("troploservices");
 
   async function getAnnouncements(
@@ -41,9 +47,29 @@ export const useAnnouncementsStore = defineStore("announcements", () => {
     }
   );
 
+  async function getAnnouncement(
+    announcementId?: string,
+    showOnMainPage?: boolean
+  ): Promise<AnnouncementQuery["announcement"]> {
+    const { data } = await apolloClient.client.query({
+      query: AnnouncementDocument,
+      variables: { showOnMainPage, announcementId }
+    });
+    return data.announcement;
+  }
+
+  onMounted(() => {
+    getAnnouncement(undefined, true).then((a) => {
+      mainPageAnnouncement.value = a;
+    });
+  });
+
   return {
     banners,
     getAnnouncements,
-    navbarOffset
+    navbarOffset,
+    announcements,
+    getAnnouncement,
+    mainPageAnnouncement
   };
 });

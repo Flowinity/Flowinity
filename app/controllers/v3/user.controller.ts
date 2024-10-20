@@ -33,6 +33,12 @@ import axios from "axios"
 import { OpenAPI } from "routing-controllers-openapi"
 import { AdminService } from "@app/services/admin.service"
 import { OauthApp } from "@app/models/oauthApp.model"
+import { Badge } from "@app/models/badge.model"
+import { Integration } from "@app/models/integration.model"
+import { Theme } from "@app/models/theme.model"
+import { Domain } from "@app/models/domain.model"
+import { Subscription } from "@app/models/subscription.model"
+import { Experiment } from "@app/models/experiment.model"
 
 @Service()
 @JsonController("/user")
@@ -44,7 +50,54 @@ export class UserControllerV3 {
   ) {}
 
   @Get("")
-  async getUser(@Auth("user.view") user: User) {
+  async getUser(@Auth("user.view") userCtx: User) {
+    const user = await User.findByPk(userCtx.id, {
+      include: [
+        {
+          model: Experiment,
+          as: "experiments"
+        },
+        {
+          model: Subscription,
+          as: "subscription"
+        },
+        {
+          model: Domain,
+          as: "domain"
+        },
+        {
+          model: Plan,
+          as: "plan"
+        },
+        {
+          model: Theme,
+          as: "theme"
+        },
+        {
+          model: Integration,
+          as: "integrations",
+          attributes: [
+            "id",
+            "type",
+            "providerUserId",
+            "providerUsername",
+            "providerUserCache",
+            "error",
+            "createdAt",
+            "updatedAt"
+          ]
+        },
+        {
+          model: Badge,
+          as: "badges"
+        }
+      ],
+      order: [
+        [{ model: Badge, as: "badges" }, "priority", "DESC"],
+        [{ model: Badge, as: "badges" }, "id", "ASC"]
+      ]
+    })
+    if (!user) throw Errors.USER_NOT_FOUND
     const pendingAutoCollects = await redis.json
       .get(`autoCollects:${user.id}`)
       .then((autoCollects: AutoCollectCache[]) => {
@@ -64,7 +117,8 @@ export class UserControllerV3 {
     })
 
     return {
-      ...user,
+      ...user.toJSON(),
+      scopes: userCtx.scopes,
       pendingAutoCollects,
       notifications,
       platforms: await redis.json.get(`user:${user.id}:platforms`)
