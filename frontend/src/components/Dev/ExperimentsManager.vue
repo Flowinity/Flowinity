@@ -244,7 +244,10 @@ export default defineComponent({
       this.getEmergencyOverrides();
     },
     async deleteEmergencyOverride(id: string) {
-      await this.$experiments.deleteEmergencyOverride(id);
+      await this.$experiments.deleteEmergencyOverride(
+        id,
+        this.selected === 0 ? undefined : this.selected
+      );
       this.getEmergencyOverrides();
     },
     async getEmergencyOverrides() {

@@ -28,7 +28,7 @@ import { computed } from "vue";
 import { RiNewsLine } from "@remixicon/vue";
 
 const announcementsStore = useAnnouncementsStore();
-const item = computed(() => announcementsStore.announcements[0]);
+const item = computed(() => announcementsStore.mainPageAnnouncement);
 </script>
 
 <style scoped></style>

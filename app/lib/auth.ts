@@ -14,6 +14,10 @@ import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
 import { AccessedFrom } from "@app/classes/graphql/user/session"
+import { CacheSession } from "@app/lib/graphql/AuthChecker"
+import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
+import { Container } from "typedi"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -177,7 +181,12 @@ export function checkScope(requiredScope: Scope | Scope[], scope: string) {
   return false
 }
 
-export async function updateSession(session: Session, ip: string | undefined) {
+export async function updateSession(
+  session: Session | CacheSession,
+  ip: string | undefined
+) {
+  // Ensure that it's the Session overload, not the bot one
+  if (!session || !("info" in session)) return
   if (
     !ip ||
     !session ||
@@ -235,87 +244,179 @@ export async function authSystem(
   req: RequestAuthSystem,
   res: Response,
   next: NextFunction
-) {
+): Promise<{
+  user: PartialUserAuth | null
+  session: CacheSession
+}> {
   const token = req.header("Authorization")
   if (!scope) scope = "*"
-  if (token) {
-    const session = await getSession(token)
-    if (session) {
-      if (!checkScope(scope, session.scopes)) {
-        if (passthrough) {
-          req.user = null
-          return next()
-        }
-        res.status(401)
-        res.json({
-          errors: [
-            {
-              name: "SCOPE_REQUIRED",
-              message:
-                "You do not have permission to access this resource due to your current API key scopes.",
-              requiredScope: scope,
-              status: 401
-            }
-          ]
-        })
-        updateSession(session, req.ip).then(() => {})
-        return
+  let cache
+  if (config.finishedSetup) {
+    cache = await redis.json.get(`session:${token}`)
+  }
+  let user: PartialUserAuth | null = null
+  let session: CacheSession = null
+  if (!token) {
+    if (passthrough) {
+      req.user = null
+      next()
+      return {
+        user: null,
+        session: null
       }
-      if (session.user?.banned) {
-        if (passthrough) {
-          req.user = null
-          return next()
+    }
+    res.status(401)
+    res.json({
+      errors: [
+        {
+          ...Errors.INVALID_TOKEN,
+          name: "INVALID_TOKEN"
         }
-        res.status(401)
-        res.json({
-          errors: [Errors.BANNED]
-        })
-        updateSession(session, req.ip).then(() => {})
-        return
-      } else {
-        req.user = session.user
-        if (!req.user.emailVerified) {
-          session.user.dataValues.scopes = "user.view,user.modify"
-        } else {
-          session.user.dataValues.scopes = session.scopes
-        }
-        if (!scope.includes("user") && !req.user.emailVerified) {
-          if (passthrough) {
-            req.user = null
-            return next()
+      ]
+    })
+    return {
+      user: null,
+      session: null
+    }
+  }
+  if (!cache) {
+    if (global.config.finishedSetup) {
+      const userResolver = Container.get(UserResolver)
+      session = await userResolver.findByToken(token)
+      user = !session?.user?.banned ? session?.user || null : null
+      if (session) {
+        redis.json.set(
+          `session:${token}`,
+          "$",
+          {
+            ...("toJSON" in session ? session.toJSON() : session),
+            user: undefined
+          },
+          {
+            ttl: session?.expiredAt
+              ? dayjs(session.expiredAt).diff(dayjs(), "second")
+              : 60 * 60 * 24 * 7
           }
-          res.status(401)
-          res.json({
-            errors: [Errors.EMAIL_NOT_VERIFIED]
-          })
-          updateSession(session, req.ip).then(() => {})
-          return
-        }
-        next()
-        updateSession(session, req.ip).then(() => {})
-        return session
+        )
+        redis.json.set(`user:${session?.userId}`, "$", session?.user)
       }
     } else {
+      user = null
+    }
+  } else if (config.finishedSetup) {
+    session = cache
+    const userCache = await redis.json.get(`user:${session!.userId}`)
+    if (userCache) {
+      if (!userCache.banned) user = userCache
+    } else {
+      const userResolver = Container.get(UserResolver)
+      session = await userResolver.findByToken(token)
+      user = !session?.user?.banned ? session?.user || null : null
+      redis.json.set(`user:${session?.userId}`, "$", user)
+    }
+  }
+
+  if (session) {
+    if (!checkScope(scope, session.scopes)) {
       if (passthrough) {
         req.user = null
-        return next()
+        next()
+        return {
+          user: null,
+          session
+        }
       }
       res.status(401)
       res.json({
         errors: [
           {
-            name: "INVALID_TOKEN",
+            name: "SCOPE_REQUIRED",
             message:
-              "The authorization token you provided is invalid or has expired.",
+              "You do not have permission to access this resource due to your current API key scopes.",
+            requiredScope: scope,
+            currentScopes: session.scopes,
             status: 401
           }
         ]
       })
+      updateSession(session, req.ip).then(() => {})
+      return {
+        user: null,
+        session
+      }
+    }
+    if (session.user?.banned) {
+      if (passthrough) {
+        req.user = null
+        return {
+          user: null,
+          session
+        }
+      }
+      res.status(401)
+      res.json({
+        errors: [Errors.BANNED]
+      })
+      updateSession(session, req.ip).then(() => {})
+      return {
+        user: null,
+        session
+      }
+    } else {
+      //@ts-ignore
+      if (user) {
+        if (!user.emailVerified) {
+          //@ts-ignore
+          if (user?.dataValues)
+            //@ts-ignore
+            user.dataValues.scopes = "user.view,user.modify"
+          //@ts-ignore
+          if (user) user.scopes = "user.view,user.modify"
+        } else {
+          //@ts-ignore
+          if (user?.dataValues)
+            //@ts-ignore
+            user.dataValues.scopes = session.scopes
+          //@ts-ignore
+          if (user) user.scopes = session.scopes
+        }
+      }
+      if (!scope.includes("user") && !user?.emailVerified) {
+        if (passthrough) {
+          req.user = null
+          next()
+          return {
+            user: null,
+            session
+          }
+        }
+        res.status(401)
+        res.json({
+          errors: [Errors.EMAIL_NOT_VERIFIED]
+        })
+        updateSession(session, req.ip).then(() => {})
+        return {
+          user: null,
+          session
+        }
+      }
+      //@ts-ignore
+      req.user = user
+      next()
+      updateSession(session, req.ip).then(() => {})
+      return {
+        user: user,
+        session: session
+      }
     }
   } else {
     if (passthrough) {
       req.user = null
-      return next()
+      next()
+      return {
+        user: null,
+        session: null
+      }
     }
     res.status(401)
     res.json({
@@ -328,6 +429,10 @@ export async function authSystem(
         }
       ]
     })
+  }
+  return {
+    user: null,
+    session: null
   }
 }
 
@@ -372,56 +477,25 @@ export function Auth(
 
       if (!config.finishedSetup && !required) return null
       if (!config.finishedSetup) throw Errors.NOT_SETUP
-      const token = action.request.header("Authorization")
       if (!scope) scope = "*"
-      if (token) {
-        const session = await getSession(token)
-
-        if (session) {
-          if (!checkScope(scope, session.scopes)) {
-            updateSession(session, action.request.ip).then(() => {})
-            if (!required) return null
-            throw Errors.SCOPE_REQUIRED
+      const auth = await authSystem(
+        scope,
+        !required,
+        action.request,
+        {
+          //@ts-ignore
+          status: (_: number) => {
+            return
+          },
+          json: (data: any) => {
+            throw {
+              ...data.errors[0]
+            }
           }
-          if (session.user?.banned) {
-            updateSession(session, action.request.ip).then(() => {})
-            if (!required) return null
-            console.log(action.request.path)
-            if (action.request.path !== "/api/v3/auth/reactivate") {
-              throw Errors.BANNED
-            } else {
-              return session.toJSON().user
-            }
-          } else {
-            if (!session.user.emailVerified) {
-              session.user.dataValues.scopes = "user.view,user.modify"
-            } else {
-              session.user.dataValues.scopes = session.scopes
-            }
-            if (!scope.includes("user") && !session.user.emailVerified) {
-              updateSession(session, action.request.ip).then(() => {})
-              throw Errors.EMAIL_NOT_VERIFIED
-            }
-            updateSession(session, action.request.ip).then(() => {})
-
-            session.user.dataValues.stats = await redis.json.get(
-              `userStats:${session?.user.id}`
-            )
-
-            if (session.oauthAppId) {
-              session.user.dataValues.oauthAppId = session.oauthAppId
-            }
-
-            return session.toJSON().user
-          }
-        } else {
-          if (!required) return null
-          throw Errors.INVALID_TOKEN
-        }
-      } else {
-        if (!required) return null
-        throw Errors.INVALID_TOKEN
-      }
+        },
+        () => {}
+      )
+      return auth.user
     }
   })
 }

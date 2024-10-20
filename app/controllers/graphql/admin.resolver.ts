@@ -279,8 +279,21 @@ export class AdminResolver {
   @Mutation(() => Success)
   async adminDeleteExperimentOverride(
     @Ctx() ctx: Context,
-    @Arg("id") id: string
+    @Arg("id") id: string,
+    @Arg("userId", {
+      nullable: true
+    })
+    userId: number
   ) {
+    if (userId) {
+      await Experiment.destroy({
+        where: {
+          key: id,
+          userId
+        }
+      })
+      return { success: true }
+    }
     const overrides = (await redis.json.get("experimentOverridesGlobal")) || []
     const existing = overrides.find((o: ExperimentOverride) => o.id === id)
     if (existing) {
