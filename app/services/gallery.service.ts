@@ -195,7 +195,8 @@ export class GalleryService {
     /// read the file
     const attachment =
       file.filename ||
-      cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
+      cryptoRandomString({ length: 14, type: "alphanumeric" }) +
+        path.extname(file.originalname)
 
     const fileStream = fs.createReadStream(
       `${global.storageRoot}/${attachment}`,

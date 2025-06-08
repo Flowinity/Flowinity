@@ -801,7 +801,7 @@ export class NoteService {
     if (!workspace) throw Errors.NOT_FOUND
     const shareLink = note.shareLink
       ? null
-      : await cryptoRandomString({ length: 64 })
+      : await cryptoRandomString({ length: 64, type: "alphanumeric" })
     await note.update({
       shareLink
     })
