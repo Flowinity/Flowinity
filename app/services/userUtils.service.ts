@@ -88,6 +88,8 @@ export class UserUtilsService {
     })
   }
   async registerFCMToken(userId: number, token: string) {
+    // TODO: Fix this
+    return;
     if (!config.providers.google) return
     const device = await FCMDevice.findOne({
       where: {
