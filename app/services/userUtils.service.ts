@@ -89,100 +89,99 @@ export class UserUtilsService {
   }
   async registerFCMToken(userId: number, token: string) {
     // TODO: Fix this
-    return;
-    if (!config.providers.google) return
-    const device = await FCMDevice.findOne({
-      where: {
-        registrationKey: token
-      }
-    })
-    if (device) return undefined
-    const user = await User.findOne({
-      where: {
-        id: userId
-      },
-      attributes: ["id", "username", "fcmNotificationKey"]
-    })
-    if (!user) throw Errors.USER_NOT_FOUND
-    if (user.fcmNotificationKey) {
-      await axios.post(
-        "https://fcm.googleapis.com/fcm/notification",
-        {
-          operation: "add",
-          notification_key_name: `user-${user.id}`,
-          notification_key: user.fcmNotificationKey,
-          registration_ids: [token]
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `key=${config.providers.google.access_token}`,
-            project_id: config.providers.google.project_info.project_number
-          }
-        }
-      )
-    } else {
-      const { data } = await axios.post(
-        "https://fcm.googleapis.com/fcm/notification",
-        {
-          operation: "create",
-          notification_key_name: `user-${user.id}`,
-          registration_ids: [token]
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `key=${config.providers.google.access_token}`,
-            project_id: config.providers.google.project_info.project_number
-          }
-        }
-      )
-      await User.update(
-        {
-          fcmNotificationKey: data.notification_key
-        },
-        {
-          where: {
-            id: user.id
-          }
-        }
-      )
-    }
-    const devices = await FCMDevice.findAll({
-      where: {
-        userId,
-        invalid: false
-      }
-    })
-    if (devices.length >= 20) {
-      await FCMDevice.update(
-        {
-          invalid: true
-        },
-        {
-          where: {
-            userId
-          },
-          limit: 1
-        }
-      )
-    }
-
-    await FCMDevice.create({
-      userId,
-      registrationKey: token
-    })
-
-    const fcmUser = await User.findOne({
-      where: {
-        id: userId
-      },
-      attributes: ["fcmNotificationKey"]
-    })
-    await redis.set(
-      `user:${userId}:notificationKey`,
-      fcmUser?.fcmNotificationKey
-    )
+    // if (!config.providers.google) return
+    // const device = await FCMDevice.findOne({
+    //   where: {
+    //     registrationKey: token
+    //   }
+    // })
+    // if (device) return undefined
+    // const user = await User.findOne({
+    //   where: {
+    //     id: userId
+    //   },
+    //   attributes: ["id", "username", "fcmNotificationKey"]
+    // })
+    // if (!user) throw Errors.USER_NOT_FOUND
+    // if (user.fcmNotificationKey) {
+    //   await axios.post(
+    //     "https://fcm.googleapis.com/fcm/notification",
+    //     {
+    //       operation: "add",
+    //       notification_key_name: `user-${user.id}`,
+    //       notification_key: user.fcmNotificationKey,
+    //       registration_ids: [token]
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `key=${config.providers.google.access_token}`,
+    //         project_id: config.providers.google.project_info.project_number
+    //       }
+    //     }
+    //   )
+    // } else {
+    //   const { data } = await axios.post(
+    //     "https://fcm.googleapis.com/fcm/notification",
+    //     {
+    //       operation: "create",
+    //       notification_key_name: `user-${user.id}`,
+    //       registration_ids: [token]
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `key=${config.providers.google.access_token}`,
+    //         project_id: config.providers.google.project_info.project_number
+    //       }
+    //     }
+    //   )
+    //   await User.update(
+    //     {
+    //       fcmNotificationKey: data.notification_key
+    //     },
+    //     {
+    //       where: {
+    //         id: user.id
+    //       }
+    //     }
+    //   )
+    // }
+    // const devices = await FCMDevice.findAll({
+    //   where: {
+    //     userId,
+    //     invalid: false
+    //   }
+    // })
+    // if (devices.length >= 20) {
+    //   await FCMDevice.update(
+    //     {
+    //       invalid: true
+    //     },
+    //     {
+    //       where: {
+    //         userId
+    //       },
+    //       limit: 1
+    //     }
+    //   )
+    // }
+    //
+    // await FCMDevice.create({
+    //   userId,
+    //   registrationKey: token
+    // })
+    //
+    // const fcmUser = await User.findOne({
+    //   where: {
+    //     id: userId
+    //   },
+    //   attributes: ["fcmNotificationKey"]
+    // })
+    // await redis.set(
+    //   `user:${userId}:notificationKey`,
+    //   fcmUser?.fcmNotificationKey
+    // )
   }
 
   async setFriendNickname(userId: number, friendId: number, name: string) {
