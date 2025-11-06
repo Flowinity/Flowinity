@@ -13,6 +13,10 @@ declare type S3Config = {
 declare type TpuConfig = {
   hostnameWithProtocol: string
   hostname: string
+  //@deprecated
+  flowinityId?: string
+  //@deprecated
+  flowinitySecret?: string
   maintenance: {
     enabled: boolean
     message: string
