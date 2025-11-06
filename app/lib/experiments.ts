@@ -132,7 +132,7 @@ export function getExperiments() {
     REMOVE_PUBLIC_USERS: false,
     USERS_IN_DASH: true,
     SETTINGS_MOVE_INTRO: true,
-    SUPERBAR_SETTINGS_NORMAL_ITEM: true,
+    SUPERBAR_SETTINGS_NORMAL_ITEM: false,
     INTERACTIVE_BUTTONS: true,
     DIALOG_REFRESH: true,
     REGISTER_V2_LANDING: false,

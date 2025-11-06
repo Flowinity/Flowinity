@@ -195,7 +195,8 @@ export class CoreResolver {
         config.release === "dev",
         false,
         version !== null ? version : ctx.client.majorVersion,
-        experiments
+        experiments,
+        false
       )
     }
     return await this.coreService.getUserExperimentsV4(

@@ -92,7 +92,14 @@ export class CoreControllerV3 {
     })
     const gold = user ? plan?.internalName === "GOLD" : false
     const majorVersion = parseInt(version?.split(".")[0] || "0")
-    if (!user) return this.coreService.getExperiments(dev, gold, majorVersion)
+    if (!user)
+      return this.coreService.getExperiments(
+        dev,
+        gold,
+        majorVersion,
+        undefined,
+        false
+      )
     return await this.coreService.getUserExperiments(
       user.id,
       dev,
@@ -104,7 +111,11 @@ export class CoreControllerV3 {
   @Get("")
   @Get("/state")
   async getCore(@Req() req: Request) {
-    const apiVersion = req.path.startsWith("/api/v2") ? 2 : 3
+    const apiVersion = req.path.startsWith("/api/v3")
+      ? 3
+      : req.path.startsWith("/api/v2")
+      ? 2
+      : 1
     if (!config.finishedSetup) {
       let step = await this.getStep()
       return {
@@ -116,7 +127,7 @@ export class CoreControllerV3 {
         redisHost: process.env.IS_DOCKER === "true" ? "redis" : "localhost"
       }
     }
-    return {
+    const result = {
       ...((await redis.json.get("core:state")) ||
         (await this.cacheService.refreshState())),
       server: cluster.worker?.id
@@ -129,8 +140,22 @@ export class CoreControllerV3 {
       finishedSetup: true,
       domain: global.domain,
       maintenance:
-        apiVersion === 2 ? config.maintenance.enabled : config.maintenance
+        apiVersion !== 3 ? config.maintenance.enabled : config.maintenance
     }
+
+    if (apiVersion === 1) {
+      result.captchaSiteKey = ""
+      result.flowinityId = config.flowinityId || ""
+      result.whitelabel = config.officialInstance
+      result.matomoId = config.officialInstance ? "troploprivateuploader" : ""
+      result.enterprise = false
+      result.loading = false
+      result.route = null
+      result.debug = false
+      result.openRegistrations = config.registrations
+    }
+
+    return result
   }
 
   @Get("/weather")

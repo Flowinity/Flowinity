@@ -334,7 +334,13 @@ export class CoreService {
         userId
       }
     })
-    const experiments = await this.getExperiments(dev, gold, majorVersion)
+    const experiments = await this.getExperiments(
+      dev,
+      gold,
+      majorVersion,
+      undefined,
+      true
+    )
     const overrideObject = overrides.reduce((acc: any, override) => {
       acc[override.dataValues.key] = JSON.parse(override.value)
       return acc
@@ -366,7 +372,8 @@ export class CoreService {
       dev,
       gold,
       majorVersion,
-      wantedExperiments
+      wantedExperiments,
+      true
     )
     return [
       ...experiments.map((experiment) => {
@@ -395,7 +402,8 @@ export class CoreService {
     dev: boolean = false,
     gold: boolean = false,
     majorVersion: number | undefined = undefined,
-    wantedExperiments: string[] | undefined = undefined
+    wantedExperiments: string[] | undefined = undefined,
+    loggedIn: boolean = false
   ): Promise<Record<ExperimentsLegacy, any>> {
     const experiments = getExperiments()
 
@@ -403,6 +411,12 @@ export class CoreService {
     experiments.INTERACTIVE_NOTES = config?.features?.workspaces ?? true
     experiments.OFFICIAL_INSTANCE = config?.officialInstance
     experiments.FLOWINITY = config?.officialInstance ?? false
+
+    if (loggedIn) {
+      experiments.PROGRESSIVE_UI = true
+    } else {
+      experiments.PROGRESSIVE_UI = false
+    }
 
     if (dev || config.release === "dev") {
       experiments.NEW_BRANDING = true
@@ -477,14 +491,16 @@ export class CoreService {
     dev: boolean = false,
     gold: boolean = false,
     majorVersion: number = 4,
-    wantedExperiments: string[] | undefined = undefined
+    wantedExperiments: string[] | undefined = undefined,
+    loggedIn: boolean = false
   ): Promise<ExperimentType[]> {
     console.log(wantedExperiments)
     const experiments = await this.getExperiments(
       dev,
       gold,
       majorVersion,
-      wantedExperiments
+      wantedExperiments,
+      loggedIn
     )
     // remove meta from object.entries
     return Object.entries(experiments)
