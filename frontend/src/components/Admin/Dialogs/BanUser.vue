@@ -68,6 +68,8 @@
 import { BanReason, User } from "@/gql/graphql";
 import { PropType } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import axios from "@/plugins/axios";
+import { useToast } from "vue-toastification";
 
 const banWizard = defineModel("banWizard", {
   type: Object as PropType<{ dialog: boolean; user: User | undefined }>
@@ -83,14 +85,14 @@ const banReasonTypes = [
 ];
 
 async function ban() {
-  await this.axios.patch("/admin/ban", {
+  await axios.patch("/admin/ban", {
     id: banWizard.value.user.id,
     banned: banWizard.value.user.banned,
     banReason: banWizard.value.user.banReason,
     banReasonType: banWizard.value.user.banReasonType,
     pendingDeletionDate: banWizard.value.user.pendingDeletionDate
   });
-  this.$toast.success("User banned.");
+  useToast().success("User banned.");
   banWizard.value.dialog = false;
   banWizard.value.user = undefined;
 }
