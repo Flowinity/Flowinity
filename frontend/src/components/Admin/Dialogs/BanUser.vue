@@ -85,7 +85,7 @@ const banReasonTypes = [
 ];
 
 async function ban() {
-  await axios.patch("/admin/ban", {
+  await axios().patch("/admin/ban", {
     id: banWizard.value.user.id,
     banned: banWizard.value.user.banned,
     banReason: banWizard.value.user.banReason,
