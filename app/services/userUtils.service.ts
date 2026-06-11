@@ -454,7 +454,7 @@ export class UserUtilsService {
     type: "banner" | "avatar"
   ) {
     if (type === "avatar") {
-      this.emitToTrackedUsers(
+      await this.emitToTrackedUsers(
         userId,
         "changeAvatar",
         {
@@ -1011,9 +1011,9 @@ export class UserUtilsService {
       if (legacy) {
         const translated =
           key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + id
-        pubSub.publish(translated, value)
+        await pubSub.publish(translated, value)
       } else {
-        pubSub.publish(key + ":" + id, value)
+        await pubSub.publish(key + ":" + id, value)
       }
       socket.of(namespace).to(id).emit(key, value)
     }
