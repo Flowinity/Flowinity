@@ -454,7 +454,7 @@ export class UserUtilsService {
     type: "banner" | "avatar"
   ) {
     if (type === "avatar") {
-      await this.emitToTrackedUsers(
+      this.emitToTrackedUsers(
         userId,
         "changeAvatar",
         {
@@ -762,7 +762,7 @@ export class UserUtilsService {
     )
 
     if (status !== UserStatus.OFFLINE) {
-      await this.emitToTrackedUsers(
+      this.emitToTrackedUsers(
         id,
         "userStatus",
         {
@@ -898,7 +898,7 @@ export class UserUtilsService {
         user.status = status
         user.dataValues.status = status
         if (body.storedStatus !== "invisible" || user.status !== "offline") {
-          await this.emitToTrackedUsers(
+          this.emitToTrackedUsers(
             user.id,
             "userStatus",
             {
@@ -1011,9 +1011,9 @@ export class UserUtilsService {
       if (legacy) {
         const translated =
           key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + id
-        await pubSub.publish(translated, value)
+        pubSub.publish(translated, value)
       } else {
-        await pubSub.publish(key + ":" + id, value)
+        pubSub.publish(key + ":" + id, value)
       }
       socket.of(namespace).to(id).emit(key, value)
     }

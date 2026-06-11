@@ -246,7 +246,7 @@ export class UserResolver extends createBaseResolver("User", User) {
         }
       }
     )
-    await this.userUtilsService.emitToTrackedUsers(
+    this.userUtilsService.emitToTrackedUsers(
       ctx.user!!.id,
       "changeUsername",
       {

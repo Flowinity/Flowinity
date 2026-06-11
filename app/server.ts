@@ -165,7 +165,7 @@ export class Server {
               devices as any
             )
 
-            await userService.emitToTrackedUsers(
+            userService.emitToTrackedUsers(
               newCtx.user.id,
               "userStatus",
               {
@@ -217,7 +217,7 @@ export class Server {
                 )
                 const userService: UserUtilsService =
                   Container.get(UserUtilsService)
-                await userService.emitToTrackedUsers(
+                userService.emitToTrackedUsers(
                   ctx.extra.userId,
                   "userStatus",
                   {

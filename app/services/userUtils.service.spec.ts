@@ -1,8 +1,8 @@
 import { describe, expect, jest, test } from "@jest/globals"
 import "reflect-metadata"
-import type { SocketServerWithUser } from "@app/types/global"
-
-const mockPublish = jest.fn()
+const mockPublish: jest.MockedFunction<
+  (key: string, value: unknown) => Promise<void>
+> = jest.fn()
 
 jest.mock("@app/lib/graphql/pubsub", () => ({
   pubSub: {
@@ -12,12 +12,14 @@ jest.mock("@app/lib/graphql/pubsub", () => ({
 
 jest.mock("@app/classes/graphql/SocketEvents", () => ({
   SocketNamespaces: {
-    TRACKED_USERS: "/trackedUsers"
+    TRACKED_USERS: "/trackedUsers",
+    USER: "/user"
   }
 }))
 
 jest.mock("@app/classes/graphql/user/status", () => ({
   UserStatus: {
+    ONLINE: "online",
     OFFLINE: "offline"
   },
   UserStoredStatus: {
@@ -34,63 +36,61 @@ jest.mock("argon2", () => ({
 }))
 
 const { UserUtilsService } = require("./userUtils.service")
+const { User } = require("@app/models/user.model")
+const { SocketNamespaces } = require("@app/classes/graphql/SocketEvents")
+const { UserStatus } = require("@app/classes/graphql/user/status")
 
 function deferred<T>() {
   let resolve!: (value: T | PromiseLike<T>) => void
-  const promise = new Promise<T>((res, _rej) => {
+  const promise = new Promise<T>((res) => {
     resolve = res
   })
   return { promise, resolve }
 }
 
 describe("UserUtilsService", () => {
-  test("emits tracked user status after pubsub publish resolves", async () => {
+  test("emits user settings before tracked user emission resolves", async () => {
     const service = new UserUtilsService()
     const pending = deferred<void>()
     const socketEmit = jest.fn()
     const socketTo = jest.fn(() => ({ emit: socketEmit }))
     const socketOf = jest.fn(() => ({ to: socketTo }))
     const originalSocket = global.socket
-    const mockSocket = {
-      of: socketOf
-    } as unknown as SocketServerWithUser
+    const emitToTrackedUsers = jest
+      .spyOn(service, "emitToTrackedUsers")
+      .mockReturnValueOnce(pending.promise)
+    const updateSpy = jest.spyOn(User, "update").mockResolvedValue([1] as never)
 
     try {
-      global.socket = mockSocket
+      global.socket = {
+        of: socketOf
+      } as unknown as typeof global.socket
 
-      jest.spyOn(service, "trackedUserIds").mockResolvedValue([7])
-      jest.spyOn(service, "blocked").mockResolvedValue(null)
-      mockPublish.mockReturnValueOnce(pending.promise)
+      const result = service.updateTempUserStatus(1, UserStatus.ONLINE)
 
-      const result = service.emitToTrackedUsers(
+      await Promise.resolve()
+
+      expect(emitToTrackedUsers).toHaveBeenCalledWith(
         1,
         "userStatus",
         {
           id: 1,
-          status: "OFFLINE"
+          status: "ONLINE"
         },
-        false
+        true
       )
-
-      await new Promise((resolve) => setImmediate(resolve))
-
-      expect(mockPublish).toHaveBeenCalledWith("USER_STATUS:7", {
-        id: 1,
-        status: "OFFLINE"
+      expect(socketOf).toHaveBeenCalledWith(SocketNamespaces.USER)
+      expect(socketTo).toHaveBeenCalledWith(1)
+      expect(socketEmit).toHaveBeenCalledWith("userSettingsUpdate", {
+        status: "ONLINE"
       })
-      expect(socketEmit).not.toHaveBeenCalled()
 
       pending.resolve()
       await result
-
-      expect(socketOf).toHaveBeenCalledWith("/trackedUsers")
-      expect(socketTo).toHaveBeenCalledWith(7)
-      expect(socketEmit).toHaveBeenCalledWith("userStatus", {
-        id: 1,
-        status: "OFFLINE"
-      })
     } finally {
       global.socket = originalSocket
+      emitToTrackedUsers.mockRestore()
+      updateSpy.mockRestore()
     }
   })
 })
